@@ -1,0 +1,46 @@
+dnl
+dnl $Id$
+dnl
+dnl The Virtuality Renderer
+dnl Copyright (C) 2001 Alex Sandro Queiroz e Silva
+dnl
+dnl This program is free software; you can redistribute it and/or modify
+dnl it under the terms of the GNU General Public License as published by
+dnl the Free Software Foundation; either version 2 of the License, or
+dnl (at your option) any later version.
+dnl
+dnl This program is distributed in the hope that it will be useful,
+dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl GNU General Public License for more details.
+dnl
+dnl You should have received a copy of the GNU General Public License
+dnl along with this program; if not, write to the Free Software
+dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+dnl
+dnl To contact the author send eletronic mail to asandro@lcg.dc.ufc.br
+dnl
+
+dnl
+dnl Virtuality's configuration script
+dnl
+
+AC_INIT(src/virtuality/main.C)
+AM_INIT_AUTOMAKE("virtuality", "0.1.0")
+
+dnl Checks for programs
+AC_PROG_CXX
+AC_PROG_RANLIB
+AC_LANG_CPLUSPLUS
+
+dnl Checks for libraries
+dnl AC_PATH_XTRA
+AC_CHECK_LIB(lua, lua_open)
+AC_CHECK_LIB(lualib, lua_baselibopen)
+AC_CHECK_LIB(z, deflate)
+AC_CHECK_LIB(png, png_set_gAMA,,, -lz -lm)
+
+dnl Checks for headers
+AC_CHECK_HEADERS(lua.h lualib.h zlib.h png.h)
+
+AC_OUTPUT(Makefile src/Makefile src/framebuffers/Makefile src/shapes/Makefile src/virtuality/Makefile tests/Makefile)
