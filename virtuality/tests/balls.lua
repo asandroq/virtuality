@@ -9,7 +9,8 @@ Frame {
 
 	-- creating camera
 	Camera {
-		direction = z
+		position  = Point  { y =  3.0 },
+		direction = Vector { y = -3.0, z = 7.0 }
 	},
 
 	-- creating light
@@ -21,6 +22,7 @@ Frame {
 	-- creating blue box
 	Box {
 		colour = Blue,
+		-- scale  = Vector { x = 2.0, y = 2.0, z = 2.0 },
 		point1 = Point { x = -1.0, y = -1.0, z = 6.0 },
 		point2 = Point { x =  1.0, y =  1.0, z = 8.0 }
 	},
@@ -30,7 +32,8 @@ Frame {
 		radius = 1.0,
 		colour = Red,
 		centre = Point { x = 2.0, z = 9.0 },
-		scale  = Vector { y = 2.0 }
+		scale  = Vector { y = 2.0, z = 2.0 },
+		-- translate = Vector { y = 1.0 }
 	},
 
 	-- creating green sphere

@@ -29,9 +29,6 @@ bin_PROGRAMS = virtuality
 
 virtuality_SOURCES = camera.H \
 		     colour.H colour.C \
-		     csgnode.H \
-		     difference.H difference.C \
-		     intersection.H intersection.C \
 		     light.H \
 		     main.C \
 		     math.H \
@@ -41,7 +38,6 @@ virtuality_SOURCES = camera.H \
 		     renderer.H renderer.C \
 		     scene.H scene.C \
 		     script.H script.C \
-		     union.H union.C \
 		     vector.H
 virtuality_LDADD =   ../framebuffers/libframebuffers.a \
 		     ../shapes/libshapes.a

@@ -33,9 +33,8 @@ void Box::hit(const Ray& r0, SpanList* sl) const
 	Ray r = inverseTransformation() * r0;
 	// auxiliary points
 	Point p0 = r.origin();
-	Point p1 = r.pointOnRay(1.0);
 	// calculating intersections
-	double dir = p1.x() - p0.x();
+	double dir = r.direction().x();
 	if(dir < 0.0) {
 		t1x = (_big_x   - p0.x()) / dir;
 		t2x = (_small_x - p0.x()) / dir;
@@ -48,7 +47,7 @@ void Box::hit(const Ray& r0, SpanList* sl) const
 	} else {
 		return;
 	}
-	dir = p1.y() - p0.y();
+	dir = r.direction().y();
 	if(dir < 0.0) {
 		t1y = (_big_y   - p0.y()) / dir;
 		t2y = (_small_y - p0.y()) / dir;
@@ -68,7 +67,7 @@ void Box::hit(const Ray& r0, SpanList* sl) const
 		return;
 	}
 	// remaining intersections
-	dir = p1.z() - p0.z();
+	dir = r.direction().z();
 	if(dir < 0.0) {
 		t1z = (_big_z   - p0.z()) / dir;
 		t2z = (_small_z - p0.z()) / dir;
@@ -110,7 +109,7 @@ Vector Box::normal(const Point& p0) const
 	} else if(areEqual(p.z(), _big_z)) {
 		v = Vector(0.0, 0.0,  1.0);
 	} else {
-		v = Vector(0.0, 0.0, -1.0);
+		v = Vector(0.0, 0.0, 0.0);
 	}
 
 	return transformNormal(v).normalise();

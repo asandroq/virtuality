@@ -92,7 +92,7 @@ VERSION = @VERSION@
 
 bin_PROGRAMS = virtuality
 
-virtuality_SOURCES = camera.H 		     colour.H colour.C 		     csgnode.H 		     difference.H difference.C 		     intersection.H intersection.C 		     light.H 		     main.C 		     math.H 		     matrix.H matrix.C 		     point.H 		     ray.H 		     renderer.H renderer.C 		     scene.H scene.C 		     script.H script.C 		     union.H union.C 		     vector.H
+virtuality_SOURCES = camera.H 		     colour.H colour.C 		     light.H 		     main.C 		     math.H 		     matrix.H matrix.C 		     point.H 		     ray.H 		     renderer.H renderer.C 		     scene.H scene.C 		     script.H script.C 		     vector.H
 
 virtuality_LDADD = ../framebuffers/libframebuffers.a 		     ../shapes/libshapes.a
 
@@ -110,8 +110,8 @@ DEFS = @DEFS@ -I. -I$(srcdir)
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-virtuality_OBJECTS =  colour.o difference.o intersection.o main.o \
-matrix.o renderer.o scene.o script.o union.o
+virtuality_OBJECTS =  colour.o main.o matrix.o renderer.o scene.o \
+script.o
 virtuality_DEPENDENCIES =  ../framebuffers/libframebuffers.a \
 ../shapes/libshapes.a
 virtuality_LDFLAGS = 
@@ -130,9 +130,8 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = tar
 GZIP_ENV = --best
-DEP_FILES =  .deps/colour.P .deps/difference.P .deps/intersection.P \
-.deps/main.P .deps/matrix.P .deps/renderer.P .deps/scene.P \
-.deps/script.P .deps/union.P
+DEP_FILES =  .deps/colour.P .deps/main.P .deps/matrix.P .deps/renderer.P \
+.deps/scene.P .deps/script.P
 SOURCES = $(virtuality_SOURCES)
 OBJECTS = $(virtuality_OBJECTS)
 
@@ -236,7 +235,7 @@ distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
-	    cp -pr $$d/$$file $(distdir)/$$file; \
+	    cp -pr $$/$$file $(distdir)/$$file; \
 	  else \
 	    test -f $(distdir)/$$file \
 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
