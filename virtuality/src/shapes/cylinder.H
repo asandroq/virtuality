@@ -52,7 +52,8 @@ private:
 	// length
 	double _length;
 	// clips the infinite cylinder
-	double clip(const Ray& r, double t) const;
+	bool clip(const Ray& r, double in, double out,
+					double* min, double* max) const;
 };
 
 inline Cylinder::Cylinder(double r, const Point& p1, const Point& p2)

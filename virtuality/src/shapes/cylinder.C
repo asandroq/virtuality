@@ -35,8 +35,67 @@ namespace Virtuality {
  * The code was modified to adapt to Virtuality
  */
 
-double Cylinder::clip(const Ray& r, double t) const
+bool Cylinder::clip(const Ray& r, double in, double out,
+					double *min, double *max) const
 {
+	*min = in;
+	*max = out;
+	// planes' distances to origin
+	double bot = _base * _axis;
+	double top = (_base + _length*_axis) * _axis;
+	// intersect ray with the bottom plane
+	double dc = r.direction() * _axis;
+	double dw = r.origin()    * _axis - bot;
+	// if parallel to plane
+	if(isZero(dc)) {
+		if(isZero(dw) || dw > 0.0) {
+			return false;
+		}
+	} else {
+		double t = - dw / dc;
+		// if far plane
+		if(dc > 0.0) {
+			if(t > in && t < out) {
+				out = t;
+			} else if(t < in) {
+				return false;
+			}
+		} else {
+			if(t > in && t < out) {
+				in = t;
+			} else if(t > out) {
+				return false;
+			}
+		}
+	}
+	// intersect ray with the top plane
+	dw = r.origin() * _axis - top;
+	// if parallel to plane
+	if(isZero(dc)) {
+		if(isZero(dw) || dw > 0.0) {
+			return false;
+		}
+	} else {
+		double t = - dw / dc;
+		// if far plane
+		if(dc > 0.0) {
+			if(t > in && t < out) {
+				out = t;
+			} else if(t < in) {
+				return false;
+			}
+		} else {
+			if(t > in && t < out) {
+				in = t;
+			} else if(t > out) {
+				return false;
+			}
+		}
+	}
+	*min = in;
+	*max = out;
+
+	return (in < out);
 }
 
 void Cylinder::hit(const Ray& r0, SpanList* sl) const
@@ -58,7 +117,13 @@ void Cylinder::hit(const Ray& r0, SpanList* sl) const
 		double d = RC * _axis;
 		d = (RC - d*_axis).length();
 		if(d <= _radius) {
-			//double t =
+			double t1, t2;
+			// clipping negative and positive infinite
+			if(!clip(r, -Omega, Omega, &t1, &t2)) {
+				return;
+			}
+			sl->insert(SpanList::value_type(t1*factor, this));
+			sl->insert(SpanList::value_type(t2*factor, this));
 		}
 		return;
 	}
@@ -71,8 +136,12 @@ void Cylinder::hit(const Ray& r0, SpanList* sl) const
 		double t = -(O * n) / length;
 		O = (n ^ _axis).normalise();
 		double s = abs(sqrt(sqr(_radius) - sqr(d)) / (r.direction()*O));
-		sl->insert(SpanList::value_type((t-s)*factor, this));
-		sl->insert(SpanList::value_type((t+s)*factor, this));
+		double t1, t2;
+		if(!clip(r, t-s, t+s, &t1, &t2)) {
+			return;
+		}
+		sl->insert(SpanList::value_type(t1*factor, this));
+		sl->insert(SpanList::value_type(t2*factor, this));
 	}
 }
 
