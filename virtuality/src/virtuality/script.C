@@ -522,9 +522,10 @@ int Script::_union_ctor(lua_State* L)
 	lua_pushnil(L);
 	while(lua_next(L, 1)) {
 		int tag = lua_tag(L, 3);
-		if(tag == s->_box_tag    ||
-		   tag == s->_sphere_tag ||
-		   tag == s->_torus_tag  ||
+		if(tag == s->_box_tag      ||
+		   tag == s->_cylinder_tag ||
+		   tag == s->_sphere_tag   ||
+		   tag == s->_torus_tag    ||
 		   tag == s->_triangle_tag) {
 			n->addChild(static_cast<Shape*>(lua_touserdata(L, 3)));
 		}
@@ -552,9 +553,10 @@ int Script::_difference_ctor(lua_State* L)
 	lua_pushnil(L);
 	while(lua_next(L, 1)) {
 		int tag = lua_tag(L, 3);
-		if(tag == s->_box_tag    ||
-		   tag == s->_sphere_tag ||
-		   tag == s->_torus_tag  ||
+		if(tag == s->_box_tag      ||
+		   tag == s->_cylinder_tag ||
+		   tag == s->_sphere_tag   ||
+		   tag == s->_torus_tag    ||
 		   tag == s->_triangle_tag) {
 			n->addChild(static_cast<Shape*>(lua_touserdata(L, 3)));
 		}
@@ -582,9 +584,10 @@ int Script::_intersection_ctor(lua_State* L)
 	lua_pushnil(L);
 	while(lua_next(L, 1)) {
 		int tag = lua_tag(L, 3);
-		if(tag == s->_box_tag    ||
-		   tag == s->_sphere_tag ||
-		   tag == s->_torus_tag  ||
+		if(tag == s->_box_tag      ||
+		   tag == s->_cylinder_tag ||
+		   tag == s->_sphere_tag   ||
+		   tag == s->_torus_tag    ||
 		   tag == s->_triangle_tag) {
 			n->addChild(static_cast<Shape*>(lua_touserdata(L, 3)));
 		}
@@ -640,8 +643,8 @@ int Script::_box_ctor(lua_State* L)
 
 int Script::_cylinder_ctor(lua_State* L)
 {
+	double r;
 	Point p1, p2;
-	double radius;
 
 	// getting and popping upvalue - Script instance
 	Script* s = static_cast<Script*>(lua_touserdata(L, -1));
@@ -650,7 +653,46 @@ int Script::_cylinder_ctor(lua_State* L)
 	if(!lua_istable(L, 1)) {
 		lua_error(L, "invalid argument to Cylinder");
 	}
+	// reading radius
+	lua_pushstring(L, "radius");
+	lua_gettable(L, 1);
+	if(lua_isnil(L, 2)) {
+		r = 1.0;
+	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+		lua_error(L, "invalid type for Cylinder.radius");
+		r = 0.0;
+	} else {
+		r = lua_tonumber(L, 2);
+	}
+	lua_pop(L, 1);
 	// reading first point
+	lua_pushstring(L, "point1");
+	lua_gettable(L, 1);
+	if(lua_isnil(L, 2)) {
+		p1 = Point();
+	} else if(lua_tag(L, 2) != s->_point_tag) {
+		lua_error(L, "invalid type for Cylinder.point1");
+	} else {
+		p1 = *(static_cast<Point*>(lua_touserdata(L, 2)));
+	}
+	lua_pop(L, 1);
+	// reading second point
+	lua_pushstring(L, "point2");
+	lua_gettable(L, 1);
+	if(lua_isnil(L, 2)) {
+		p2 = Point();
+	} else if(lua_tag(L, 2) != s->_point_tag) {
+		lua_error(L, "invalid type for Cylinder.point2");
+	} else {
+		p2 = *(static_cast<Point*>(lua_touserdata(L, 2)));
+	}
+	lua_pop(L, 1);
+	// creating and pushing new cylinder
+	Shape* c = new Cylinder(r, p1, p2);
+	s->_shape_ctor(L, c);
+	lua_pushusertag(L, c, s->_cylinder_tag);
+
+	return 1;
 }
 
 int Script::_sphere_ctor(lua_State* L)
@@ -929,11 +971,12 @@ int Script::_frame_ctor(lua_State* L)
 		} else if(tag == s->_light_tag) {
 			Light* l = static_cast<Light*>(lua_touserdata(L, -1));
 			s->_sc->addLight(*l);
-		} else if(tag == s->_csg_tag          ||
-				tag == s->_box_tag    ||
-				tag == s->_sphere_tag ||
-				tag == s->_plane_tag  ||
-				tag == s->_torus_tag  ||
+		} else if(tag == s->_csg_tag            ||
+				tag == s->_box_tag      ||
+				tag == s->_cylinder_tag ||
+				tag == s->_sphere_tag   ||
+				tag == s->_plane_tag    ||
+				tag == s->_torus_tag    ||
 				tag == s->_triangle_tag) {
 			Shape* p =
 				static_cast<Shape*>(lua_touserdata(L, -1));

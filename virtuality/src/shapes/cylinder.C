@@ -55,6 +55,9 @@ void Cylinder::hit(const Ray& r0, SpanList* sl) const
 	if(isZero(length)) {
 		double d = RC * axis;
 		d = (RC - d*axis).length();
+		if(d <= _r) {
+			//double t =
+		}
 		return;
 	}
 	// shortest distance
@@ -71,11 +74,23 @@ void Cylinder::hit(const Ray& r0, SpanList* sl) const
 	}
 }
 
+/*
+ * I'm gonna find the plane whose normal is the cylinder axis and contains p,
+ * then the point pn in the axis which lie in the same plane. The normal is
+ * p - pn.
+ */
 Vector Cylinder::normal(const Point& p0) const
 {
 	Vector v;
 
 	Point p = inverseTransformation() * p0;
+	// plane axis
+	Vector axis = (_p2 - _p1).normalise();
+	// distance from cylinder bottom to desired plane
+	double d = p * axis - _p1 * axis;
+	// point in axis and plane
+	Point pn = _p1 + d * axis;
+	v = p - pn;
 
 	return transformNormal(v).normalise();
 }

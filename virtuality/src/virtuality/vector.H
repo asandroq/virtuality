@@ -150,6 +150,11 @@ inline double operator*(const Vector& v1, const Vector& v2)
 	return v1.x() * v2.x() + v1.y() * v2.y() + v1.z() * v2.z();
 }
 
+inline double operator*(const Point& p, const Vector& v)
+{
+	return p.x() * v.x() + p.y() * v.y() + p.z() * v.z();
+}
+
 inline Vector operator^(const Vector& v1, const Vector& v2)
 {
 	Vector r  = v1;

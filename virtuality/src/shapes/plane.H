@@ -32,7 +32,7 @@ class Plane : public Shape {
 public:
 	//! Constructor
 	Plane(const Vector& normal, double distance)
-		: _normal(normal), _distance(distance) {}
+		: _normal(normal.normalise()), _distance(distance) {}
 
 	//! Destructor
 	~Plane() {}

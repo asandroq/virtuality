@@ -32,14 +32,9 @@ void Plane::hit(const Ray& r0, SpanList* sl) const
 	// applying inverse transformation to ray
 	Ray r = r0.transform(inverseTransformation(), &factor);
 	// finds intersection
-	double den = _normal.x()*r.direction().x() +
-		     _normal.y()*r.direction().y() +
-		     _normal.z()*r.direction().z();
-	// tests if ray hits the plane
+	double den = _normal * r.direction();
 	if(!isZero(den)) {
-		double t = (_distance - _normal.x()*r.origin().x() -
-					_normal.y()*r.origin().y() -
-					_normal.z()*r.origin().z()) / den;
+		double t = (_distance - r.origin() * _normal) / den;
 		sl->insert(SpanList::value_type(t*factor, this));
 	}
 }
