@@ -1,5 +1,6 @@
 #
 # $Id$
+# 
 #
 # The Virtuality Renderer
 # Copyright (C) 2001 Alex Sandro Queiroz e Silva
@@ -22,30 +23,16 @@
 #
 
 #
-# Virtuality's executable makefile
+# Virtuality's shaders library makefile
 #
 
-bin_PROGRAMS = virtuality
+noinst_LIBRARIES = libshaders.a
 
-virtuality_SOURCES = boundingbox.H boundingbox.C \
-		     camera.H \
-		     colour.H colour.C \
-		     light.H \
-		     luascript.H luascript.C \
-		     main.C \
-		     math.H math.C \
-		     matrix.H matrix.C \
-		     point.H \
-		     ray.H \
-		     renderer.H renderer.C \
-		     scene.H scene.C \
-		     vector.H
-virtuality_LDADD =   ../framebuffers/libframebuffers.a \
-		     ../shaders/libshaders.a \
-		     ../shapes/libshapes.a
+libshaders_a_SOURCES = surfaceshader.H \
+		       constantsurfaceshader.H
 
-INCLUDES = -I../framebuffers -I../shaders -I../shapes
-AM_CXXFLAGS = -Wall -Wno-trigraphs -ansi -D_XOPEN_SOURCE -ffast-math -fno-rtti -fno-exceptions
+INCLUDES = -I../virtuality
+AM_CXXFLAGS = -Wall -Wno-trigraphs -ansi -ffast-math -fno-rtti -fno-exceptions
 
 AUTOMAKE_OPTIONS = foreign
 

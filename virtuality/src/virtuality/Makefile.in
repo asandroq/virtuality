@@ -94,10 +94,10 @@ bin_PROGRAMS = virtuality
 
 virtuality_SOURCES = boundingbox.H boundingbox.C 		     camera.H 		     colour.H colour.C 		     light.H 		     luascript.H luascript.C 		     main.C 		     math.H math.C 		     matrix.H matrix.C 		     point.H 		     ray.H 		     renderer.H renderer.C 		     scene.H scene.C 		     vector.H
 
-virtuality_LDADD = ../framebuffers/libframebuffers.a 		     ../shapes/libshapes.a
+virtuality_LDADD = ../framebuffers/libframebuffers.a 		     ../shaders/libshaders.a 		     ../shapes/libshapes.a
 
 
-INCLUDES = -I../framebuffers -I../shapes
+INCLUDES = -I../framebuffers -I../shaders -I../shapes
 AM_CXXFLAGS = -Wall -Wno-trigraphs -ansi -D_XOPEN_SOURCE -ffast-math -fno-rtti -fno-exceptions
 
 AUTOMAKE_OPTIONS = foreign
@@ -113,7 +113,7 @@ LIBS = @LIBS@
 virtuality_OBJECTS =  boundingbox.o colour.o luascript.o main.o math.o \
 matrix.o renderer.o scene.o
 virtuality_DEPENDENCIES =  ../framebuffers/libframebuffers.a \
-../shapes/libshapes.a
+../shaders/libshaders.a ../shapes/libshapes.a
 virtuality_LDFLAGS = 
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
