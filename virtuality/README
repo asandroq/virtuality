@@ -16,9 +16,9 @@ It is a console application, which tries to do just one thing: render scenes,
 but this is not a simple task. It is being designed to be modular and extensi-
 ble from the beginning, to allow the inclusion of new shapes and rendering
 algorithms.
-	The input language chosen is Lua (http://www.tecgraf.puc-rio.br/lua/)
-for it is procedural but has enhanced data description capabilities, is very
-small and easy to embed.
+	The input language chosen is Lua (http://www.lua.org/) for it is
+procedural yet has enhanced data description capabilities, is very small and
+easy to embed.
 
 2. Prerequisites
 
@@ -26,7 +26,7 @@ small and easy to embed.
 
 	This is an interpreted language developed at the PUC/Rio University,
 in Brazil. It is very simple yet powerful. For more information and software,
-visit http://www.tecgraf.puc-rio.br/lua/.
+visit http://www.lua.org/.
 
 2.2. The zlib and PNG libraries
 
