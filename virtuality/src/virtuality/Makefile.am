@@ -39,9 +39,9 @@ virtuality_SOURCES = boundingbox.H boundingbox.C \
 		     ray.H \
 		     renderer.H renderer.C \
 		     scene.H scene.C \
+		     scriptapi.H scriptapi.C \
 		     vector.H
 virtuality_LDADD =   ../framebuffers/libframebuffers.a \
-		     ../shaders/libshaders.a \
 		     ../shapes/libshapes.a
 
 INCLUDES = -I../framebuffers -I../shaders -I../shapes

@@ -91,7 +91,7 @@ PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
 VERSION = @VERSION@
 
-SUBDIRS = framebuffers shaders shapes virtuality
+SUBDIRS = framebuffers shapes virtuality
 
 AUTOMAKE_OPTIONS = foreign
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs

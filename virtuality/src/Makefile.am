@@ -26,7 +26,7 @@
 # Virtuality's src makefile
 #
 
-SUBDIRS = framebuffers shaders shapes virtuality
+SUBDIRS = framebuffers shapes virtuality
 
 AUTOMAKE_OPTIONS = foreign
 

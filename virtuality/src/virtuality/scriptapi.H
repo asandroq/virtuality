@@ -28,6 +28,19 @@
 
 namespace Virtuality {
 
+class ScriptAPI {
+public:
+	//! Sets current scene
+	static void setScene(Scene* s);
+
+	//! Returns the total of ambient light
+
+	//! Similar to RenderMan's illuminance
+
+private:
+	static Scene* _scene;
+};
+
 }
 
 #endif // __VIRTUALITY_SCRIPTAPI_H__

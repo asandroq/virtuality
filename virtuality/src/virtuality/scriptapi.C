@@ -25,4 +25,6 @@
 
 namespace Virtuality {
 
+Scene* ScriptAPI::_scene = 0;
+
 }
