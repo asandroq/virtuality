@@ -61,20 +61,28 @@ public:
 	 */
 	void setColour(const Colour& colour);
 
+	//! Scales this shape
+	/*!
+	 * \param x the scale in the x direction
+ 	 * \param x the scale in the x direction
+ 	 * \param x the scale in the x direction
+	 */
+	void scale(double x, double y, double z);
+
 	//! Translates this shape
 	/*!
-	 * \param x
-	 * \param y
-	 * \param z
+	 * \param x the x component of the translation vector
+	 * \param y the y component of the translation vector
+	 * \param z the z component of the translation vector
 	 */
 	void translate(double x, double y, double z);
 
 	//! Rotates this shape
 	/*!
-	 * \param a
-	 * \param x
-	 * \param y
-	 * \param z
+	 * \param a the angle of rotation, in degrees
+	 * \param x the x component of the rotation axis
+	 * \param y the y component of the rotation axis
+	 * \param z the z component of the rotation axis
 	 */
 	void rotate(double a, double x, double y, double z);
 
@@ -116,6 +124,17 @@ inline void Shape::setColour(const Colour& c)
 	_colour = c;
 }
 
+inline void Shape::scale(double x, double y, double z)
+{
+	// creating scaling matrix
+	Matrix tmp(  x, 0.0, 0.0, 0.0,
+		   0.0,   y, 0.0, 0.0,
+		   0.0, 0.0,   z, 0.0,
+		   0.0, 0.0, 0.0, 1.0);
+	// applying transformation
+	_trans *= tmp;
+}
+
 inline void Shape::translate(double x, double y, double z)
 {
 	// creating translation matrix
@@ -123,7 +142,7 @@ inline void Shape::translate(double x, double y, double z)
 		   0.0, 1.0, 0.0,   y,
 		   0.0, 0.0, 1.0,   z,
 		   0.0, 0.0, 0.0, 1.0);
-	// concatenating
+	// applying transformation
 	_trans *= tmp;
 }
 

@@ -28,7 +28,9 @@
 
 namespace Virtuality {
 
+// some constants
 const double Epsilon = 1.0e-10;
+const double Pi = 3.1415926535898;
 
 inline double isZero(double t)
 {
@@ -53,6 +55,17 @@ template<class T> inline T clamp(T a, T min, T max)
 template<class T> inline T sqr(T x)
 {
 	return x*x;
+}
+
+// convert degrees to radians
+inline double radians(double degrees)
+{
+	return degrees * (Pi/180.0);
+}
+
+inline double degrees(double radians)
+{
+	return radians / (Pi/180.0);
 }
 
 }
