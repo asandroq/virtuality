@@ -44,8 +44,9 @@ bool Cylinder::clip(const Ray& r, double in, double out,
 	double bot = _base * _axis;
 	double top = (_base + _length*_axis) * _axis;
 	// intersect ray with the bottom plane
+	double u = r.origin() * _axis;
 	double dc = r.direction() * _axis;
-	double dw = r.origin()    * _axis - bot;
+	double dw = u - bot;
 	// if parallel to plane
 	if(isZero(dc)) {
 		if(isZero(dw) || dw > 0.0) {
@@ -54,7 +55,7 @@ bool Cylinder::clip(const Ray& r, double in, double out,
 	} else {
 		double t = - dw / dc;
 		// if far plane
-		if(dc > 0.0) {
+		if(dc < 0.0) {
 			if(t > in && t < out) {
 				out = t;
 			} else if(t < in) {
@@ -69,8 +70,9 @@ bool Cylinder::clip(const Ray& r, double in, double out,
 		}
 	}
 	// intersect ray with the top plane
-	dw = r.origin() * _axis - top;
+	dw = u - top;
 	// if parallel to plane
+/*
 	if(isZero(dc)) {
 		if(isZero(dw) || dw > 0.0) {
 			return false;
@@ -92,6 +94,7 @@ bool Cylinder::clip(const Ray& r, double in, double out,
 			}
 		}
 	}
+*/
 	*min = in;
 	*max = out;
 
@@ -100,10 +103,10 @@ bool Cylinder::clip(const Ray& r, double in, double out,
 
 void Cylinder::hit(const Ray& r0, SpanList* sl) const
 {
-	double factor;
+	double fct;
 
 	// applying inverse transformation to ray
-	Ray r = r0.transform(inverseTransformation(), &factor);
+	Ray r = r0.transform(inverseTransformation(), &fct);
 	// possibly discarding ray
 	//if(!bounds().hit(r)) {
 	//	return;
@@ -119,11 +122,10 @@ void Cylinder::hit(const Ray& r0, SpanList* sl) const
 		if(d <= _radius) {
 			double t1, t2;
 			// clipping negative and positive infinite
-			if(!clip(r, -Omega, Omega, &t1, &t2)) {
-				return;
+			if(clip(r, -Omega, Omega, &t1, &t2)) {
+				sl->insert(SpanList::value_type(t1*fct, this));
+				sl->insert(SpanList::value_type(t2*fct, this));
 			}
-			sl->insert(SpanList::value_type(t1*factor, this));
-			sl->insert(SpanList::value_type(t2*factor, this));
 		}
 		return;
 	}
@@ -137,11 +139,10 @@ void Cylinder::hit(const Ray& r0, SpanList* sl) const
 		O = (n ^ _axis).normalise();
 		double s = abs(sqrt(sqr(_radius) - sqr(d)) / (r.direction()*O));
 		double t1, t2;
-		if(!clip(r, t-s, t+s, &t1, &t2)) {
-			return;
+		if(clip(r, t-s, t+s, &t1, &t2)) {
+			sl->insert(SpanList::value_type(t1*fct, this));
+			sl->insert(SpanList::value_type(t2*fct, this));
 		}
-		sl->insert(SpanList::value_type(t1*factor, this));
-		sl->insert(SpanList::value_type(t2*factor, this));
 	}
 }
 
@@ -156,11 +157,19 @@ Vector Cylinder::normal(const Point& p0) const
 	Vector v;
 
 	Point p = inverseTransformation() * p0;
-	// distance from cylinder bottom to desired plane
-	double d = p * _axis - _base * _axis;
-	// point in axis and plane
-	Point pn = _base + d * _axis;
-	v = p - pn;
+	// testing if point lies in any of the caps
+	double t = p * _axis;
+	double bot = _base * _axis;
+	double top = (_base + _length * _axis) * _axis;
+	if(areEqual(t, bot) || areEqual(t, top)) {
+		v = _axis;
+	} else {
+		// distance from cylinder bottom to desired plane
+		double d = t - bot;
+		// point in axis and plane
+		Point pn = _base + d * _axis;
+		v = p - pn;
+	}
 
 	return transformNormal(v).normalise();
 }
