@@ -24,6 +24,7 @@
 #include <string>
 
 #include <box.H>
+#include <cylinder.H>
 #include <plane.H>
 #include <sphere.H>
 #include <torus.H>
@@ -637,6 +638,21 @@ int Script::_box_ctor(lua_State* L)
 	return 1;
 }
 
+int Script::_cylinder_ctor(lua_State* L)
+{
+	Point p1, p2;
+	double radius;
+
+	// getting and popping upvalue - Script instance
+	Script* s = static_cast<Script*>(lua_touserdata(L, -1));
+	lua_pop(L, 1);
+	// we must get a table
+	if(!lua_istable(L, 1)) {
+		lua_error(L, "invalid argument to Cylinder");
+	}
+	// reading first point
+}
+
 int Script::_sphere_ctor(lua_State* L)
 {
 	Point p;
@@ -1058,6 +1074,13 @@ Script::Script()
 	lua_getref(_lua_state, _script_ref);
 	lua_pushcclosure(_lua_state, _box_ctor, 1);
 	lua_setglobal(_lua_state, "Box");
+
+	// cylinders
+	_cylinder_tag = lua_newtag(_lua_state);
+	// constructor
+	lua_getref(_lua_state, _script_ref);
+	lua_pushcclosure(_lua_state, _cylinder_ctor, 1);
+	lua_setglobal(_lua_state, "Cylinder");
 
 	// spheres
 	_sphere_tag = lua_newtag(_lua_state);

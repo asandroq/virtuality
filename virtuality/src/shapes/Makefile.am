@@ -29,6 +29,7 @@
 noinst_LIBRARIES = libshapes.a
 
 libshapes_a_SOURCES = box.H box.C \
+		      cylinder.H cylinder.C \
 		      csgnode.H \
 		      difference.H difference.C \
 		      intersection.H intersection.C \

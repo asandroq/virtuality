@@ -96,6 +96,10 @@ private:
 	int _box_tag;
 	static int _box_ctor(lua_State* L);
 
+	// cylinders
+	int _cylinder_tag;
+	static int _cylinder_ctor(lua_State* L);
+
 	// spheres
 	int _sphere_tag;
 	static int _sphere_ctor(lua_State* L);

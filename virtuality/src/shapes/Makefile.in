@@ -93,7 +93,7 @@ VERSION = @VERSION@
 
 noinst_LIBRARIES = libshapes.a
 
-libshapes_a_SOURCES = box.H box.C 		      csgnode.H 		      difference.H difference.C 		      intersection.H intersection.C 		      plane.H plane.C 		      shape.H shape.C 		      sphere.H sphere.C 		      torus.H torus.C 		      triangle.H triangle.C 		      union.H union.C
+libshapes_a_SOURCES = box.H box.C 		      cylinder.H cylinder.C 		      csgnode.H 		      difference.H difference.C 		      intersection.H intersection.C 		      plane.H plane.C 		      shape.H shape.C 		      sphere.H sphere.C 		      torus.H torus.C 		      triangle.H triangle.C 		      union.H union.C
 
 
 INCLUDES = -I../virtuality
@@ -110,8 +110,8 @@ CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 libshapes_a_LIBADD = 
-libshapes_a_OBJECTS =  box.o difference.o intersection.o plane.o shape.o \
-sphere.o torus.o triangle.o union.o
+libshapes_a_OBJECTS =  box.o cylinder.o difference.o intersection.o \
+plane.o shape.o sphere.o torus.o triangle.o union.o
 AR = ar
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -128,9 +128,9 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = tar
 GZIP_ENV = --best
-DEP_FILES =  .deps/box.P .deps/difference.P .deps/intersection.P \
-.deps/plane.P .deps/shape.P .deps/sphere.P .deps/torus.P \
-.deps/triangle.P .deps/union.P
+DEP_FILES =  .deps/box.P .deps/cylinder.P .deps/difference.P \
+.deps/intersection.P .deps/plane.P .deps/shape.P .deps/sphere.P \
+.deps/torus.P .deps/triangle.P .deps/union.P
 SOURCES = $(libshapes_a_SOURCES)
 OBJECTS = $(libshapes_a_OBJECTS)
 
@@ -219,7 +219,7 @@ distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
-	    cp -pr $$d/$$file $(distdir)/$$file; \
+	    cp -pr $$/$$file $(distdir)/$$file; \
 	  else \
 	    test -f $(distdir)/$$file \
 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
