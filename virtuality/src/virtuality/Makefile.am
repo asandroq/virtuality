@@ -27,7 +27,8 @@
 
 bin_PROGRAMS = virtuality
 
-virtuality_SOURCES = camera.H \
+virtuality_SOURCES = boundingbox.H boundingbox.C \
+		     camera.H \
 		     colour.H colour.C \
 		     light.H \
 		     main.C \

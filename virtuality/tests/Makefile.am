@@ -26,7 +26,7 @@
 # Distributed test files
 #
 
-EXTRA_DIST = balls.lua csg.lua triangle.lua
+EXTRA_DIST = balls.lua csg.lua torus.lua triangle.lua
 CLEANFILES = *.png *.tga
 
 AUTOMAKE_OPTIONS = foreign

@@ -40,7 +40,7 @@ int solveQuadric(double coefs[3], double roots[2])
 {
 	// normal form: x^2 + px + q = 0
 	double p = coefs[1] / (2 * coefs[2]);
-	double q = coefs[0] / coefs[1];
+	double q = coefs[0] / coefs[2];
 	// calculates delta
 	double D = sqr(p) - q;
 	if(isZero(D)) {
