@@ -35,6 +35,10 @@ namespace Virtuality {
  * The code was modified to adapt to Virtuality
  */
 
+double Cylinder::clip(const Ray& r, double t) const
+{
+}
+
 void Cylinder::hit(const Ray& r0, SpanList* sl) const
 {
 	double factor;
@@ -45,17 +49,15 @@ void Cylinder::hit(const Ray& r0, SpanList* sl) const
 	//if(!bounds().hit(r)) {
 	//	return;
 	//}
-	// cylinder's axis
-	Vector axis = _p2 - _p1;
 	// vector pointing from cylinder base to ray's origin
-	Vector RC = r.origin() - _p1;
-	Vector n = r.direction() ^ axis;
+	Vector RC = r.origin() - _base;
+	Vector n = r.direction() ^ _axis;
 	// is ray parallel to cylinder?
 	double length = n.length();
 	if(isZero(length)) {
-		double d = RC * axis;
-		d = (RC - d*axis).length();
-		if(d <= _r) {
+		double d = RC * _axis;
+		d = (RC - d*_axis).length();
+		if(d <= _radius) {
 			//double t =
 		}
 		return;
@@ -64,17 +66,18 @@ void Cylinder::hit(const Ray& r0, SpanList* sl) const
 	n = n.normalise();
 	double d = abs(RC * n);
 	// ray hits infinite cylinder
-	if(d <= _r) {
-		Vector O = RC ^ axis;
+	if(d <= _radius) {
+		Vector O = RC ^ _axis;
 		double t = -(O * n) / length;
-		O = (n ^ axis).normalise();
-		double s = abs(sqrt(sqr(_r) - sqr(d)) / (r.direction()*O));
+		O = (n ^ _axis).normalise();
+		double s = abs(sqrt(sqr(_radius) - sqr(d)) / (r.direction()*O));
 		sl->insert(SpanList::value_type((t-s)*factor, this));
 		sl->insert(SpanList::value_type((t+s)*factor, this));
 	}
 }
 
 /*
+ * Well, this I can say was by myself :)
  * I'm gonna find the plane whose normal is the cylinder axis and contains p,
  * then the point pn in the axis which lie in the same plane. The normal is
  * p - pn.
@@ -84,12 +87,10 @@ Vector Cylinder::normal(const Point& p0) const
 	Vector v;
 
 	Point p = inverseTransformation() * p0;
-	// plane axis
-	Vector axis = (_p2 - _p1).normalise();
 	// distance from cylinder bottom to desired plane
-	double d = p * axis - _p1 * axis;
+	double d = p * _axis - _base * _axis;
 	// point in axis and plane
-	Point pn = _p1 + d * axis;
+	Point pn = _base + d * _axis;
 	v = p - pn;
 
 	return transformNormal(v).normalise();

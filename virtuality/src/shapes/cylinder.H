@@ -43,15 +43,24 @@ public:
 	virtual Vector normal(const Point& P) const;
 
 private:
-	// cylinder's radius
-	double _r;
-	// cylinder's axis extremes
-	Point _p1, _p2;
+	// base point
+	Point _base;
+	// axis
+	Vector _axis;
+	// radius
+	double _radius;
+	// length
+	double _length;
+	// clips the infinite cylinder
+	double clip(const Ray& r, double t) const;
 };
 
 inline Cylinder::Cylinder(double r, const Point& p1, const Point& p2)
-	: _r(r), _p1(p1), _p2(p2)
+	: _base(p1), _radius(r)
 {
+	_axis = p2 - p1;
+	_length = _axis.length();
+	_axis = _axis.normalise();
 }
 
 inline Cylinder::~Cylinder()
