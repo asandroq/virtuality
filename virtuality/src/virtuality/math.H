@@ -29,12 +29,18 @@
 namespace Virtuality {
 
 // some constants
+const double Omega = 1.0e+17;
 const double Epsilon = 1.0e-10;
 const double Pi = 3.1415926535898;
 
 inline bool isZero(double t)
 {
 	return -Epsilon < t && t < Epsilon;
+}
+
+inline bool areEqual(double a, double b)
+{
+	return isZero(a-b);
 }
 
 template<class T> inline T min(T a, T b)

@@ -22,7 +22,7 @@ Frame {
 	Box {
 		colour = Blue,
 		point1 = Point { x = -1.0, y = -1.0, z = 6.0 },
-		point2 = Point { x =  2.0, y =  2.0, z = 8.0 }
+		point2 = Point { x =  1.0, y =  1.0, z = 8.0 }
 	},
 
 	-- creating red sphere

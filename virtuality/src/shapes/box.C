@@ -27,16 +27,40 @@ namespace Virtuality {
 
 void Box::hit(const Ray& r0, SpanList* sl) const
 {
+	double t1x, t2x, t1y, t2y, t1z, t2z;
+
 	// applying inverse transformation to ray
 	Ray r = inverseTransformation() * r0;
 	// auxiliary points
 	Point p0 = r.origin();
 	Point p1 = r.pointOnRay(1.0);
 	// calculating intersections
-	double t1x = (min(_p1.x(), _p2.x()) - p0.x()) / (p1.x() - p0.x());
-	double t2x = (max(_p1.x(), _p2.x()) - p0.x()) / (p1.x() - p0.x());
-	double t1y = (min(_p1.y(), _p2.y()) - p0.y()) / (p1.y() - p0.y());
-	double t2y = (max(_p1.y(), _p2.y()) - p0.y()) / (p1.y() - p0.y());
+	double dir = p1.x() - p0.x();
+	if(dir < 0.0) {
+		t1x = (_big_x   - p0.x()) / dir;
+		t2x = (_small_x - p0.x()) / dir;
+	} else if(dir > 0.0) {
+		t1x = (_small_x - p0.x()) / dir;
+		t2x = (_big_x   - p0.x()) / dir;
+	} else if(p0.x() >= _small_x && p0.x() <= _big_x) {
+		t1x = 0.0;
+		t2x = Omega;
+	} else {
+		return;
+	}
+	dir = p1.y() - p0.y();
+	if(dir < 0.0) {
+		t1y = (_big_y   - p0.y()) / dir;
+		t2y = (_small_y - p0.y()) / dir;
+	} else if(dir > 0.0) {
+		t1y = (_small_y - p0.y()) / dir;
+		t2y = (_big_y   - p0.y()) / dir;
+	} else if(p0.y() >= _small_y && p0.y() <= _big_y) {
+		t1y = 0.0;
+		t2y = Omega;
+	} else {
+		return;
+	}
 	// tests if we miss the box
 	double t1 = max(t1x, t1y);
 	double t2 = min(t2x, t2y);
@@ -44,8 +68,19 @@ void Box::hit(const Ray& r0, SpanList* sl) const
 		return;
 	}
 	// remaining intersections
-	double t1z = (min(_p1.z(), _p2.z()) - p0.z()) / (p1.z() - p0.z());
-	double t2z = (max(_p1.z(), _p2.z()) - p0.z()) / (p1.z() - p0.z());
+	dir = p1.z() - p0.z();
+	if(dir < 0.0) {
+		t1z = (_big_z   - p0.z()) / dir;
+		t2z = (_small_z - p0.z()) / dir;
+	} else if(dir > 0.0) {
+		t1z = (_small_z - p0.z()) / dir;
+		t2z = (_big_z   - p0.z()) / dir;
+	} else if(p0.z() >= _small_z && p0.z() <= _big_z) {
+		t1z = 0.0;
+		t2z = Omega;
+	} else {
+		return;
+	}
 	// remaining tests
 	t1 = max(t1, t1z);
 	t2 = min(t2, t2z);
@@ -59,17 +94,17 @@ void Box::hit(const Ray& r0, SpanList* sl) const
 
 Vector Box::normal(const Point& p) const
 {
-	if(isZero(p.x() - min(_p1.x(), _p2.x()))) {
+	if(areEqual(p.x(), _small_x)) {
 		return Vector(-1.0, 0.0, 0.0);
-	} else if(isZero(p.x() - max(_p1.x(), _p2.x()))) {
+	} else if(areEqual(p.x(), _big_x)) {
 		return Vector( 1.0, 0.0, 0.0);
-	} else if(isZero(p.y() - min(_p1.y(), _p2.y()))) {
+	} else if(areEqual(p.y(), _small_y)) {
 		return Vector(0.0, -1.0, 0.0);
-	} else if(isZero(p.y() - max(_p1.y(), _p2.y()))) {
+	} else if(areEqual(p.y(), _big_y)) {
 		return Vector(0.0,  1.0, 0.0);
-	} else if(isZero(p.z() - min(_p1.z(), _p2.z()))) {
+	} else if(areEqual(p.z(), _small_z)) {
 		return Vector(0.0, 0.0, -1.0);
-	} else if(isZero(p.z() - max(_p1.z(), _p2.z()))) {
+	} else if(areEqual(p.z(), _big_z)) {
 		return Vector(0.0, 0.0,  1.0);
 	} else {
 		return Vector(0.0, 0.0, 0.0);

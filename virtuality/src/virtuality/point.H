@@ -75,9 +75,9 @@ private:
 
 inline bool operator==(const Point& p1, const Point& p2)
 {
-	return isZero(p1.x()-p2.x()) &&
-	       isZero(p1.y()-p2.y()) &&
-	       isZero(p1.z()-p2.z());
+	return areEqual(p1.x(), p2.x()) &&
+	       areEqual(p1.y(), p2.y()) &&
+	       areEqual(p1.z(), p2.z());
 }
 
 }

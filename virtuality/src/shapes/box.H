@@ -31,8 +31,7 @@ namespace Virtuality {
 class Box : public Shape {
 public:
 	//! Constructor
-	Box(const Point& point1, const Point& point2)
-		: _p1(point1), _p2(point2) {}
+	Box(const Point& point1, const Point& point2);
 
 	//! Destructor
 	~Box() {}
@@ -44,9 +43,20 @@ public:
 	virtual Vector normal(const Point& P) const;
 
 private:
-	// box's extreme points
-	Point _p1, _p2;
+	// box's extremes
+	double _small_x, _big_x, _small_y, _big_y, _small_z, _big_z;
 };
+
+inline Box::Box(const Point& point1, const Point& point2)
+{
+	_small_x = min(point1.x(), point2.x());
+	_big_x   = max(point1.x(), point2.x());
+	_small_y = min(point1.y(), point2.y());
+	_big_y   = max(point1.y(), point2.y());
+	_small_z = min(point1.z(), point2.z());
+	_big_z   = max(point1.z(), point2.z());
+
+}
 
 }
 
