@@ -238,7 +238,7 @@ int LuaScript::_vector_ctor(lua_State *L)
 	lua_pop(L, 1);
 	// we must get a table
 	if(!lua_istable(L, 1)) {
-		lua_error(L, "invalid argument to Point");
+		lua_error(L, "invalid argument to Vector");
 	}
 	// reading x coordinate
 	lua_pushstring(L, "x");
@@ -446,6 +446,7 @@ void LuaScript::_shape_ctor(lua_State* L, Shape* p)
 {
 	Colour c;
 	Vector v;
+	SurfaceShader* surface;
 
 	// we must get a table
 	if(!lua_istable(L, 1)) {
@@ -497,9 +498,19 @@ void LuaScript::_shape_ctor(lua_State* L, Shape* p)
 	} else {
 		c = *(static_cast<Colour*>(lua_touserdata(L, 2)));
 	}
-	lua_pop(L, 2);
-	// setting colour
+	lua_pop(L, 1);
 	p->setColour(c);
+	// reading surface shader
+	lua_pushstring(L, "surface");
+	lua_gettable(L, 1);
+	if(lua_isnil(L, 2)) {
+		p->setSurfaceShader(new ConstantSurfaceShader());
+	} else if(lua_tag(L, 2) != _surface_tag) {
+		lua_error(L, "invalid type for Shape.surface");
+	} else {
+		p->setSurfaceShader(static_cast<Colour*>(lua_touserdata(L, 2)));
+	}
+	lua_pop(L, 2);
 }
 
 int LuaScript::_shape_dtor(lua_State* L)
@@ -882,14 +893,136 @@ int LuaScript::_triangle_ctor(lua_State* L)
 
 int LuaScript::_mattesurface_ctor(lua_State* L)
 {
+	double ka, kd;
+
+	// getting and popping upvalue - LuaScript instance
+	LuaScript* s = static_cast<LuaScript*>(lua_touserdata(L, -1));
+	lua_pop(L, 1);
+	// we must get a table
+	if(!lua_istable(L, 1)) {
+		lua_error(L, "invalid argument to Matte");
+	}
+	// reading ka
+	lua_pushstring(L, "ka");
+	lua_gettable(L, 1);
+	if(lua_isnil(L, 2)) {
+		ka = 1.0;
+	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+		lua_error(L, "invalid type for Matte.ka");
+		ka = 0.0;
+	} else {
+		ka = lua_tonumber(L, 2);
+	}
+	lua_pop(L, 1);
+	// reading kd
+	lua_pushstring(L, "kd");
+	lua_gettable(L, 1);
+	if(lua_isnil(L, 2)) {
+		kd = 1.0;
+	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+		lua_error(L, "invalid type for Matte.kd");
+		kd = 0.0;
+	} else {
+		kd = lua_tonumber(L, 2);
+	}
+	lua_pop(L, 2);
+	SurfaceShader *ss = new MatteSurfaceShader(ka, kd);
+	lua_pushusertag(L, ss, s->_surface_tag);
+
+	return 1;
 }
 
 int LuaScript::_plasticsurface_ctor(lua_State* L)
 {
+	Colour spc;
+	double ka, kd, ks, rn;
+
+	// getting and popping upvalue - LuaScript instance
+	LuaScript* s = static_cast<LuaScript*>(lua_touserdata(L, -1));
+	lua_pop(L, 1);
+	// we must get a table
+	if(!lua_istable(L, 1)) {
+		lua_error(L, "invalid argument to Plastic");
+	}
+	// reading ka
+	lua_pushstring(L, "ka");
+	lua_gettable(L, 1);
+	if(lua_isnil(L, 2)) {
+		ka = 1.0;
+	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+		lua_error(L, "invalid type for Plastic.ka");
+		ka = 0.0;
+	} else {
+		ka = lua_tonumber(L, 2);
+	}
+	lua_pop(L, 1);
+	// reading kd
+	lua_pushstring(L, "kd");
+	lua_gettable(L, 1);
+	if(lua_isnil(L, 2)) {
+		kd = 0.5;
+	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+		lua_error(L, "invalid type for Plastic.kd");
+		kd = 0.0;
+	} else {
+		kd = lua_tonumber(L, 2);
+	}
+	lua_pop(L, 1);
+	// reading ks
+	lua_pushstring(L, "ks");
+	lua_gettable(L, 1);
+	if(lua_isnil(L, 2)) {
+		ks = 0.5;
+	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+		lua_error(L, "invalid type for Plastic.ks");
+		ks = 0.0;
+	} else {
+		ks = lua_tonumber(L, 2);
+	}
+	lua_pop(L, 1);
+	// reading roughness
+	lua_pushstring(L, "roughness");
+	lua_gettable(L, 1);
+	if(lua_isnil(L, 2)) {
+		rn = 0.1;
+	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+		lua_error(L, "invalid type for Plastic.roughness");
+		rn = 0.0;
+	} else {
+		rn = lua_tonumber(L, 2);
+	}
+	lua_pop(L, 1);
+	// reading specularcolour
+	lua_pushstring(L, "specularcolour");
+	lua_gettable(L, 1);
+	if(lua_isnil(L, 2)) {
+		spc = Colour(1.0, 1.0, 1.0);
+	} else if(lua_tag(L, 2) != s->_colour_tag) {
+		lua_error(L, "invalid type for Plastic.specularcolour");
+	} else {
+		spc = *(static_cast<Colour*>(lua_touserdata(L, 2)));
+	}
+	lua_pop(L, 2);
+	SurfaceShader *ss = new PlasticSurfaceShader(ka, kd, ks, rn, spc);
+	lua_pushusertag(L, ss, s->_surface_tag);
+
+	return 1;
 }
 
 int LuaScript::_constantsurface_ctor(lua_State* L)
 {
+	// getting and popping upvalue - LuaScript instance
+	LuaScript* s = static_cast<LuaScript*>(lua_touserdata(L, -1));
+	lua_pop(L, 1);
+	// we must get a table
+	if(!lua_istable(L, 1)) {
+		lua_error(L, "invalid argument to Constant");
+	}
+	lua_pop(L, 1);
+	SurfaceShader *ss = new ConstantSurfaceShader();
+	lua_pushusertag(L, ss, s->_surface_tag);
+
+	return 1;
 }
 
 int LuaScript::_frame_ctor(lua_State* L)
@@ -1168,6 +1301,21 @@ LuaScript::LuaScript()
 	lua_getref(_lua_state, _script_ref);
 	lua_pushcclosure(_lua_state, _triangle_ctor, 1);
 	lua_setglobal(_lua_state, "Triangle");
+
+	// surface shaders
+	_surface_tag = lua_newtag(_lua_state);
+	// matte surface constructor
+	lua_getref(_lua_state, _script_ref);
+	lua_pushcclosure(_lua_state, _mattesurface_ctor, 1);
+	lua_setglobal(_lua_state, "Matte");
+	// plastic surface constructor
+	lua_getref(_lua_state, _script_ref);
+	lua_pushcclosure(_lua_state, _plasticsurface_ctor, 1);
+	lua_setglobal(_lua_state, "Plastic");
+	// constant surface constructor
+	lua_getref(_lua_state, _script_ref);
+	lua_pushcclosure(_lua_state, _constantsurface_ctor, 1);
+	lua_setglobal(_lua_state, "Constant");
 
 	// frames
 	// constructor

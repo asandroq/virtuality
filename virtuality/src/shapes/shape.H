@@ -30,10 +30,11 @@
 #include <colour.H>
 #include <boundingbox.H>
 
+#include <surfaceshader.H>
+
 namespace Virtuality {
 
 class Shape;
-class SurfaceShader;
 
 // list of hits
 typedef map<double, const Shape*> SpanList;
@@ -47,7 +48,7 @@ public:
 	Shape();
 
 	//! Destructor
-	virtual ~Shape() {}
+	virtual ~Shape();
 	
 	//! Queries the colour of this shape
 	/*!
@@ -138,9 +139,15 @@ private:
 // inline member functions
 
 inline Shape::Shape()
+	: _shader(0)
 {
 }
 		
+inline Shape::~Shape()
+{
+	delete _shader;
+}
+
 inline Colour Shape::colour() const
 {
 	return _colour;

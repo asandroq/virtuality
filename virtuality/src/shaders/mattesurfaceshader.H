@@ -28,7 +28,7 @@
 
 namespace Virtuality {
 
-class MatteSurfaceShader {
+class MatteSurfaceShader : public SurfaceShader {
 public:
 	//! Constructor
 	MatteSurfaceShader(double ka = 1.0, double kd = 1.0);

@@ -28,7 +28,7 @@
 
 namespace Virtuality {
 
-class PlasticSurfaceShader {
+class PlasticSurfaceShader : public SurfaceShader {
 public:
 	//! Constructor
 	PlasticSurfaceShader(double ka = 1.0, double kd = 0.5, double ks = 0.5,

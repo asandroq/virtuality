@@ -28,7 +28,7 @@
 
 namespace Virtuality {
 
-class ConstantSurfaceShader {
+class ConstantSurfaceShader : public SurfaceShader {
 public:
 	//! Constructor
 	ConstantSurfaceShader();

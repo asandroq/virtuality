@@ -40,7 +40,7 @@ libshapes_a_SOURCES = box.H box.C \
 		      triangle.H triangle.C \
 		      union.H union.C
 
-INCLUDES = -I../virtuality
+INCLUDES = -I../shaders -I../virtuality
 AM_CXXFLAGS = -Wall -Wno-trigraphs -ansi -ffast-math -fno-rtti -fno-exceptions
 
 AUTOMAKE_OPTIONS = foreign
