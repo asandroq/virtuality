@@ -92,7 +92,7 @@ VERSION = @VERSION@
 
 bin_PROGRAMS = virtuality
 
-virtuality_SOURCES = boundingbox.H boundingbox.C 		     camera.H 		     colour.H colour.C 		     light.H 		     luascript.H luascript.C 		     main.C 		     math.H math.C 		     matrix.H matrix.C 		     point.H 		     ray.H 		     renderer.H renderer.C 		     scene.H scene.C 		     scriptapi.H scriptapi.C 		     vector.H
+virtuality_SOURCES = boundingbox.H boundingbox.C 		     camera.H 		     colour.H colour.C 		     light.H 		     luascript.H luascript.C 		     main.C 		     math.H math.C 		     matrix.H matrix.C 		     point.H 		     ray.H 		     renderer.H renderer.C 		     scene.H scene.C 		     scriptapi.H scriptapi.C 		     shaderenv.H 		     vector.H
 
 virtuality_LDADD = ../framebuffers/libframebuffers.a 		     ../shapes/libshapes.a
 

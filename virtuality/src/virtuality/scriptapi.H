@@ -24,22 +24,25 @@
 #ifndef __VIRTUALITY_SCRIPTAPI_H__
 #define __VIRTUALITY_SCRIPTAPI_H__
 
-#include <scene.H>
+#include <shaderenv.H>
 
 namespace Virtuality {
 
-class ScriptAPI {
-public:
-	//! Sets current scene
-	static void setScene(Scene* s);
+namespace ScriptAPI {
 
-	//! Returns the total of ambient light
+	//! Gives the reflection vector
+	Vector reflect(const Vector& I, const Vector& N);
 
-	//! Similar to RenderMan's illuminance
+	//! Gives the refraction vector
+	Vector refract(const Vector& I, const Vector& N, double eta);
 
-private:
-	static Scene* _scene;
-};
+	//! Returns the ambient light in scene
+	Colour ambient(const ShaderEnv& env);
+
+
+	//! Returns the amount of diffuse light given normal
+	Colour diffuse(const ShaderEnv& env, const Vector& N);
+}
 
 }
 
