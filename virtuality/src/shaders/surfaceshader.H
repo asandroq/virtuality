@@ -24,8 +24,7 @@
 #ifndef __VIRTUALITY_SURFACESHADER_H__
 #define __VIRTUALITY_SURFACESHADER_H__
 
-#include <colour.H>
-#include <vector.H>
+#include <scriptapi.H>
 
 namespace Virtuality {
 
@@ -38,10 +37,7 @@ public:
 	virtual ~SurfaceShader();
 
 	//! Shades a surface
-	virtual Colour shade(const Colour& Cs, const Colour& Os, const Point& P,
-			const Vector& N, double u, double v, double s, double t,
-			const Vector& E, const Vector& I) = 0;
-
+	virtual void shade(const ShaderEnv& env, Colour& Ci, Colour& Oi) = 0;
 };
 
 inline SurfaceShader::SurfaceShader()

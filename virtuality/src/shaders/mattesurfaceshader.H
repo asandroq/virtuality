@@ -21,34 +21,38 @@
  * To contact the author send eletronic mail to asandro@lcg.dc.ufc.br
  */
 
-#ifndef __VIRTUALITY_CONSTANTSURFACESHADER_H__
-#define __VIRTUALITY_CONSTANTSURFACESHADER_H__
+#ifndef __VIRTUALITY_MATTESURFACESHADER_H__
+#define __VIRTUALITY_MATTESURFACESHADER_H__
 
 #include <surfaceshader.H>
 
 namespace Virtuality {
 
-class ConstantSurfaceShader {
+class MatteSurfaceShader {
 public:
 	//! Constructor
-	ConstantSurfaceShader();
+	MatteSurfaceShader(double ka = 1.0, double kd = 1.0);
 
 	//! Destructor
-	virtual ~ConstantSurfaceShader();
+	virtual ~MatteSurfaceShader();
 
 	//! Shades a surface
 	virtual void shade(const ShaderEnv& env, Colour& Ci, Colour& Oi);
+
+private:
+	double _ka, _kd;
 };
 
-inline ConstantSurfaceShader::ConstantSurfaceShader()
+inline MatteSurfaceShader::MatteSurfaceShader(double ka, double kd)
+	: _ka(ka), _kd(kd)
 {
 }
 
-inline ConstantSurfaceShader::~ConstantSurfaceShader()
+inline MatteSurfaceShader::~MatteSurfaceShader()
 {
 }
 
-inline Colour ConstantSurfaceShader::shade(const ShaderEnv& env,
+inline void MatteSurfaceShader::shade(const ShaderEnv& env,
 						Colour& Ci, Colour& Oi);
 {
 	Oi = env.Os();
@@ -57,4 +61,4 @@ inline Colour ConstantSurfaceShader::shade(const ShaderEnv& env,
 
 }
 
-#endif // __VIRTUALITY_CONSTANTSURFACESHADER_H__
+#endif // __VIRTUALITY_MATTESURFACESHADER_H__

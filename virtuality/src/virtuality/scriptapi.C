@@ -56,11 +56,50 @@ Colour ambient(const ShaderEnv& env)
 
 Colour diffuse(const ShaderEnv& env, const Vector& N)
 {
+	Colour c;
+
+	for(unsigned i = 0; i < env.Sc().numLights(); i++) {
+		// gets light and light direction
+                Light  l = env.Sc().light(i);
+		Vector L = (l.position()-env.P()).normalise();
+		 // calculating light contribution
+                double coss = N*L;
+                if(coss > 0.0) {
+                        // is this point in shadow?
+                        if(env.Sc().occluded(env.P(), l.position())) {
+                                continue;
+                        }
+			c += coss*l.colour();
+		}
+	}
+	return c;
 }
 
 Colour specular(const ShaderEnv& env, const Vector& N, const Vector& V,
                 double roughness)
 {
+	Colour c;
+
+	if(isZero(roughness)) {
+		roughness = 0.001;
+	}
+	for(unsigned i = 0; i < env.Sc().numLights(); i++) {
+		// gets light and light direction
+                Light  l = env.Sc().light(i);
+		Vector L = (l.position()-env.P()).normalise();
+		 // calculating light contribution
+                if(N*L > 0.0) {
+                        // is this point in shadow?
+                        if(env.Sc().occluded(env.P(), l.position())) {
+                                continue;
+                        }
+			Vector H = 0.5*(L+V);
+			c += pow(N*H, 1/roughness)*l.colour();
+                                
+		}
+	}
+
+	return c;
 }
 
 }

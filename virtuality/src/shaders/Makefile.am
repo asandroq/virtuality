@@ -29,7 +29,9 @@
 noinst_LIBRARIES = libshaders.a
 
 libshaders_a_SOURCES = surfaceshader.H \
-		       constantsurfaceshader.H
+		       constantsurfaceshader.H \
+		       mattesurfaceshader.H \
+		       plasticsurfaceshader.H
 
 INCLUDES = -I../virtuality
 AM_CXXFLAGS = -Wall -Wno-trigraphs -ansi -ffast-math -fno-rtti -fno-exceptions
