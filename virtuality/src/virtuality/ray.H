@@ -61,10 +61,6 @@ inline Point Ray::pointOnRay(double t) const
 	return _origin + t * _direction;
 }
 
-/*
- * The factor stuff was inspired by GNU Panorama
- */
-
 inline Ray Ray::transform(const Matrix& m, double* t) const
 {
 	// transforming direction

@@ -31,7 +31,7 @@ virtuality_SOURCES = camera.H \
 		     colour.H colour.C \
 		     light.H \
 		     main.C \
-		     math.H \
+		     math.H math.C \
 		     matrix.H matrix.C \
 		     point.H \
 		     ray.H \

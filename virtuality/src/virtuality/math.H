@@ -84,6 +84,29 @@ inline double degrees(double radians)
 	return radians / (Pi/180.0);
 }
 
+// a function to find the cubic root
+inline double cbrt(double x)
+{
+	return x > 0.0 ? pow(x, 1.0/3.0) : x < 0.0 ? -pow(-x, 1.0/3.0) : 0.0;
+}
+
+/*
+ * Functions to solve quadric, cubic and quartic equations.
+ * The arguments are an array of coefficients and one for the roots,
+ * the functions return the number of roots found.
+ * Coefficients are passed like this:
+ *
+ * c[0] + c[1]*x + c[2]*x^2 + c[3]*x^3 + c[4]*x^4 = 0
+ *
+ * Code by Jochen Schwarze (schwarze@isa.de)
+ */
+
+int solveQuadric(double coefs[3], double roots[2]);
+
+int solveCubic(double coefs[4], double roots[3]);
+
+int solveQuartic(double coefs[5], double roots[4]);
+
 }
 
 #endif  // __VIRTUALITY_MATH_H__

@@ -104,6 +104,10 @@ private:
 	int _plane_tag;
 	static int _plane_ctor(lua_State* L);
 
+	// torii
+	int _torus_tag;
+	static int _torus_ctor(lua_State* L);
+
 	// triangles
 	int _triangle_tag;
 	static int _triangle_ctor(lua_State* L);

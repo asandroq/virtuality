@@ -26,6 +26,7 @@
 #include <box.H>
 #include <plane.H>
 #include <sphere.H>
+#include <torus.H>
 #include <triangle.H>
 
 #include <union.H>
@@ -520,7 +521,9 @@ int Script::_union_ctor(lua_State* L)
 	lua_pushnil(L);
 	while(lua_next(L, 1)) {
 		int tag = lua_tag(L, 3);
-		if(tag == s->_box_tag || tag == s->_sphere_tag) {
+		if(tag == s->_box_tag    ||
+		   tag == s->_sphere_tag ||
+		   tag == s->_torus_tag) {
 			n->addChild(static_cast<Shape*>(lua_touserdata(L, 3)));
 		}
 		lua_pop(L, 1);
@@ -547,7 +550,9 @@ int Script::_difference_ctor(lua_State* L)
 	lua_pushnil(L);
 	while(lua_next(L, 1)) {
 		int tag = lua_tag(L, 3);
-		if(tag == s->_box_tag || tag == s->_sphere_tag) {
+		if(tag == s->_box_tag    ||
+		   tag == s->_sphere_tag ||
+		   tag == s->_torus_tag) {
 			n->addChild(static_cast<Shape*>(lua_touserdata(L, 3)));
 		}
 		lua_pop(L, 1);
@@ -574,7 +579,9 @@ int Script::_intersection_ctor(lua_State* L)
 	lua_pushnil(L);
 	while(lua_next(L, 1)) {
 		int tag = lua_tag(L, 3);
-		if(tag == s->_box_tag || tag == s->_sphere_tag) {
+		if(tag == s->_box_tag    ||
+		   tag == s->_sphere_tag ||
+		   tag == s->_torus_tag) {
 			n->addChild(static_cast<Shape*>(lua_touserdata(L, 3)));
 		}
 		lua_pop(L, 1);
@@ -709,6 +716,49 @@ int Script::_plane_ctor(lua_State* L)
 	Shape* p = new Plane(n, d);
 	s->_shape_ctor(L, p);
 	lua_pushusertag(L, p, s->_plane_tag);
+
+	return 1;
+}
+
+int Script::_torus_ctor(lua_State* L)
+{
+	double major, minor;
+
+	// getting and popping upvalue - Script instance
+	Script* s = static_cast<Script*>(lua_touserdata(L, -1));
+	lua_pop(L, 1);
+	// we must get a table
+	if(!lua_istable(L, 1)) {
+		lua_error(L, "invalid argument to Torus");
+	}
+	// reading major radius
+	lua_pushstring(L, "major");
+	lua_gettable(L, 1);
+	if(lua_isnil(L, 2)) {
+		major = 1.0;
+	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+		lua_error(L, "invalid type for Torus.major");
+		major = 0.0;
+	} else {
+		major = lua_tonumber(L, 2);
+	}
+	lua_pop(L, 1);
+	// reading minor radius
+	lua_pushstring(L, "minor");
+	lua_gettable(L, 1);
+	if(lua_isnil(L, 2)) {
+		minor = 1.0;
+	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+		lua_error(L, "invalid type for Torus.minor");
+		minor = 0.0;
+	} else {
+		minor = lua_tonumber(L, 2);
+	}
+	lua_pop(L, 1);
+	// creating torus
+	Shape* t = new Torus(major, minor);
+	s->_shape_ctor(L, t);
+	lua_pushusertag(L, t, s->_torus_tag);
 
 	return 1;
 }
@@ -860,10 +910,11 @@ int Script::_frame_ctor(lua_State* L)
 		} else if(tag == s->_light_tag) {
 			Light* l = static_cast<Light*>(lua_touserdata(L, -1));
 			s->_sc->addLight(*l);
-		} else if(tag == s->_csg_tag ||
-				tag == s->_box_tag ||
+		} else if(tag == s->_csg_tag          ||
+				tag == s->_box_tag    ||
 				tag == s->_sphere_tag ||
-				tag == s->_plane_tag ||
+				tag == s->_plane_tag  ||
+				tag == s->_torus_tag  ||
 				tag == s->_triangle_tag) {
 			Shape* p =
 				static_cast<Shape*>(lua_touserdata(L, -1));
@@ -1018,6 +1069,13 @@ Script::Script()
 	lua_getref(_lua_state, _script_ref);
 	lua_pushcclosure(_lua_state, _plane_ctor, 1);
 	lua_setglobal(_lua_state, "Plane");
+
+	// torii
+	_torus_tag = lua_newtag(_lua_state);
+	// constructor
+	lua_getref(_lua_state, _script_ref);
+	lua_pushcclosure(_lua_state, _torus_ctor, 1);
+	lua_setglobal(_lua_state, "Torus");
 
 	// triangles
 	_triangle_tag = lua_newtag(_lua_state);

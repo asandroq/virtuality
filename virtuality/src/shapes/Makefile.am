@@ -35,6 +35,7 @@ libshapes_a_SOURCES = box.H box.C \
 		      plane.H plane.C \
 		      shape.H shape.C \
 		      sphere.H sphere.C \
+		      torus.H torus.C \
 		      triangle.H triangle.C \
 		      union.H union.C
 

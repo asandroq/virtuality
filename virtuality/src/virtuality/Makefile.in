@@ -92,7 +92,7 @@ VERSION = @VERSION@
 
 bin_PROGRAMS = virtuality
 
-virtuality_SOURCES = camera.H 		     colour.H colour.C 		     light.H 		     main.C 		     math.H 		     matrix.H matrix.C 		     point.H 		     ray.H 		     renderer.H renderer.C 		     scene.H scene.C 		     script.H script.C 		     vector.H
+virtuality_SOURCES = camera.H 		     colour.H colour.C 		     light.H 		     main.C 		     math.H math.C 		     matrix.H matrix.C 		     point.H 		     ray.H 		     renderer.H renderer.C 		     scene.H scene.C 		     script.H script.C 		     vector.H
 
 virtuality_LDADD = ../framebuffers/libframebuffers.a 		     ../shapes/libshapes.a
 
@@ -110,7 +110,7 @@ DEFS = @DEFS@ -I. -I$(srcdir)
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-virtuality_OBJECTS =  colour.o main.o matrix.o renderer.o scene.o \
+virtuality_OBJECTS =  colour.o main.o math.o matrix.o renderer.o scene.o \
 script.o
 virtuality_DEPENDENCIES =  ../framebuffers/libframebuffers.a \
 ../shapes/libshapes.a
@@ -130,8 +130,8 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = tar
 GZIP_ENV = --best
-DEP_FILES =  .deps/colour.P .deps/main.P .deps/matrix.P .deps/renderer.P \
-.deps/scene.P .deps/script.P
+DEP_FILES =  .deps/colour.P .deps/main.P .deps/math.P .deps/matrix.P \
+.deps/renderer.P .deps/scene.P .deps/script.P
 SOURCES = $(virtuality_SOURCES)
 OBJECTS = $(virtuality_OBJECTS)
 
