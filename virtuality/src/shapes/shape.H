@@ -71,15 +71,12 @@ public:
 
 	//! Rotates this shape
 	/*!
-	 * \param ax the amount of rotation about the x axis
-	 * \param ay the amount of rotation about the y axis
-	 * \param az the amount of rotation about the z axis
-	 * \sa rotX()
-	 * \sa rotY()
-	 * \sa rotZ()
-	 * \sa setRotation()
+	 * \param a
+	 * \param x
+	 * \param y
+	 * \param z
 	 */
-	void rotate(double ax, double ay = 0.0, double az = 0.0);
+	void rotate(double a, double x, double y, double z);
 
 	//! Queries if the ray hits the shape
 	/*!
@@ -128,10 +125,6 @@ inline void Shape::translate(double x, double y, double z)
 		   0.0, 0.0, 0.0, 1.0);
 	// concatenating
 	_trans *= tmp;
-}
-
-inline void Shape::rotate(double ax, double ay, double az)
-{
 }
 
 }

@@ -26,6 +26,10 @@
 
 namespace Virtuality {
 
+void Shape::rotate(double a, double x, double y, double z)
+{
+}
+
 Ray Shape::reflectedRay(const Ray& r, const Point& P) const
 {
 	Vector N = normal(P);

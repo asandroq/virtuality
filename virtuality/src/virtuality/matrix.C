@@ -26,6 +26,119 @@
 
 namespace Virtuality {
 
+#define SWAP_ROWS(a, b) { double *_tmp = (a); (a) = (b), (b) = _tmp; }
+
+/*
+ * This code was shamelessly stolen from the Mesa 3-D graphics library, by
+ * Brian Paul. The code was contributed by Jacques Leroy <jle@star.be>
+ */
+
+Matrix Matrix::inverse() const
+{
+	double wtmp[4][8];
+	double m0, m1, m2, m3, s;
+	double *r0, *r1, *r2, *r3;
+
+	r0 = wtmp[0], r1 = wtmp[1], r2 = wtmp[2], r3 = wtmp[3];
+
+	r0[0] = _e11, r0[1] = _e12,
+	r0[2] = _e13, r0[3] = _e14,
+	r0[4] =  1.0, r0[5] = r0[6] = r0[7] = 0.0,
+
+	r1[0] = _e21, r1[1] = _e22,
+	r1[2] = _e23, r1[3] = _e24,
+	r1[5] =  1.0, r1[4] = r1[6] = r1[7] = 0.0,
+
+	r2[0] = _e31, r2[1] = _e32,
+	r2[2] = _e33, r2[3] = _e34,
+	r2[6] =  1.0, r2[4] = r2[5] = r2[7] = 0.0,
+
+	r3[0] = _e41, r3[1] = _e42,
+	r3[2] = _e43, r3[3] = _e44,
+	r3[7] =  1.0, r3[4] = r3[5] = r3[6] = 0.0;
+
+	// choose pivot - or return identity
+	if(abs(r3[0]) > abs(r2[0])) SWAP_ROWS(r3, r2);
+	if(abs(r2[0]) > abs(r1[0])) SWAP_ROWS(r2, r1);
+	if(abs(r1[0]) > abs(r0[0])) SWAP_ROWS(r1, r0);
+	if(isZero(r0[0])) return Matrix();
+
+	/* eliminate first variable	*/
+	m1 = r1[0]/r0[0]; m2 = r2[0]/r0[0]; m3 = r3[0]/r0[0];
+	s = r0[1]; r1[1] -= m1 * s; r2[1] -= m2 * s; r3[1] -= m3 * s;
+	s = r0[2]; r1[2] -= m1 * s; r2[2] -= m2 * s; r3[2] -= m3 * s;
+	s = r0[3]; r1[3] -= m1 * s; r2[3] -= m2 * s; r3[3] -= m3 * s;
+	s = r0[4];
+	if(!isZero(s)) { r1[4] -= m1 * s; r2[4] -= m2 * s; r3[4] -= m3 * s; }
+	s = r0[5];
+	if(!isZero(s)) { r1[5] -= m1 * s; r2[5] -= m2 * s; r3[5] -= m3 * s; }
+	s = r0[6];
+	if(!isZero(s)) { r1[6] -= m1 * s; r2[6] -= m2 * s; r3[6] -= m3 * s; }
+	s = r0[7];
+	if(!isZero(s)) { r1[7] -= m1 * s; r2[7] -= m2 * s; r3[7] -= m3 * s; }
+
+	// choose pivot - or return identity
+	if(abs(r3[1]) > abs(r2[1])) SWAP_ROWS(r3, r2);
+	if(abs(r2[1]) > abs(r1[1])) SWAP_ROWS(r2, r1);
+	if(isZero(r1[1])) return Matrix();
+
+	// eliminate second variable
+	m2 = r2[1]/r1[1]; m3 = r3[1]/r1[1];
+	r2[2] -= m2 * r1[2]; r3[2] -= m3 * r1[2];
+	r2[3] -= m2 * r1[3]; r3[3] -= m3 * r1[3];
+	s = r1[4]; if(!isZero(s)) { r2[4] -= m2 * s; r3[4] -= m3 * s; }
+	s = r1[5]; if(!isZero(s)) { r2[5] -= m2 * s; r3[5] -= m3 * s; }
+	s = r1[6]; if(!isZero(s)) { r2[6] -= m2 * s; r3[6] -= m3 * s; }
+	s = r1[7]; if(!isZero(s)) { r2[7] -= m2 * s; r3[7] -= m3 * s; }
+
+	// choose pivot - or return identity
+	if(abs(r3[2]) > abs(r2[2])) SWAP_ROWS(r3, r2);
+	if(isZero(r2[2])) return Matrix();
+
+	/* eliminate third variable */
+	m3 = r3[2]/r2[2];
+	r3[3] -= m3 * r2[3], r3[4] -= m3 * r2[4],
+	r3[5] -= m3 * r2[5], r3[6] -= m3 * r2[6],
+	r3[7] -= m3 * r2[7];
+
+	// last check
+	if(isZero(r3[3])) return Matrix();
+
+	s = 1.0/r3[3];  	    // now back substitute row 3
+	r3[4] *= s; r3[5] *= s; r3[6] *= s; r3[7] *= s;
+
+	m2 = r2[3];		    // now back substitute row 2
+	s  = 1.0/r2[2];
+	r2[4] = s * (r2[4] - r3[4] * m2), r2[5] = s * (r2[5] - r3[5] * m2),
+	r2[6] = s * (r2[6] - r3[6] * m2), r2[7] = s * (r2[7] - r3[7] * m2);
+	m1 = r1[3];
+	r1[4] -= r3[4] * m1, r1[5] -= r3[5] * m1,
+	r1[6] -= r3[6] * m1, r1[7] -= r3[7] * m1;
+	m0 = r0[3];
+	r0[4] -= r3[4] * m0, r0[5] -= r3[5] * m0,
+	r0[6] -= r3[6] * m0, r0[7] -= r3[7] * m0;
+
+	m1 = r1[2];		    // now back substitute row 1
+	s  = 1.0/r1[1];
+	r1[4] = s * (r1[4] - r2[4] * m1), r1[5] = s * (r1[5] - r2[5] * m1),
+	r1[6] = s * (r1[6] - r2[6] * m1), r1[7] = s * (r1[7] - r2[7] * m1);
+	m0 = r0[2];
+	r0[4] -= r2[4] * m0, r0[5] -= r2[5] * m0,
+	r0[6] -= r2[6] * m0, r0[7] -= r2[7] * m0;
+
+	m0 = r0[1];		    // now back substitute row 0
+	s  = 1.0/r0[0];
+	r0[4] = s * (r0[4] - r1[4] * m0), r0[5] = s * (r0[5] - r1[5] * m0),
+	r0[6] = s * (r0[6] - r1[6] * m0), r0[7] = s * (r0[7] - r1[7] * m0);
+
+	return Matrix(r0[4], r0[5], r0[6], r0[7],
+		      r1[4], r1[5], r1[6], r1[7],
+      		      r2[4], r2[5], r2[6], r2[7],
+      		      r3[4], r3[5], r3[6], r3[7]);
+}
+
+#undef SWAP_ROWS
+
 #define T(x) (this->x)
 
 Matrix& Matrix::operator*=(const Matrix& m)
@@ -51,7 +164,7 @@ Matrix& Matrix::operator*=(const Matrix& m)
 	return *this;
 }
 
-#undef T(x)
+#undef T
 
 Point operator*(const Matrix& m, const Point& p)
 {

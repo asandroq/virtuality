@@ -1,0 +1,55 @@
+
+The Virtuality Renderer
+Copyright (c) 2001 Alex Sandro Queiroz e Silva
+
+0. Legal information
+
+	This program comes with ABSOLUTELY NO WARRANTY. It is free software,
+and you are welcome to redistribute it under certain conditions, see the file
+COPYING for details.
+
+1. What is it?
+
+	The Virtuality Renderer is a program that accepts a scene description
+in a procedural language and renders a raster image representing that scene.
+It is a console application, which tries to do just one thing: render scenes,
+but this is not a simple task. It is being designed to be modular and extensi-
+ble from the beginning, to allow the inclusion of new shapes and rendering
+algorithms.
+	The input language chosen is Lua (http://www.tecgraf.puc-rio.br/lua/)
+for it is procedural but has enhanced data description capabilities, is very
+small and easy to embed.
+
+2. Prerequisites
+
+2.1. The Lua language
+
+	This is an interpreted language developed at the PUC/Rio University,
+in Brazil. It is very simple yet powerful. For more information and software,
+visit http://www.tecgraf.puc-rio.br/lua/.
+
+2.2. The zlib and PNG libraries
+
+	These libraries are required for the generation of raster images. They
+were chosen because of their availability (if you are running Linux you proba-
+bly have them) and license. But if they are missing, try
+http://www.libpng.org/pub/png/.
+
+3. Installation
+
+	As this is a simple package, just try:
+
+$ ./configure
+$ make
+
+and, with super user privilegies:
+
+$ make install
+
+	There are some test scenes in the tests subdirectory, that you can try
+before installing the program.
+
+4. Contact information
+
+	If you want to contact me, to send ideas, suggestions, patches or bug
+reports, send a email to asandro@lcg.dc.ufc.br.
