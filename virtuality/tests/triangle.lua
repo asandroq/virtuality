@@ -2,7 +2,7 @@
 -- Alex Sandro Queiroz e Silva
 
 Frame {
-	kind = FB_PNG,
+	format = FB_PNG,
 	name = "triangle.png",
 	width = 800,
 	height = 600;
