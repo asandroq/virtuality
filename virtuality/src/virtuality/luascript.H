@@ -160,6 +160,9 @@ private:
 
 	// framebuffer where to render the scene
 	FrameBuffer* _fb;
+
+	// helper function
+	bool isShape(int tag) const;
 };
 
 inline int LuaScript::colourTag() const

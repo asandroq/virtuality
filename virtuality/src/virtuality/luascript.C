@@ -45,26 +45,26 @@
 #include <pngframebuffer.H>
 #include <tgaframebuffer.H>
 
-// helper function to test if a tag belongs to a shape
-bool isShape(lua_State *L, int tag)
-{
-	if(tag == lua_name2tag(L, "Box")	||
-	   tag == lua_name2tag(L, "Cylinder")	||
-	   tag == lua_name2tag(L, "Sphere")	||
-	   tag == lua_name2tag(L, "Torus")	||
-	   tag == lua_name2tag(L, "Triangle"))	{
-		return true;
-	} else {
-		return false;
-	}
-}
-
 namespace Virtuality {
 
 const int FB_PNG = 1;
 const int FB_TGA = 2;
 
 LuaScript* _lua_script;
+
+// helper function to test if a tag belongs to a shape
+bool LuaScript::isShape(int tag) const
+{
+	if(tag == _box_tag	||
+	   tag == _cylinder_tag	||
+	   tag == _sphere_tag	||
+	   tag == _torus_tag	||
+	   tag == _triangle_tag){
+		return true;
+	} else {
+		return false;
+	}
+}
 
 int LuaScript::_point_ctor(lua_State *L)
 {
@@ -113,7 +113,7 @@ int LuaScript::_point_ctor(lua_State *L)
 	// pushing point onto stack
 	Point* p = new Point(x, y, z);
 	lua_newuserdatabox(L, p);
-	lua_settag(L, lua_name2tag(L, "Point"));
+	lua_settag(L, s->_point_tag);
 
 	return 1;
 }
@@ -1016,7 +1016,7 @@ int LuaScript::_union_ctor(lua_State* L)
 	lua_pushnil(L);
 	while(lua_next(L, 1)) {
 		int tag = lua_tag(L, 3);
-		if(isShape(L, tag)) {
+		if(s->isShape(tag)) {
 			n->addChild(static_cast<Shape*>(lua_touserdata(L, 3)));
 		}
 		lua_pop(L, 1);
@@ -1044,7 +1044,7 @@ int LuaScript::_difference_ctor(lua_State* L)
 	lua_pushnil(L);
 	while(lua_next(L, 1)) {
 		int tag = lua_tag(L, 3);
-		if(isShape(L, tag)) {
+		if(s->isShape(tag)) {
 			n->addChild(static_cast<Shape*>(lua_touserdata(L, 3)));
 		}
 		lua_pop(L, 1);
@@ -1072,7 +1072,7 @@ int LuaScript::_intersection_ctor(lua_State* L)
 	lua_pushnil(L);
 	while(lua_next(L, 1)) {
 		int tag = lua_tag(L, 3);
-		if(isShape(L, tag)) {
+		if(s->isShape(tag)) {
 			n->addChild(static_cast<Shape*>(lua_touserdata(L, 3)));
 		}
 		lua_pop(L, 1);
@@ -1612,7 +1612,7 @@ int LuaScript::_frame_ctor(lua_State* L)
 		} else if(tag == s->_light_tag) {
 			Light* l = static_cast<Light*>(lua_touserdata(L, -1));
 			s->_sc->addLight(*l);
-		} else if(tag == s->_csg_tag || isShape(L, tag)) {
+		} else if(tag == s->_csg_tag || s->isShape(tag)) {
 			Shape* p = static_cast<Shape*>(lua_touserdata(L, -1));
 			s->_sc->addShape(p);
 		}
@@ -1653,7 +1653,7 @@ LuaScript::LuaScript()
 	lua_setglobal(_lua_state, "FB_TGA");
 
 	// points
-	_point_tag = lua_newtype(_lua_state, "Point", LUA_TUSERDATA);
+	_point_tag = lua_newtag(_lua_state);
 	// constructor
 	lua_register(_lua_state, "Point", _point_ctor);
 	// destructor
@@ -1676,7 +1676,7 @@ LuaScript::LuaScript()
 	lua_settagmethod(_lua_state, _point_tag, "div");
 
 	// colours
-	_colour_tag = lua_newtype(_lua_state, "Colour", LUA_TUSERDATA);
+	_colour_tag = lua_newtag(_lua_state);
 	// constructor
 	lua_register(_lua_state, "Colour", _colour_ctor);
 	// destructor
@@ -1715,7 +1715,7 @@ LuaScript::LuaScript()
 	lua_setglobal(_lua_state, "White");
 
 	// vectors
-	_vector_tag = lua_newtype(_lua_state, "Vector", LUA_TUSERDATA);
+	_vector_tag = lua_newtag(_lua_state);
 	// constructor
 	lua_register(_lua_state, "Vector", _vector_ctor);
 	// destructor
@@ -1736,7 +1736,7 @@ LuaScript::LuaScript()
 	lua_setglobal(_lua_state, "z");
 
 	// lights
-	_light_tag = lua_newtype(_lua_state, "Light", LUA_TUSERDATA);
+	_light_tag = lua_newtag(_lua_state);
 	// constructor
 	lua_register(_lua_state, "Light", _light_ctor);
 	// destructor
@@ -1744,7 +1744,7 @@ LuaScript::LuaScript()
 	lua_settagmethod(_lua_state, _light_tag, "gc");
 
 	// cameras
-	_camera_tag = lua_newtype(_lua_state, "Camera", LUA_TUSERDATA);
+	_camera_tag = lua_newtag(_lua_state);
 	// constructor
 	lua_register(_lua_state, "Camera", _camera_ctor);
 	// destructor
@@ -1752,7 +1752,7 @@ LuaScript::LuaScript()
 	lua_settagmethod(_lua_state, _camera_tag, "gc");
 
 	// csg
-	_csg_tag = lua_newtype(_lua_state, "CSG", LUA_TUSERDATA);
+	_csg_tag = lua_newtag(_lua_state);
 	// constructors
 	lua_getref(_lua_state, _script_ref);
 	lua_pushcclosure(_lua_state, _union_ctor, 1);
@@ -1765,49 +1765,49 @@ LuaScript::LuaScript()
 	lua_setglobal(_lua_state, "Intersection");
 
 	// boxes
-	_box_tag = lua_newtype(_lua_state, "Box", LUA_TUSERDATA);
+	_box_tag = lua_newtag(_lua_state);
 	// constructor
 	lua_getref(_lua_state, _script_ref);
 	lua_pushcclosure(_lua_state, _box_ctor, 1);
 	lua_setglobal(_lua_state, "Box");
 
 	// cylinders
-	_cylinder_tag = lua_newtype(_lua_state, "Cylinder", LUA_TUSERDATA);
+	_cylinder_tag = lua_newtag(_lua_state);
 	// constructor
 	lua_getref(_lua_state, _script_ref);
 	lua_pushcclosure(_lua_state, _cylinder_ctor, 1);
 	lua_setglobal(_lua_state, "Cylinder");
 
 	// spheres
-	_sphere_tag = lua_newtype(_lua_state, "Sphere", LUA_TUSERDATA);
+	_sphere_tag = lua_newtag(_lua_state);
 	// constructor
 	lua_getref(_lua_state, _script_ref);
 	lua_pushcclosure(_lua_state, _sphere_ctor, 1);
 	lua_setglobal(_lua_state, "Sphere");
 
 	// planes
-	_plane_tag = lua_newtype(_lua_state, "Plane", LUA_TUSERDATA);
+	_plane_tag = lua_newtag(_lua_state);
 	// constructor
 	lua_getref(_lua_state, _script_ref);
 	lua_pushcclosure(_lua_state, _plane_ctor, 1);
 	lua_setglobal(_lua_state, "Plane");
 
 	// torii
-	_torus_tag = lua_newtype(_lua_state, "Torus", LUA_TUSERDATA);
+	_torus_tag = lua_newtag(_lua_state);
 	// constructor
 	lua_getref(_lua_state, _script_ref);
 	lua_pushcclosure(_lua_state, _torus_ctor, 1);
 	lua_setglobal(_lua_state, "Torus");
 
 	// triangles
-	_triangle_tag = lua_newtype(_lua_state, "Triangle", LUA_TUSERDATA);
+	_triangle_tag = lua_newtag(_lua_state);
 	// constructor
 	lua_getref(_lua_state, _script_ref);
 	lua_pushcclosure(_lua_state, _triangle_ctor, 1);
 	lua_setglobal(_lua_state, "Triangle");
 
 	// surface shaders
-	_surface_tag = lua_newtype(_lua_state, "Surface", LUA_TUSERDATA);
+	_surface_tag = lua_newtag(_lua_state);
 	// matte surface constructor
 	lua_getref(_lua_state, _script_ref);
 	lua_pushcclosure(_lua_state, _mattesurface_ctor, 1);
