@@ -55,7 +55,7 @@ Ray Shape::reflectedRay(const Ray& r, const Point& P) const
 
 Ray Shape::transmittedRay(const Ray& r, const Point& P) const
 {
-	const double nr = 1.0;
+	const double nr = 1.3;
 
 	Vector N = normal(P);
 	// makes ray go to eye

@@ -24,8 +24,7 @@
 #ifndef __VIRTUALITY_RAY_H_
 #define __VIRTUALITY_RAY_H_
 
-#include <point.H>
-#include <vector.H>
+#include <matrix.H>
 
 namespace Virtuality {
 
@@ -47,6 +46,9 @@ public:
 	//! Returns a point along the ray
 	Point pointOnRay(double t) const;
 
+	//! Transforms the ray
+	Ray transform(const Matrix& m, double* t) const;
+
 private:
 	// ray's origin
 	Point _origin;
@@ -57,6 +59,20 @@ private:
 inline Point Ray::pointOnRay(double t) const
 {
 	return _origin + t * _direction;
+}
+
+/*
+ * The factor stuff was inspired by GNU Panorama
+ */
+
+inline Ray Ray::transform(const Matrix& m, double* t) const
+{
+	// transforming direction
+	Vector v = m * _direction;
+	// computing factor
+	*t = 1.0 / v.length();
+	// returning transformed ray
+	return Ray(m * _origin, v);
 }
 
 inline bool operator==(const Ray& r1, const Ray& r2)

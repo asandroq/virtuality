@@ -4,8 +4,8 @@
 Frame {
 	kind = FB_PNG,
 	name = "csg.png",
-	width = 800,
-	height = 600;
+	width = 640,
+	height = 480;
 
 	-- creating camera
 	Camera {

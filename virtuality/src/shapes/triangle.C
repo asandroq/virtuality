@@ -28,11 +28,11 @@ namespace Virtuality {
 
 void Triangle::hit(const Ray& r0, SpanList* sl) const
 {
-	double l1, l2, l3;
+	double factor, l1, l2, l3;
 
 	// applying inverse transformation to ray
-	Ray r = inverseTransformation() * r0;
-	Vector n = normal(_p1);
+	Ray r = r0.transform(inverseTransformation(), &factor);
+	Vector n = ((_p1-_p2)^(_p3-_p2)).normalise();
 	// I must first test if the ray hits the triangle's plane
 	double den =
 		n.x()*r.direction().x() +
@@ -124,13 +124,13 @@ void Triangle::hit(const Ray& r0, SpanList* sl) const
 		}
 	}
 	if(!(l1 < 0.0 || l2 < 0.0 || l3 < 0.0)) {
-		sl->insert(SpanList::value_type(t, this));
+		sl->insert(SpanList::value_type(t*factor, this));
 	}
 }
 
 Vector Triangle::normal(const Point& P) const
 {
-	return ((_p1-_p2)^(_p3-_p2)).normalise();
+	return transformNormal((_p1-_p2)^(_p3-_p2)).normalise();
 }
 
 }

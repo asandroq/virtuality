@@ -28,7 +28,6 @@
 
 #include <ray.H>
 #include <colour.H>
-#include <matrix.H>
 
 namespace Virtuality {
 
@@ -86,10 +85,10 @@ public:
 	void rotate(double ax, double ay, double az);
 
 	//! queries the transformation matrix
-	const Matrix& transformation() const;
+	Matrix transformation() const;
 
 	//! queries the inverse transformation matrix
-	const Matrix& inverseTransformation() const;
+	Matrix inverseTransformation() const;
 
 	//! transforms a normal vector, keeping it normal
 	Vector transformNormal(const Vector& v) const;
@@ -166,12 +165,12 @@ inline void Shape::translate(double x, double y, double z)
 		      0.0, 0.0, 0.0, 1.0) * _inv;
 }
 
-inline const Matrix& Shape::transformation() const
+inline Matrix Shape::transformation() const
 {
 	return _trans;
 }
 
-inline const Matrix& Shape::inverseTransformation() const
+inline Matrix Shape::inverseTransformation() const
 {
 	return _inv;
 }

@@ -24,7 +24,8 @@
 #ifndef __VIRTUALITY_MATRIX_H__
 #define __VIRTUALITY_MATRIX_H__
 
-#include <ray.H>
+#include <point.H>
+#include <vector.H>
 
 namespace Virtuality {
 
@@ -169,12 +170,6 @@ Point operator*(const Matrix& m, const Point& p);
  * the vector is not translated
  */
 Vector operator*(const Matrix& m, const Vector& v);
-
-//! transforms a ray with this matrix
-inline Ray operator*(const Matrix& m, const Ray& r)
-{
-	return Ray(m*r.origin(), m*r.direction());
-}
 
 }
 

@@ -28,8 +28,10 @@ namespace Virtuality {
 
 void Sphere::hit(const Ray& r0, SpanList* sl) const
 {
+	double factor;
+
 	// applying inverse transformation to ray
-	Ray r = inverseTransformation() * r0;
+	Ray r = r0.transform(inverseTransformation(), &factor);
 	// sphere's centre
 	double l = _centre.x();
 	double m = _centre.y();
@@ -49,11 +51,11 @@ void Sphere::hit(const Ray& r0, SpanList* sl) const
 	double d = sqr(b) - 4*c;
 	if(isZero(d)) {
 		// ray grazes the sphere
-		sl->insert(SpanList::value_type(-0.5*b, this));
+		sl->insert(SpanList::value_type(-0.5*b*factor, this));
 	} else if(d > 0.0) {
 		double sqrt_d = sqrt(d);
-		sl->insert(SpanList::value_type(0.5*(-b-sqrt_d), this));
-		sl->insert(SpanList::value_type(0.5*(-b+sqrt_d), this));
+		sl->insert(SpanList::value_type(0.5*(-b-sqrt_d)*factor, this));
+		sl->insert(SpanList::value_type(0.5*(-b+sqrt_d)*factor, this));
 	}
 }
 

@@ -25,12 +25,16 @@
 
 namespace Virtuality {
 
-void Intersection::hit(const Ray& r, SpanList* sl) const
+void Intersection::hit(const Ray& r0, SpanList* sl) const
 {
+	double f;
+
 	// sanity checking
 	if(_childs.empty() || !sl) {
 		return;
 	}
+	// applying inverse transformation to ray
+	Ray r = r0.transform(inverseTransformation(), &f);
 	// hitting first child
 	_childs[0]->hit(r, sl);
 	if(sl->empty()) {
@@ -85,12 +89,12 @@ void Intersection::hit(const Ray& r, SpanList* sl) const
 			if(in && in1) {
 				if(!in2) {
 					in2 = true;
-					sl2.insert(SpanList::value_type(t, s));
+					sl2.insert(SpanList::value_type(t*f,s));
 				}
 			} else {
 				if(in2) {
 					in2 = false;
-					sl2.insert(SpanList::value_type(t, s));
+					sl2.insert(SpanList::value_type(t*f,s));
 				}
 			}
 		}

@@ -27,10 +27,10 @@ namespace Virtuality {
 
 void Box::hit(const Ray& r0, SpanList* sl) const
 {
-	double t1x, t2x, t1y, t2y, t1z, t2z;
+	double factor, t1x, t2x, t1y, t2y, t1z, t2z;
 
 	// applying inverse transformation to ray
-	Ray r = inverseTransformation() * r0;
+	Ray r = r0.transform(inverseTransformation(), &factor);
 	// auxiliary points
 	Point p0 = r.origin();
 	// calculating intersections
@@ -86,8 +86,8 @@ void Box::hit(const Ray& r0, SpanList* sl) const
 	if(t1 > t2) {
 		return;
 	} else {
-		sl->insert(SpanList::value_type(t1, this));
-		sl->insert(SpanList::value_type(t2, this));
+		sl->insert(SpanList::value_type(t1*factor, this));
+		sl->insert(SpanList::value_type(t2*factor, this));
 	}
 }
 

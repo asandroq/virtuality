@@ -519,16 +519,14 @@ int Script::_union_ctor(lua_State* L)
 	// traversing table gathering shapes
 	lua_pushnil(L);
 	while(lua_next(L, 1)) {
-		if(lua_tag(L, 3) == s->_box_tag ||
-					s->_sphere_tag) {
+		int tag = lua_tag(L, 3);
+		if(tag == s->_box_tag || tag == s->_sphere_tag) {
 			n->addChild(static_cast<Shape*>(lua_touserdata(L, 3)));
-		} else {
-			delete n;
-			lua_error(L, "invalid object in Union");
 		}
 		lua_pop(L, 1);
 	}
 	// returning union
+	s->_shape_ctor(L, n);
 	lua_pushusertag(L, n, s->_csg_tag);
 
 	return 1;
@@ -548,16 +546,14 @@ int Script::_difference_ctor(lua_State* L)
 	// traversing table gathering shapes
 	lua_pushnil(L);
 	while(lua_next(L, 1)) {
-		if(lua_tag(L, 3) == s->_box_tag ||
-					s->_sphere_tag) {
+		int tag = lua_tag(L, 3);
+		if(tag == s->_box_tag || tag == s->_sphere_tag) {
 			n->addChild(static_cast<Shape*>(lua_touserdata(L, 3)));
-		} else {
-			delete n;
-			lua_error(L, "invalid object in Difference");
 		}
 		lua_pop(L, 1);
 	}
 	// returning difference
+	s->_shape_ctor(L, n);
 	lua_pushusertag(L, n, s->_csg_tag);
 
 	return 1;
@@ -577,16 +573,14 @@ int Script::_intersection_ctor(lua_State* L)
 	// traversing table gathering shapes
 	lua_pushnil(L);
 	while(lua_next(L, 1)) {
-		if(lua_tag(L, 3) == s->_box_tag ||
-					s->_sphere_tag) {
+		int tag = lua_tag(L, 3);
+		if(tag == s->_box_tag || tag == s->_sphere_tag) {
 			n->addChild(static_cast<Shape*>(lua_touserdata(L, 3)));
-		} else {
-			delete n;
-			lua_error(L, "invalid object in Intersection");
 		}
 		lua_pop(L, 1);
 	}
 	// returning intersection
+	s->_shape_ctor(L, n);
 	lua_pushusertag(L, n, s->_csg_tag);
 
 	return 1;

@@ -70,7 +70,7 @@ Colour Renderer::trace(const Ray& r) const
 	// calculating reflections and refractions
 	if(_curr_depth++ < _max_depth) {
 		c += 0.2 * trace(s->reflectedRay(r, P));
-		//c += 0.7 * trace(s->transmittedRay(r, P));
+		//c += 0.2 * trace(s->transmittedRay(r, P));
 	}
 	
 	return c;

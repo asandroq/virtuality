@@ -27,8 +27,10 @@ namespace Virtuality {
 
 void Plane::hit(const Ray& r0, SpanList* sl) const
 {
+	double factor;
+
 	// applying inverse transformation to ray
-	Ray r = inverseTransformation() * r0;
+	Ray r = r0.transform(inverseTransformation(), &factor);
 	// finds intersection
 	double den = _normal.x()*r.direction().x() +
 		     _normal.y()*r.direction().y() +
@@ -38,7 +40,7 @@ void Plane::hit(const Ray& r0, SpanList* sl) const
 		double t = (_distance - _normal.x()*r.origin().x() -
 					_normal.y()*r.origin().y() -
 					_normal.z()*r.origin().z()) / den;
-		sl->insert(SpanList::value_type(t, this));
+		sl->insert(SpanList::value_type(t*factor, this));
 	}
 }
 

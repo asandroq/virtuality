@@ -4,8 +4,8 @@
 Frame {
 	kind = FB_PNG,
 	name = "balls.png",
-	width = 800,
-	height = 600;
+	width = 640,
+	height = 480;
 
 	-- creating camera
 	Camera {
@@ -22,18 +22,17 @@ Frame {
 	-- creating blue box
 	Box {
 		colour = Blue,
-		-- scale  = Vector { x = 2.0, y = 2.0, z = 2.0 },
 		point1 = Point { x = -1.0, y = -1.0, z = 6.0 },
-		point2 = Point { x =  1.0, y =  1.0, z = 8.0 }
+		point2 = Point { x =  1.0, y =  1.0, z = 8.0 },
 	},
 
 	-- creating red sphere
 	Sphere {
 		radius = 1.0,
 		colour = Red,
-		centre = Point { x = 2.0, z = 9.0 },
+		centre = Point {},
 		scale  = Vector { y = 2.0, z = 2.0 },
-		-- translate = Vector { y = 1.0 }
+		translate = Vector { x = 2.0, y = 1.0, z = 9.0 }
 	},
 
 	-- creating green sphere

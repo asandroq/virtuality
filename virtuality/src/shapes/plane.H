@@ -52,7 +52,7 @@ private:
 
 inline Vector Plane::normal(const Point& P) const
 {
-	return _normal.normalise();
+	return transformNormal(_normal).normalise();
 }
 
 }
