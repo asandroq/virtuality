@@ -91,7 +91,7 @@ PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
 VERSION = @VERSION@
 
-SUBDIRS = framebuffers shapes virtuality
+SUBDIRS = framebuffers shaders shapes virtuality
 
 AUTOMAKE_OPTIONS = foreign
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -215,7 +215,7 @@ distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
-	    cp -pr $$/$$file $(distdir)/$$file; \
+	    cp -pr $$d/$$file $(distdir)/$$file; \
 	  else \
 	    test -f $(distdir)/$$file \
 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \

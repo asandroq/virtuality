@@ -34,6 +34,10 @@
 #include <difference.H>
 #include <intersection.H>
 
+#include <mattesurfaceshader.H>
+#include <plasticsurfaceshader.H>
+#include <constantsurfaceshader.H>
+
 #include <luascript.H>
 #include <pngframebuffer.H>
 #include <tgaframebuffer.H>
@@ -874,6 +878,18 @@ int LuaScript::_triangle_ctor(lua_State* L)
 	lua_pushusertag(L, t, s->_triangle_tag);
 
 	return 1;
+}
+
+int LuaScript::_mattesurface_ctor(lua_State* L)
+{
+}
+
+int LuaScript::_plasticsurface_ctor(lua_State* L)
+{
+}
+
+int LuaScript::_constantsurface_ctor(lua_State* L)
+{
 }
 
 int LuaScript::_frame_ctor(lua_State* L)

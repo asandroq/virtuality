@@ -21,47 +21,19 @@
  * To contact the author send eletronic mail to asandro@lcg.dc.ufc.br
  */
 
-#ifndef __VIRTUALITY_MATTESURFACESHADER_H__
-#define __VIRTUALITY_MATTESURFACESHADER_H__
-
-#include <surfaceshader.H>
+#include <plasticsurfaceshader.H>
 
 namespace Virtuality {
 
-class MatteSurfaceShader {
-public:
-	//! Constructor
-	MatteSurfaceShader(double ka = 1.0, double kd = 1.0);
-
-	//! Destructor
-	virtual ~MatteSurfaceShader();
-
-	//! Shades a surface
-	virtual void shade(const ShaderEnv& env, Colour& Ci, Colour& Oi);
-
-private:
-	double _ka, _kd;
-};
-
-inline MatteSurfaceShader::MatteSurfaceShader(double ka, double kd)
-	: _ka(ka), _kd(kd)
-{
-}
-
-inline MatteSurfaceShader::~MatteSurfaceShader()
-{
-}
-
 using namespace ScriptAPI;
 
-inline void MatteSurfaceShader::shade(const ShaderEnv& env,
-						Colour& Ci, Colour& Oi)
+void PlasticSurfaceShader::shade(const ShaderEnv& env, Colour& Ci, Colour& Oi)
 {
 	Vector Nf = faceforward(env.N().normalise(), env.I());
+	Vector V  = -env.I().normalise();
 	Oi = env.Os();
-	Ci = env.Os() * env.Cs()*(_ka*ambient(env) + _kd*diffuse(env, Nf));
+	Ci = env.Os() * (env.Cs()*(_ka*ambient(env) + _kd*diffuse(env, Nf)) +
+	     _specularcolour*_ks*specular(env, Nf, V, _roughness));
 }
 
 }
-
-#endif // __VIRTUALITY_MATTESURFACESHADER_H__

@@ -116,6 +116,12 @@ private:
 	int _triangle_tag;
 	static int _triangle_ctor(lua_State* L);
 
+	// surface shaders
+	int _surface_tag;
+	static int _constantsurface_ctor(lua_State* L);
+	static int _mattesurface_ctor(lua_State* L);
+	static int _plasticsurface_ctor(lua_State* L);
+
 	// frames
 	static int _frame_ctor(lua_State* L);
 

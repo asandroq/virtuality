@@ -31,19 +31,28 @@ namespace Virtuality {
 class PlasticSurfaceShader {
 public:
 	//! Constructor
-	PlasticSurfaceShader();
+	PlasticSurfaceShader(double ka = 1.0, double kd = 0.5, double ks = 0.5,
+			     double roughness = 0.1,
+			     Colour specularcolour = Colour(1.0, 1.0, 1.0));
 
 	//! Destructor
 	virtual ~PlasticSurfaceShader();
 
 	//! Shades a surface
-	virtual Colour shade(const Colour& Cs, const Colour& Os, const Point& P,
-			const Vector& N, double u, double v, double s, double t,
-			const Vector& E, const Vector& I);
+	virtual void shade(const ShaderEnv& env, Colour& Ci, Colour& Oi);
 
+private:
+	double _ka, _kd, _ks, _roughness;
+	Colour _specularcolour;
 };
 
-inline PlasticSurfaceShader::PlasticSurfaceShader()
+inline PlasticSurfaceShader::PlasticSurfaceShader(double ka,
+						  double kd,
+						  double ks,
+						  double roughness,
+						  Colour specularcolour)
+	: _ka(ka), _kd(kd), _ks(ks),
+	  _roughness(roughness), _specularcolour(specularcolour)
 {
 }
 

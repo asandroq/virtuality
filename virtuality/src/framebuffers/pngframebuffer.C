@@ -58,7 +58,7 @@ PNGFrameBuffer::~PNGFrameBuffer()
 {
 #ifdef HAVE_PNG
 	png_write_end(png_ptr, info_ptr);
-	png_destroy_write_struct(&png_ptr, 0);
+	png_destroy_write_struct(&png_ptr, &info_ptr);
 #endif
 }
 

@@ -43,6 +43,7 @@ virtuality_SOURCES = boundingbox.H boundingbox.C \
 		     shaderenv.H \
 		     vector.H
 virtuality_LDADD =   ../framebuffers/libframebuffers.a \
+		     ../shaders/libshaders.a \
 		     ../shapes/libshapes.a
 
 INCLUDES = -I../framebuffers -I../shaders -I../shapes

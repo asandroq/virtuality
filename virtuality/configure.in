@@ -45,4 +45,4 @@ AC_CHECK_HEADERS(lua.h lualib.h zlib.h png.h)
 
 dnl Checks for functions
 
-AC_OUTPUT(Makefile src/Makefile src/framebuffers/Makefile src/shapes/Makefile src/virtuality/Makefile tests/Makefile)
+AC_OUTPUT(Makefile src/Makefile src/framebuffers/Makefile src/shaders/Makefile src/shapes/Makefile src/virtuality/Makefile tests/Makefile)

@@ -35,7 +35,7 @@
 #
 
 #
-# Virtuality's framebuffer library makefile
+# Virtuality's shaders library makefile
 #
 
 
@@ -91,12 +91,12 @@ PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
 VERSION = @VERSION@
 
-noinst_LIBRARIES = libframebuffers.a
+noinst_LIBRARIES = libshaders.a
 
-libframebuffers_a_SOURCES = framebuffer.H 			    pngframebuffer.H pngframebuffer.C 			    tgaframebuffer.H tgaframebuffer.C
+libshaders_a_SOURCES = surfaceshader.H 		       constantsurfaceshader.H 		       mattesurfaceshader.H 		       plasticsurfaceshader.H plasticsurfaceshader.C
 
 
-INCLUDES = -I../virtuality
+INCLUDES = -I../shapes -I../virtuality
 AM_CXXFLAGS = -Wall -Wno-trigraphs -ansi -ffast-math -fno-rtti -fno-exceptions
 
 AUTOMAKE_OPTIONS = foreign
@@ -109,8 +109,8 @@ DEFS = @DEFS@ -I. -I$(srcdir)
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-libframebuffers_a_LIBADD = 
-libframebuffers_a_OBJECTS =  pngframebuffer.o tgaframebuffer.o
+libshaders_a_LIBADD = 
+libshaders_a_OBJECTS =  plasticsurfaceshader.o
 AR = ar
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -127,15 +127,15 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = tar
 GZIP_ENV = --best
-DEP_FILES =  .deps/pngframebuffer.P .deps/tgaframebuffer.P
-SOURCES = $(libframebuffers_a_SOURCES)
-OBJECTS = $(libframebuffers_a_OBJECTS)
+DEP_FILES =  .deps/plasticsurfaceshader.P
+SOURCES = $(libshaders_a_SOURCES)
+OBJECTS = $(libshaders_a_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
 .SUFFIXES: .C .S .c .o .s
 $(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
-	cd $(top_srcdir) && $(AUTOMAKE) --foreign src/framebuffers/Makefile
+	cd $(top_srcdir) && $(AUTOMAKE) --foreign src/shaders/Makefile
 
 Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
 	cd $(top_builddir) \
@@ -167,10 +167,10 @@ distclean-compile:
 
 maintainer-clean-compile:
 
-libframebuffers.a: $(libframebuffers_a_OBJECTS) $(libframebuffers_a_DEPENDENCIES)
-	-rm -f libframebuffers.a
-	$(AR) cru libframebuffers.a $(libframebuffers_a_OBJECTS) $(libframebuffers_a_LIBADD)
-	$(RANLIB) libframebuffers.a
+libshaders.a: $(libshaders_a_OBJECTS) $(libshaders_a_DEPENDENCIES)
+	-rm -f libshaders.a
+	$(AR) cru libshaders.a $(libshaders_a_OBJECTS) $(libshaders_a_LIBADD)
+	$(RANLIB) libshaders.a
 .C.o:
 	$(CXXCOMPILE) -c $<
 
@@ -205,14 +205,14 @@ maintainer-clean-tags:
 
 distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
 
-subdir = src/framebuffers
+subdir = src/shaders
 
 distdir: $(DISTFILES)
 	here=`cd $(top_builddir) && pwd`; \
 	top_distdir=`cd $(top_distdir) && pwd`; \
 	distdir=`cd $(distdir) && pwd`; \
 	cd $(top_srcdir) \
-	  && $(AUTOMAKE) --include-deps --build-dir=$$here --srcdir-name=$(top_srcdir) --output-dir=$$top_distdir --foreign src/framebuffers/Makefile
+	  && $(AUTOMAKE) --include-deps --build-dir=$$here --srcdir-name=$(top_srcdir) --output-dir=$$top_distdir --foreign src/shaders/Makefile
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \

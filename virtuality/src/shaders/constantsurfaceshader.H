@@ -48,8 +48,8 @@ inline ConstantSurfaceShader::~ConstantSurfaceShader()
 {
 }
 
-inline Colour ConstantSurfaceShader::shade(const ShaderEnv& env,
-						Colour& Ci, Colour& Oi);
+inline void ConstantSurfaceShader::shade(const ShaderEnv& env,
+						Colour& Ci, Colour& Oi)
 {
 	Oi = env.Os();
 	Ci = env.Os() * env.Cs();
