@@ -29,7 +29,8 @@ Frame {
 	Sphere {
 		radius = 1.0,
 		colour = Red,
-		centre = Point { x = 2.0, z = 9.0 }
+		centre = Point { x = 2.0, z = 9.0 },
+		scale  = Vector { y = 2.0 }
 	},
 
 	-- creating green sphere

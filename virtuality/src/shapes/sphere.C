@@ -57,13 +57,14 @@ void Sphere::hit(const Ray& r0, SpanList* sl) const
 	}
 }
 
-Vector Sphere::normal(const Point& P) const
+Vector Sphere::normal(const Point& p0) const
 {
-	Vector n(P.x() - _centre.x(),
-		 P.y() - _centre.y(),
-		 P.z() - _centre.z());
+	Point p = inverseTransformation() * p0;
+	Vector n(p.x() - _centre.x(),
+		 p.y() - _centre.y(),
+		 p.z() - _centre.z());
 
-	return n.normalise();
+	return transformNormal(n).normalise();
 }
 
 }

@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 
 	// the usual copyright notice
 	cout << "The Virtuality Renderer\n";
-	cout << "Copyright (c) 2001, Alex Sandro Queiroz e Silva\n";
+	cout << "Copyright (c) 2001 Alex Sandro Queiroz e Silva\n";
 	cout << "This program comes with no warranty!\n\n";
 	// reading options
 	opterr = 0;

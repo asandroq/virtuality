@@ -91,6 +91,9 @@ public:
 	//! queries the inverse transformation matrix
 	const Matrix& inverseTransformation() const;
 
+	//! transforms a normal vector, keeping it normal
+	Vector transformNormal(const Vector& v) const;
+
 	//! Queries if the ray hits the shape
 	/*!
 	 * the ray's direction is supposed to be normalised
@@ -171,6 +174,20 @@ inline const Matrix& Shape::transformation() const
 inline const Matrix& Shape::inverseTransformation() const
 {
 	return _inv;
+}
+
+inline Vector Shape::transformNormal(const Vector& v) const
+{
+	/* 
+	 * to transform the normal, we multiply it by the transpose
+	 * of the inverse transformation
+	 */
+	Matrix tmp(_inv.e11(), _inv.e21(), _inv.e31(), 0.0,
+		   _inv.e12(), _inv.e22(), _inv.e32(), 0.0,
+		   _inv.e13(), _inv.e23(), _inv.e33(), 0.0,
+			  0.0,        0.0,        0.0, 1.0);
+
+	return tmp * v;
 }
 
 }

@@ -92,23 +92,28 @@ void Box::hit(const Ray& r0, SpanList* sl) const
 	}
 }
 
-Vector Box::normal(const Point& p) const
+Vector Box::normal(const Point& p0) const
 {
+	Vector v;
+
+	Point p = inverseTransformation() * p0;
 	if(areEqual(p.x(), _small_x)) {
-		return Vector(-1.0, 0.0, 0.0);
+		v = Vector(-1.0, 0.0, 0.0);
 	} else if(areEqual(p.x(), _big_x)) {
-		return Vector( 1.0, 0.0, 0.0);
+		v = Vector( 1.0, 0.0, 0.0);
 	} else if(areEqual(p.y(), _small_y)) {
-		return Vector(0.0, -1.0, 0.0);
+		v = Vector(0.0, -1.0, 0.0);
 	} else if(areEqual(p.y(), _big_y)) {
-		return Vector(0.0,  1.0, 0.0);
+		v = Vector(0.0,  1.0, 0.0);
 	} else if(areEqual(p.z(), _small_z)) {
-		return Vector(0.0, 0.0, -1.0);
+		v = Vector(0.0, 0.0, -1.0);
 	} else if(areEqual(p.z(), _big_z)) {
-		return Vector(0.0, 0.0,  1.0);
+		v = Vector(0.0, 0.0,  1.0);
 	} else {
-		return Vector(0.0, 0.0, 0.0);
+		v = Vector(0.0, 0.0, -1.0);
 	}
+
+	return transformNormal(v).normalise();
 }
 
 }
