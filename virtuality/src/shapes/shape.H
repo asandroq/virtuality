@@ -33,6 +33,7 @@
 namespace Virtuality {
 
 class Shape;
+class SurfaceShader;
 
 // list of hits
 typedef map<double, const Shape*> SpanList;
@@ -60,6 +61,12 @@ public:
 	 * \sa colour()
 	 */
 	void setColour(const Colour& colour);
+
+	//! Queries the surface shader of this shape
+	SurfaceShader* surfaceShader() const;
+
+	//! Sets the shader of this shape
+	void setSurfaceShader(SurfaceShader* shader);
 
 	//! Scales this shape
 	/*!
@@ -118,6 +125,8 @@ public:
 private:
 	// this shape's colour
 	Colour _colour;
+	// this shape's shader
+	SurfaceShader* _shader;
 	// transformation matrix
 	Matrix _trans;
 	// inverse transfomation matrix
@@ -140,6 +149,16 @@ inline Colour Shape::colour() const
 inline void Shape::setColour(const Colour& c)
 {
 	_colour = c;
+}
+
+inline SurfaceShader* Shape::surfaceShader() const
+{
+	return _shader;
+}
+
+inline void Shape::setSurfaceShader(SurfaceShader* shader)
+{
+	_shader = shader;
 }
 
 inline void Shape::scale(double x, double y, double z)

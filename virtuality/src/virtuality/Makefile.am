@@ -31,6 +31,7 @@ virtuality_SOURCES = boundingbox.H boundingbox.C \
 		     camera.H \
 		     colour.H colour.C \
 		     light.H \
+		     luascript.H luascript.C \
 		     main.C \
 		     math.H math.C \
 		     matrix.H matrix.C \
@@ -38,7 +39,6 @@ virtuality_SOURCES = boundingbox.H boundingbox.C \
 		     ray.H \
 		     renderer.H renderer.C \
 		     scene.H scene.C \
-		     script.H script.C \
 		     vector.H
 virtuality_LDADD =   ../framebuffers/libframebuffers.a \
 		     ../shapes/libshapes.a

@@ -21,8 +21,8 @@
  * To contact the author send eletronic mail to asandro@lcg.dc.ufc.br
  */
 
-#ifndef __VIRTUALITY_SCRIPT_H__
-#define __VIRTUALITY_SCRIPT_H__
+#ifndef __VIRTUALITY_LUASCRIPT_H__
+#define __VIRTUALITY_LUASCRIPT_H__
 
 extern "C" {
 #include <lua.h>
@@ -35,13 +35,13 @@ extern "C" {
 
 namespace Virtuality {
 
-class Script {
+class LuaScript {
 public:
 	//! Constructor
-	Script();
+	LuaScript();
 
 	//! Destructor
-	~Script();
+	~LuaScript();
 
 	//! Runs specified script
 	bool run(const char* filename, bool verbose);
@@ -131,4 +131,4 @@ private:
 
 }
 
-#endif  //__VIRTUALITY_SCRIPT_H__
+#endif  //__VIRTUALITY_LUASCRIPT_H__

@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <iostream>
 
-#include <script.H>
+#include <luascript.H>
 
 using namespace Virtuality;
 
@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
 	}
 	srand(time(0));
 	// running file
-	Script script;
+	LuaScript script;
 	cout << "Processing " << argv[optind] << "...\n";
 	script.run(argv[optind], verbose);
 	cout << "Processing of " << argv[optind] << " finished.\n";

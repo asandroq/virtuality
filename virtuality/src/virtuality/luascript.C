@@ -34,7 +34,7 @@
 #include <difference.H>
 #include <intersection.H>
 
-#include <script.H>
+#include <luascript.H>
 #include <pngframebuffer.H>
 #include <tgaframebuffer.H>
 
@@ -43,12 +43,12 @@ namespace Virtuality {
 const int FB_PNG = 1;
 const int FB_TGA = 2;
 
-int Script::_point_ctor(lua_State *L)
+int LuaScript::_point_ctor(lua_State *L)
 {
 	double x, y, z;
 
-	// getting and popping upvalue - Script instance
-	Script* s = static_cast<Script*>(lua_touserdata(L, -1));
+	// getting and popping upvalue - LuaScript instance
+	LuaScript* s = static_cast<LuaScript*>(lua_touserdata(L, -1));
 	lua_pop(L, 1);
 	// we must get a table
 	if(!lua_istable(L, 1)) {
@@ -97,7 +97,7 @@ int Script::_point_ctor(lua_State *L)
 	return 1;
 }
 
-int Script::_point_dtor(lua_State* L)
+int LuaScript::_point_dtor(lua_State* L)
 {
 	Point* p = static_cast<Point*>(lua_touserdata(L, 1));
 	lua_pop(L, 1);
@@ -106,7 +106,7 @@ int Script::_point_dtor(lua_State* L)
 	return 0;
 }
 
-int Script::_point_index(lua_State* L)
+int LuaScript::_point_index(lua_State* L)
 {
 	double res;
 
@@ -134,12 +134,12 @@ int Script::_point_index(lua_State* L)
 	return 1;
 }
 
-int Script::_colour_ctor(lua_State *L)
+int LuaScript::_colour_ctor(lua_State *L)
 {
 	double r, g, b;
 
-	// getting and popping upvalue - Script instance
-	Script* s = static_cast<Script*>(lua_touserdata(L, -1));
+	// getting and popping upvalue - LuaScript instance
+	LuaScript* s = static_cast<LuaScript*>(lua_touserdata(L, -1));
 	lua_pop(L, 1);
 	// we must get a table
 	if(!lua_istable(L, 1)) {
@@ -188,7 +188,7 @@ int Script::_colour_ctor(lua_State *L)
 	return 1;
 }
 
-int Script::_colour_dtor(lua_State* L)
+int LuaScript::_colour_dtor(lua_State* L)
 {
 	Colour* c = static_cast<Colour*>(lua_touserdata(L, 1));
 	lua_pop(L, 1);
@@ -197,7 +197,7 @@ int Script::_colour_dtor(lua_State* L)
 	return 0;
 }
 
-int Script::_colour_index(lua_State* L)
+int LuaScript::_colour_index(lua_State* L)
 {
 	double res;
 
@@ -225,12 +225,12 @@ int Script::_colour_index(lua_State* L)
 	return 1;
 }
 
-int Script::_vector_ctor(lua_State *L)
+int LuaScript::_vector_ctor(lua_State *L)
 {
 	double x, y, z;
 
-	// getting and popping upvalue - Script instance
-	Script* s = static_cast<Script*>(lua_touserdata(L, -1));
+	// getting and popping upvalue - LuaScript instance
+	LuaScript* s = static_cast<LuaScript*>(lua_touserdata(L, -1));
 	lua_pop(L, 1);
 	// we must get a table
 	if(!lua_istable(L, 1)) {
@@ -279,7 +279,7 @@ int Script::_vector_ctor(lua_State *L)
 	return 1;
 }
 
-int Script::_vector_dtor(lua_State* L)
+int LuaScript::_vector_dtor(lua_State* L)
 {
 	Vector* v = static_cast<Vector*>(lua_touserdata(L, 1));
 	lua_pop(L, 1);
@@ -288,7 +288,7 @@ int Script::_vector_dtor(lua_State* L)
 	return 0;
 }
 
-int Script::_vector_index(lua_State* L)
+int LuaScript::_vector_index(lua_State* L)
 {
 	double res;
 
@@ -316,13 +316,13 @@ int Script::_vector_index(lua_State* L)
 	return 1;
 }
 
-int Script::_light_ctor(lua_State* L)
+int LuaScript::_light_ctor(lua_State* L)
 {
 	Point p;
 	Colour c;
 
-	// getting and popping upvalue - Script instance
-	Script* s = static_cast<Script*>(lua_touserdata(L, -1));
+	// getting and popping upvalue - LuaScript instance
+	LuaScript* s = static_cast<LuaScript*>(lua_touserdata(L, -1));
 	lua_pop(L, 1);
 	// we must get a table
 	if(!lua_istable(L, 1)) {
@@ -357,7 +357,7 @@ int Script::_light_ctor(lua_State* L)
 	return 1;
 }
 
-int Script::_light_dtor(lua_State* L)
+int LuaScript::_light_dtor(lua_State* L)
 {
 	Light* l = static_cast<Light*>(lua_touserdata(L, 1));
 	lua_pop(L, 1);
@@ -366,13 +366,13 @@ int Script::_light_dtor(lua_State* L)
 	return 0;
 }
 
-int Script::_camera_ctor(lua_State* L)
+int LuaScript::_camera_ctor(lua_State* L)
 {
 	Point p;
 	Vector d, u, r;
 
-	// getting and popping upvalue - Script instance
-	Script* s = static_cast<Script*>(lua_touserdata(L, -1));
+	// getting and popping upvalue - LuaScript instance
+	LuaScript* s = static_cast<LuaScript*>(lua_touserdata(L, -1));
 	lua_pop(L, 1);
 	// we must get a table
 	if(!lua_istable(L, 1)) {
@@ -429,7 +429,7 @@ int Script::_camera_ctor(lua_State* L)
 	return 1;
 }
 
-int Script::_camera_dtor(lua_State* L)
+int LuaScript::_camera_dtor(lua_State* L)
 {
 	Camera* c = static_cast<Camera*>(lua_touserdata(L, 1));
 	lua_pop(L, 1);
@@ -438,7 +438,7 @@ int Script::_camera_dtor(lua_State* L)
 	return 0;
 }
 
-void Script::_shape_ctor(lua_State* L, Shape* p)
+void LuaScript::_shape_ctor(lua_State* L, Shape* p)
 {
 	Colour c;
 	Vector v;
@@ -498,7 +498,7 @@ void Script::_shape_ctor(lua_State* L, Shape* p)
 	p->setColour(c);
 }
 
-int Script::_shape_dtor(lua_State* L)
+int LuaScript::_shape_dtor(lua_State* L)
 {
 	Shape* p = static_cast<Shape*>(lua_touserdata(L, 1));
 	lua_pop(L, 1);
@@ -507,10 +507,10 @@ int Script::_shape_dtor(lua_State* L)
 	return 0;
 }
 
-int Script::_union_ctor(lua_State* L)
+int LuaScript::_union_ctor(lua_State* L)
 {
-	// getting and popping upvalue - Script instance
-	Script* s = static_cast<Script*>(lua_touserdata(L, -1));
+	// getting and popping upvalue - LuaScript instance
+	LuaScript* s = static_cast<LuaScript*>(lua_touserdata(L, -1));
 	lua_pop(L, 1);
 	// we must get a table
 	if(!lua_istable(L, 1)) {
@@ -538,10 +538,10 @@ int Script::_union_ctor(lua_State* L)
 	return 1;
 }
 
-int Script::_difference_ctor(lua_State* L)
+int LuaScript::_difference_ctor(lua_State* L)
 {
-	// getting and popping upvalue - Script instance
-	Script* s = static_cast<Script*>(lua_touserdata(L, -1));
+	// getting and popping upvalue - LuaScript instance
+	LuaScript* s = static_cast<LuaScript*>(lua_touserdata(L, -1));
 	lua_pop(L, 1);
 	// we must get a table
 	if(!lua_istable(L, 1)) {
@@ -569,10 +569,10 @@ int Script::_difference_ctor(lua_State* L)
 	return 1;
 }
 
-int Script::_intersection_ctor(lua_State* L)
+int LuaScript::_intersection_ctor(lua_State* L)
 {
-	// getting and popping upvalue - Script instance
-	Script* s = static_cast<Script*>(lua_touserdata(L, -1));
+	// getting and popping upvalue - LuaScript instance
+	LuaScript* s = static_cast<LuaScript*>(lua_touserdata(L, -1));
 	lua_pop(L, 1);
 	// we must get a table
 	if(!lua_istable(L, 1)) {
@@ -600,12 +600,12 @@ int Script::_intersection_ctor(lua_State* L)
 	return 1;
 }
 
-int Script::_box_ctor(lua_State* L)
+int LuaScript::_box_ctor(lua_State* L)
 {
 	Point p1, p2;
 
-	// getting and popping upvalue - Script instance
-	Script* s = static_cast<Script*>(lua_touserdata(L, -1));
+	// getting and popping upvalue - LuaScript instance
+	LuaScript* s = static_cast<LuaScript*>(lua_touserdata(L, -1));
 	lua_pop(L, 1);
 	// we must get a table
 	if(!lua_istable(L, 1)) {
@@ -641,13 +641,13 @@ int Script::_box_ctor(lua_State* L)
 	return 1;
 }
 
-int Script::_cylinder_ctor(lua_State* L)
+int LuaScript::_cylinder_ctor(lua_State* L)
 {
 	double r;
 	Point p1, p2;
 
-	// getting and popping upvalue - Script instance
-	Script* s = static_cast<Script*>(lua_touserdata(L, -1));
+	// getting and popping upvalue - LuaScript instance
+	LuaScript* s = static_cast<LuaScript*>(lua_touserdata(L, -1));
 	lua_pop(L, 1);
 	// we must get a table
 	if(!lua_istable(L, 1)) {
@@ -695,13 +695,13 @@ int Script::_cylinder_ctor(lua_State* L)
 	return 1;
 }
 
-int Script::_sphere_ctor(lua_State* L)
+int LuaScript::_sphere_ctor(lua_State* L)
 {
 	Point p;
 	double r;
 
-	// getting and popping upvalue - Script instance
-	Script* s = static_cast<Script*>(lua_touserdata(L, -1));
+	// getting and popping upvalue - LuaScript instance
+	LuaScript* s = static_cast<LuaScript*>(lua_touserdata(L, -1));
 	lua_pop(L, 1);
 	// we must get a table
 	if(!lua_istable(L, 1)) {
@@ -738,13 +738,13 @@ int Script::_sphere_ctor(lua_State* L)
 	return 1;
 }
 
-int Script::_plane_ctor(lua_State* L)
+int LuaScript::_plane_ctor(lua_State* L)
 {
 	Vector n;
 	double d;
 
-	// getting and popping upvalue - Script instance
-	Script* s = static_cast<Script*>(lua_touserdata(L, -1));
+	// getting and popping upvalue - LuaScript instance
+	LuaScript* s = static_cast<LuaScript*>(lua_touserdata(L, -1));
 	lua_pop(L, 1);
 	// we must get a table
 	if(!lua_istable(L, 1)) {
@@ -781,12 +781,12 @@ int Script::_plane_ctor(lua_State* L)
 	return 1;
 }
 
-int Script::_torus_ctor(lua_State* L)
+int LuaScript::_torus_ctor(lua_State* L)
 {
 	double major, minor;
 
-	// getting and popping upvalue - Script instance
-	Script* s = static_cast<Script*>(lua_touserdata(L, -1));
+	// getting and popping upvalue - LuaScript instance
+	LuaScript* s = static_cast<LuaScript*>(lua_touserdata(L, -1));
 	lua_pop(L, 1);
 	// we must get a table
 	if(!lua_istable(L, 1)) {
@@ -824,12 +824,12 @@ int Script::_torus_ctor(lua_State* L)
 	return 1;
 }
 
-int Script::_triangle_ctor(lua_State* L)
+int LuaScript::_triangle_ctor(lua_State* L)
 {
 	Point p1, p2, p3;
 
-	// getting and popping upvalue - Script instance
-	Script* s = static_cast<Script*>(lua_touserdata(L, -1));
+	// getting and popping upvalue - LuaScript instance
+	LuaScript* s = static_cast<LuaScript*>(lua_touserdata(L, -1));
 	lua_pop(L, 1);
 	// we must get a table
 	if(!lua_istable(L, 1)) {
@@ -876,13 +876,13 @@ int Script::_triangle_ctor(lua_State* L)
 	return 1;
 }
 
-int Script::_frame_ctor(lua_State* L)
+int LuaScript::_frame_ctor(lua_State* L)
 {
 	string nm;
 	int depth, kind, width, height;
 
-	// getting and popping upvalue - Script instance
-	Script* s = static_cast<Script*>(lua_touserdata(L, -1));
+	// getting and popping upvalue - LuaScript instance
+	LuaScript* s = static_cast<LuaScript*>(lua_touserdata(L, -1));
 	lua_pop(L, 1);
 	// we must get a table
 	if(!lua_istable(L, 1)) {
@@ -997,7 +997,7 @@ int Script::_frame_ctor(lua_State* L)
 	return 0;
 }
 
-Script::Script()
+LuaScript::LuaScript()
 	: _verbose(false), _lua_state(0), _sc(0), _rd(0), _fb(0)
 {
 	// creating a new lua state
@@ -1160,7 +1160,7 @@ Script::Script()
 	lua_setglobal(_lua_state, "Frame");
 }
 
-Script::~Script()
+LuaScript::~LuaScript()
 {
 	lua_unref(_lua_state, _script_ref);
 	lua_close(_lua_state);
@@ -1170,7 +1170,7 @@ Script::~Script()
 	delete _fb;
 }
 
-bool Script::run(const char* filename, bool verbose)
+bool LuaScript::run(const char* filename, bool verbose)
 {
 	if(filename) {
 		_verbose = verbose;

@@ -92,7 +92,7 @@ VERSION = @VERSION@
 
 bin_PROGRAMS = virtuality
 
-virtuality_SOURCES = boundingbox.H boundingbox.C 		     camera.H 		     colour.H colour.C 		     light.H 		     main.C 		     math.H math.C 		     matrix.H matrix.C 		     point.H 		     ray.H 		     renderer.H renderer.C 		     scene.H scene.C 		     script.H script.C 		     vector.H
+virtuality_SOURCES = boundingbox.H boundingbox.C 		     camera.H 		     colour.H colour.C 		     light.H 		     luascript.H luascript.C 		     main.C 		     math.H math.C 		     matrix.H matrix.C 		     point.H 		     ray.H 		     renderer.H renderer.C 		     scene.H scene.C 		     vector.H
 
 virtuality_LDADD = ../framebuffers/libframebuffers.a 		     ../shapes/libshapes.a
 
@@ -110,8 +110,8 @@ DEFS = @DEFS@ -I. -I$(srcdir)
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-virtuality_OBJECTS =  boundingbox.o colour.o main.o math.o matrix.o \
-renderer.o scene.o script.o
+virtuality_OBJECTS =  boundingbox.o colour.o luascript.o main.o math.o \
+matrix.o renderer.o scene.o
 virtuality_DEPENDENCIES =  ../framebuffers/libframebuffers.a \
 ../shapes/libshapes.a
 virtuality_LDFLAGS = 
@@ -130,9 +130,8 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = tar
 GZIP_ENV = --best
-DEP_FILES =  .deps/boundingbox.P .deps/colour.P .deps/main.P \
-.deps/math.P .deps/matrix.P .deps/renderer.P .deps/scene.P \
-.deps/script.P
+DEP_FILES =  .deps/boundingbox.P .deps/colour.P .deps/luascript.P \
+.deps/main.P .deps/math.P .deps/matrix.P .deps/renderer.P .deps/scene.P
 SOURCES = $(virtuality_SOURCES)
 OBJECTS = $(virtuality_OBJECTS)
 
