@@ -29,7 +29,7 @@ namespace Virtuality {
 void Sphere::hit(const Ray& r0, SpanList* sl) const
 {
 	// applying inverse transformation to ray
-	Ray r = transformRay(r0);
+	Ray r = inverseTransformation() * r0;
 	// sphere's centre
 	double l = _centre.x();
 	double m = _centre.y();
@@ -60,8 +60,8 @@ void Sphere::hit(const Ray& r0, SpanList* sl) const
 Vector Sphere::normal(const Point& P) const
 {
 	Vector n(P.x() - _centre.x(),
-			P.y() - _centre.y(),
-			P.z() - _centre.z());
+		 P.y() - _centre.y(),
+		 P.z() - _centre.z());
 
 	return n.normalise();
 }

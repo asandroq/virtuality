@@ -85,8 +85,11 @@ public:
 	 */
 	void rotate(double ax, double ay, double az);
 
-	//! transforms the ray with inverse shape's transformation
-	Ray transformRay(const Ray& r) const;
+	//! queries the transformation matrix
+	const Matrix& transformation() const;
+
+	//! queries the inverse transformation matrix
+	const Matrix& inverseTransformation() const;
 
 	//! Queries if the ray hits the shape
 	/*!
@@ -160,11 +163,16 @@ inline void Shape::translate(double x, double y, double z)
 		      0.0, 0.0, 0.0, 1.0) * _inv;
 }
 
-inline Ray Shape::transformRay(const Ray& r) const
+inline const Matrix& Shape::transformation() const
 {
-	return _inv*r;
+	return _trans;
+}
+
+inline const Matrix& Shape::inverseTransformation() const
+{
+	return _inv;
 }
 
 }
 
-#endif // __VIRTUALITY_SHAPE_H__
+#endif  // __VIRTUALITY_SHAPE_H__

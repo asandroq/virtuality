@@ -28,7 +28,8 @@
 
 noinst_LIBRARIES = libshapes.a
 
-libshapes_a_SOURCES = plane.H plane.C \
+libshapes_a_SOURCES = box.H box.C \
+		      plane.H plane.C \
 		      shape.H shape.C \
 		      sphere.H sphere.C \
 		      triangle.H triangle.C

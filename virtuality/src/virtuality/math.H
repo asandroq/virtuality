@@ -32,9 +32,9 @@ namespace Virtuality {
 const double Epsilon = 1.0e-10;
 const double Pi = 3.1415926535898;
 
-inline double isZero(double t)
+inline bool isZero(double t)
 {
-	return abs(t) < Epsilon;
+	return -Epsilon < t && t < Epsilon;
 }
 
 template<class T> inline T min(T a, T b)
@@ -45,6 +45,16 @@ template<class T> inline T min(T a, T b)
 template<class T> inline T max(T a, T b)
 {
 	return a > b ? a : b;
+}
+
+template<class T> inline T min(T a, T b, T c)
+{
+	return a < b ? (a < c ? a : c) : (b < c ? b : c);
+}
+
+template<class T> inline T max(T a, T b, T c)
+{
+	return a > b ? (a > c ? a : c) : (b > c ? b : c);
 }
 
 template<class T> inline T clamp(T a, T min, T max)

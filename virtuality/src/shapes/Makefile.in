@@ -93,7 +93,7 @@ VERSION = @VERSION@
 
 noinst_LIBRARIES = libshapes.a
 
-libshapes_a_SOURCES = plane.H plane.C 		      shape.H shape.C 		      sphere.H sphere.C 		      triangle.H triangle.C
+libshapes_a_SOURCES = box.H box.C 		      plane.H plane.C 		      shape.H shape.C 		      sphere.H sphere.C 		      triangle.H triangle.C
 
 
 INCLUDES = -I../virtuality
@@ -110,7 +110,7 @@ CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 libshapes_a_LIBADD = 
-libshapes_a_OBJECTS =  plane.o shape.o sphere.o triangle.o
+libshapes_a_OBJECTS =  box.o plane.o shape.o sphere.o triangle.o
 AR = ar
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -127,7 +127,8 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = tar
 GZIP_ENV = --best
-DEP_FILES =  .deps/plane.P .deps/shape.P .deps/sphere.P .deps/triangle.P
+DEP_FILES =  .deps/box.P .deps/plane.P .deps/shape.P .deps/sphere.P \
+.deps/triangle.P
 SOURCES = $(libshapes_a_SOURCES)
 OBJECTS = $(libshapes_a_OBJECTS)
 
@@ -216,7 +217,7 @@ distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
-	    cp -pr $$/$$file $(distdir)/$$file; \
+	    cp -pr $$d/$$file $(distdir)/$$file; \
 	  else \
 	    test -f $(distdir)/$$file \
 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \

@@ -37,7 +37,7 @@ public:
 	//! Destructor
 	~Sphere() {}
 
-	//! Queries if ray hits this sphere
+	//! Queries if ray hits this shape
 	virtual void hit(const Ray& r, SpanList* sl) const;
 
 	//! Queries the surface normal at intersection point

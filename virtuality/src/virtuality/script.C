@@ -23,6 +23,7 @@
 
 #include <string>
 
+#include <box.H>
 #include <plane.H>
 #include <sphere.H>
 #include <triangle.H>
@@ -444,18 +445,6 @@ void Script::_shape_ctor(lua_State* L, Shape* p)
 	if(!lua_istable(L, 1)) {
 		lua_error(L, "invalid argument to Shape");
 	}
-	// reading scaling
-	lua_pushstring(L, "scale");
-	lua_gettable(L, 1);
-	if(lua_isnil(L, 2)) {
-		// ok
-	} else if(lua_tag(L, 2) != _vector_tag) {
-		lua_error(L, "invalid type for Shape.scale");
-	} else {
-		v = *(static_cast<Vector*>(lua_touserdata(L, 2)));
-		p->scale(v.x(), v.y(), v.z());
-	}
-	lua_pop(L, 1);
 	// reading translation
 	lua_pushstring(L, "translate");
 	lua_gettable(L, 1);
@@ -466,6 +455,30 @@ void Script::_shape_ctor(lua_State* L, Shape* p)
 	} else {
 		v = *(static_cast<Vector*>(lua_touserdata(L, 2)));
 		p->translate(v.x(), v.y(), v.z());
+	}
+	lua_pop(L, 1);
+	// reading rotation
+	lua_pushstring(L, "rotate");
+	lua_gettable(L, 1);
+	if(lua_isnil(L, 2)) {
+		// ok
+	} else if(lua_tag(L, 2) != _vector_tag) {
+		lua_error(L, "invalid type for Shape.rotate");
+	} else {
+		v = *(static_cast<Vector*>(lua_touserdata(L, 2)));
+		p->rotate(v.x(), v.y(), v.z());
+	}
+	lua_pop(L, 1);
+	// reading scaling
+	lua_pushstring(L, "scale");
+	lua_gettable(L, 1);
+	if(lua_isnil(L, 2)) {
+		// ok
+	} else if(lua_tag(L, 2) != _vector_tag) {
+		lua_error(L, "invalid type for Shape.scale");
+	} else {
+		v = *(static_cast<Vector*>(lua_touserdata(L, 2)));
+		p->scale(v.x(), v.y(), v.z());
 	}
 	lua_pop(L, 1);
 	// reading colour
@@ -506,7 +519,8 @@ int Script::_union_ctor(lua_State* L)
 	// traversing table gathering shapes
 	lua_pushnil(L);
 	while(lua_next(L, 1)) {
-		if(lua_tag(L, 3) == s->_sphere_tag) {
+		if(lua_tag(L, 3) == s->_box_tag ||
+					s->_sphere_tag) {
 			n->addChild(static_cast<Shape*>(lua_touserdata(L, 3)));
 		} else {
 			delete n;
@@ -534,7 +548,8 @@ int Script::_difference_ctor(lua_State* L)
 	// traversing table gathering shapes
 	lua_pushnil(L);
 	while(lua_next(L, 1)) {
-		if(lua_tag(L, 3) == s->_sphere_tag) {
+		if(lua_tag(L, 3) == s->_box_tag ||
+					s->_sphere_tag) {
 			n->addChild(static_cast<Shape*>(lua_touserdata(L, 3)));
 		} else {
 			delete n;
@@ -562,7 +577,8 @@ int Script::_intersection_ctor(lua_State* L)
 	// traversing table gathering shapes
 	lua_pushnil(L);
 	while(lua_next(L, 1)) {
-		if(lua_tag(L, 3) == s->_sphere_tag) {
+		if(lua_tag(L, 3) == s->_box_tag ||
+					s->_sphere_tag) {
 			n->addChild(static_cast<Shape*>(lua_touserdata(L, 3)));
 		} else {
 			delete n;
@@ -572,6 +588,47 @@ int Script::_intersection_ctor(lua_State* L)
 	}
 	// returning intersection
 	lua_pushusertag(L, n, s->_csg_tag);
+
+	return 1;
+}
+
+int Script::_box_ctor(lua_State* L)
+{
+	Point p1, p2;
+
+	// getting and popping upvalue - Script instance
+	Script* s = static_cast<Script*>(lua_touserdata(L, -1));
+	lua_pop(L, 1);
+	// we must get a table
+	if(!lua_istable(L, 1)) {
+		lua_error(L, "invalid argument to Box");
+	}
+	// reading first point
+	lua_pushstring(L, "point1");
+	lua_gettable(L, 1);
+	if(lua_isnil(L, 2)) {
+		p1 = Point(0.0, 0.0, 0.0);
+	} else if(lua_tag(L, 2) != s->_point_tag) {
+		lua_error(L, "invalid type for Box.point1");
+	} else {
+		p1 = *(static_cast<Point*>(lua_touserdata(L, 2)));
+	}
+	lua_pop(L, 1);
+	// reading second point
+	lua_pushstring(L, "point2");
+	lua_gettable(L, 1);
+	if(lua_isnil(L, 2)) {
+		p2 = Point(0.0, 0.0, 0.0);
+	} else if(lua_tag(L, 2) != s->_point_tag) {
+		lua_error(L, "invalid type for Box.point2");
+	} else {
+		p2 = *(static_cast<Point*>(lua_touserdata(L, 2)));
+	}
+	lua_pop(L, 1);
+	// creating and pushing new box
+	Shape* b = new Box(p1, p2);
+	s->_shape_ctor(L, b);
+	lua_pushusertag(L, b, s->_box_tag);
 
 	return 1;
 }
@@ -810,6 +867,7 @@ int Script::_frame_ctor(lua_State* L)
 			Light* l = static_cast<Light*>(lua_touserdata(L, -1));
 			s->_sc->addLight(*l);
 		} else if(tag == s->_csg_tag ||
+				tag == s->_box_tag ||
 				tag == s->_sphere_tag ||
 				tag == s->_plane_tag ||
 				tag == s->_triangle_tag) {
@@ -945,6 +1003,13 @@ Script::Script()
 	lua_getref(_lua_state, _script_ref);
 	lua_pushcclosure(_lua_state, _intersection_ctor, 1);
 	lua_setglobal(_lua_state, "Intersection");
+
+	// boxes
+	_box_tag = lua_newtag(_lua_state);
+	// constructor
+	lua_getref(_lua_state, _script_ref);
+	lua_pushcclosure(_lua_state, _box_ctor, 1);
+	lua_setglobal(_lua_state, "Box");
 
 	// spheres
 	_sphere_tag = lua_newtag(_lua_state);

@@ -25,7 +25,6 @@
 #define __VIRTUALITY_RAY_H_
 
 #include <point.H>
-#include <matrix.H>
 #include <vector.H>
 
 namespace Virtuality {
@@ -63,12 +62,6 @@ inline Point Ray::pointOnRay(double t) const
 inline bool operator==(const Ray& r1, const Ray& r2)
 {
 	return r1.origin() == r2.origin() && r1.direction() == r2.direction();
-}
-
-//! transforms a ray with this matrix
-inline Ray operator*(const Matrix& m, const Ray& r)
-{
-	return Ray(m*r.origin(), m*r.direction());
 }
 
 }

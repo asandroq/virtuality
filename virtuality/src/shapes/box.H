@@ -21,21 +21,21 @@
  * To contact the author send eletronic mail to asandro@lcg.dc.ufc.br
  */
 
-#ifndef __VIRTUALITY_PLANE_H__
-#define __VIRTUALITY_PLANE_H__
+#ifndef __VIRTUALITY_BOX_H__
+#define __VIRTUALITY_BOX_H__
 
 #include <shape.H>
 
 namespace Virtuality {
 
-class Plane : public Shape {
+class Box : public Shape {
 public:
 	//! Constructor
-	Plane(const Vector& normal, double distance)
-		: _normal(normal), _distance(distance) {}
+	Box(const Point& point1, const Point& point2)
+		: _p1(point1), _p2(point2) {}
 
 	//! Destructor
-	~Plane() {}
+	~Box() {}
 
 	//! Queries if ray hits this shape
 	virtual void hit(const Ray& r, SpanList* sl) const;
@@ -44,17 +44,10 @@ public:
 	virtual Vector normal(const Point& P) const;
 
 private:
-	// plane's normal
-	Vector _normal;
-	// plane's distance along normal
-	double _distance;
+	// box's extreme points
+	Point _p1, _p2;
 };
 
-inline Vector Plane::normal(const Point& P) const
-{
-	return _normal.normalise();
 }
 
-}
-
-#endif  // __VIRTUALITY_PLANE_H__
+#endif  // __VIRTUALITY_BOX_H__

@@ -1,4 +1,4 @@
--- Scene with tree balls
+-- CSG demo
 -- Alex Sandro Queiroz e Silva
 
 Frame {
@@ -25,7 +25,7 @@ Frame {
 			radius = 1.0,
 			colour = Red,
 			centre = Point { x = 0.5, z = 7.5 },
-			scale = Vector { x = 2.0, y = 2.0 }
+			scale = Vector { x = 2.0, y = 2.0, z = 2.0 },
 		},
 		-- creating blue sphere
 		Sphere {

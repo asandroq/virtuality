@@ -116,7 +116,9 @@ inline Vector& Vector::operator^=(const Vector& v)
 
 inline bool operator==(const Vector& v1, const Vector& v2)
 {
-	return v1.x() == v2.x() && v1.y() == v2.y() && v1.z() == v2.z();
+	return isZero(v1.x()-v2.x()) &&
+	       isZero(v1.y()-v2.y()) &&
+	       isZero(v1.z()-v2.z());
 }
 
 inline Vector operator-(const Vector& v)

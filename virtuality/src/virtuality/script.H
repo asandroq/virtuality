@@ -92,6 +92,10 @@ private:
 	static int _difference_ctor(lua_State* L);
 	static int _intersection_ctor(lua_State* L);
 
+	// boxes
+	int _box_tag;
+	static int _box_ctor(lua_State* L);
+
 	// spheres
 	int _sphere_tag;
 	static int _sphere_ctor(lua_State* L);

@@ -21,7 +21,6 @@
  * To contact the author send eletronic mail to asandro@lcg.dc.ufc.br
  */
 
-#include <math.H>
 #include <plane.H>
 
 namespace Virtuality {
@@ -29,11 +28,11 @@ namespace Virtuality {
 void Plane::hit(const Ray& r0, SpanList* sl) const
 {
 	// applying inverse transformation to ray
-	Ray r = transformRay(r0);
+	Ray r = inverseTransformation() * r0;
 	// finds intersection
 	double den = _normal.x()*r.direction().x() +
-				_normal.y()*r.direction().y() +
-				_normal.z()*r.direction().z();
+		     _normal.y()*r.direction().y() +
+		     _normal.z()*r.direction().z();
 	// tests if ray hits the plane
 	if(!isZero(den)) {
 		double t = (_distance - _normal.x()*r.origin().x() -

@@ -18,11 +18,11 @@ Frame {
 		position = Point { y = 30.0, z = -10.0 }
 	},
 
-	-- creating blue sphere
-	Sphere {
-		radius = 1.0,
+	-- creating blue box
+	Box {
 		colour = Blue,
-		centre = Point { z = 7.0 }
+		point1 = Point { x = -1.0, y = -1.0, z = 6.0 },
+		point2 = Point { x =  2.0, y =  2.0, z = 8.0 }
 	},
 
 	-- creating red sphere
