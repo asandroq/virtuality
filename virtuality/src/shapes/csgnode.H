@@ -67,9 +67,13 @@ inline CSGNode::~CSGNode()
 inline void CSGNode::addChild(const Shape* s)
 {
 	if(s) {
+		if(_childs.empty()) {
+			setBounds(s->bounds());
+		} else {
+			setBounds(bounds() + s->bounds());
+		}
 		_childs.push_back(s);
 	}
-
 }
 
 inline Vector CSGNode::normal(const Point& P) const

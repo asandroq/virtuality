@@ -31,6 +31,10 @@ void Box::hit(const Ray& r0, SpanList* sl) const
 
 	// applying inverse transformation to ray
 	Ray r = r0.transform(inverseTransformation(), &factor);
+	// possibly discarding ray
+	if(!bounds().hit(r)) {
+		return;
+	}
 	// auxiliary points
 	Point p0 = r.origin();
 	// calculating intersections

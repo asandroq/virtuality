@@ -31,8 +31,7 @@ namespace Virtuality {
 class Torus : public Shape {
 public:
 	//! Constructor
-	Torus(double major, double minor)
-		: _major(major), _minor(minor) {}
+	Torus(double major, double minor);
 
 	//! Destructor
 	~Torus() {}
@@ -49,6 +48,13 @@ private:
 	// torus' minor radius
 	double _minor;
 };
+
+inline Torus::Torus(double major, double minor)
+	: _major(major), _minor(minor)
+{
+	double d = major + minor;
+	setBounds(BoundingBox(-d, -minor, -d, d, minor, d));
+}
 
 }
 

@@ -32,6 +32,10 @@ void Torus::hit(const Ray& r0, SpanList* sl) const
 
 	// applying inverse transformation to ray
 	Ray r = r0.transform(inverseTransformation(), &factor);
+	// possibly discarding ray
+	if(!bounds().hit(r)) {
+		return;
+	}
 	// caching...
 	Point p  = r.origin();
 	Vector v = r.direction();

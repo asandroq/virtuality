@@ -523,7 +523,8 @@ int Script::_union_ctor(lua_State* L)
 		int tag = lua_tag(L, 3);
 		if(tag == s->_box_tag    ||
 		   tag == s->_sphere_tag ||
-		   tag == s->_torus_tag) {
+		   tag == s->_torus_tag  ||
+		   tag == s->_triangle_tag) {
 			n->addChild(static_cast<Shape*>(lua_touserdata(L, 3)));
 		}
 		lua_pop(L, 1);
@@ -552,7 +553,8 @@ int Script::_difference_ctor(lua_State* L)
 		int tag = lua_tag(L, 3);
 		if(tag == s->_box_tag    ||
 		   tag == s->_sphere_tag ||
-		   tag == s->_torus_tag) {
+		   tag == s->_torus_tag  ||
+		   tag == s->_triangle_tag) {
 			n->addChild(static_cast<Shape*>(lua_touserdata(L, 3)));
 		}
 		lua_pop(L, 1);
@@ -581,7 +583,8 @@ int Script::_intersection_ctor(lua_State* L)
 		int tag = lua_tag(L, 3);
 		if(tag == s->_box_tag    ||
 		   tag == s->_sphere_tag ||
-		   tag == s->_torus_tag) {
+		   tag == s->_torus_tag  ||
+		   tag == s->_triangle_tag) {
 			n->addChild(static_cast<Shape*>(lua_touserdata(L, 3)));
 		}
 		lua_pop(L, 1);

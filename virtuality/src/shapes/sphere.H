@@ -31,8 +31,7 @@ namespace Virtuality {
 class Sphere : public Shape {
 public:
 	//! Constructor
-	Sphere(const Point& centre, double radius)
-		: _centre(centre), _radius(radius) {}
+	Sphere(const Point& centre, double radius);
 
 	//! Destructor
 	~Sphere() {}
@@ -49,6 +48,13 @@ private:
 	// sphere's radius
 	double _radius;
 };
+
+inline Sphere::Sphere(const Point& c, double r)
+	: _centre(c), _radius(r)
+{
+	setBounds(BoundingBox(c.x()-r, c.y()-r, c.z()-r,
+			      c.x()+r, c.y()+r, c.z()+r));
+}
 
 }
 

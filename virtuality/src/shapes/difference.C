@@ -35,6 +35,10 @@ void Difference::hit(const Ray& r0, SpanList* sl) const
 	}
 	// applying inverse transformation to ray
 	Ray r = r0.transform(inverseTransformation(), &f);
+	// possibly discarding ray
+	if(!bounds().hit(r)) {
+		return;
+	}
 	// hitting first child
 	_childs[0]->hit(r, sl);
 	if(sl->empty()) {

@@ -31,22 +31,48 @@ namespace Virtuality {
 class BoundingBox {
 public:
 	//! constructor
+	BoundingBox();
 	BoundingBox(double x1, double y1, double z1,
 		    double x2, double y2, double z2);
 
 	//! destructor
 	~BoundingBox();
 
+	//! configures this box
+	void set(double x1, double y1, double z1,
+		 double x2, double y2, double z2);
+
 	//! queries if the ray hit this box
 	bool hit(const Ray& r) const;
+
+	//! enlages this box so it contains another
+	BoundingBox& operator+=(const BoundingBox& b);
 
 private:
 	// box extremes
 	double _x1, _y1, _z1, _x2, _y2, _z2;
 };
 
+inline BoundingBox::BoundingBox()
+	: _x1(0.0), _y1(0.0), _z1(0.0), _x2(0.0), _y2(0.0), _z2(0.0)
+{
+}
+
+inline BoundingBox::BoundingBox(double x1, double y1, double z1,
+				double x2, double y2, double z2)
+{
+	set(x1, y1, z1, x2, y2, z2);
+}
+
 inline BoundingBox::~BoundingBox()
 {
+}
+
+inline BoundingBox operator+(const BoundingBox& b1, const BoundingBox& b2)
+{
+	BoundingBox bb(b1);
+
+	return bb += b2;
 }
 
 }

@@ -47,14 +47,18 @@ private:
 	double _small_x, _big_x, _small_y, _big_y, _small_z, _big_z;
 };
 
-inline Box::Box(const Point& point1, const Point& point2)
+inline Box::Box(const Point& p1, const Point& p2)
 {
-	_small_x = min(point1.x(), point2.x());
-	_big_x   = max(point1.x(), point2.x());
-	_small_y = min(point1.y(), point2.y());
-	_big_y   = max(point1.y(), point2.y());
-	_small_z = min(point1.z(), point2.z());
-	_big_z   = max(point1.z(), point2.z());
+	_small_x = min(p1.x(), p2.x());
+	_big_x   = max(p1.x(), p2.x());
+	_small_y = min(p1.y(), p2.y());
+	_big_y   = max(p1.y(), p2.y());
+	_small_z = min(p1.z(), p2.z());
+	_big_z   = max(p1.z(), p2.z());
+
+	// setting bounding box
+	setBounds(BoundingBox(_small_x, _small_y, _small_z,
+			      _big_x, _big_y, _big_z));
 
 }
 

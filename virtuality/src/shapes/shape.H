@@ -28,6 +28,7 @@
 
 #include <ray.H>
 #include <colour.H>
+#include <boundingbox.H>
 
 namespace Virtuality {
 
@@ -93,6 +94,12 @@ public:
 	//! transforms a normal vector, keeping it normal
 	Vector transformNormal(const Vector& v) const;
 
+	//! queries the bounding box of this object
+	BoundingBox bounds() const;
+
+	//! sets the bounding box for this object
+	void setBounds(const BoundingBox& bb);
+
 	//! Queries if the ray hits the shape
 	/*!
 	 * the ray's direction is supposed to be normalised
@@ -115,6 +122,8 @@ private:
 	Matrix _trans;
 	// inverse transfomation matrix
 	Matrix _inv;
+	// bounding box
+	BoundingBox _bb;
 };
 
 // inline member functions
@@ -187,6 +196,16 @@ inline Vector Shape::transformNormal(const Vector& v) const
 			  0.0,        0.0,        0.0, 1.0);
 
 	return tmp * v;
+}
+
+inline BoundingBox Shape::bounds() const
+{
+	return _bb;
+}
+
+inline void Shape::setBounds(const BoundingBox& bb)
+{
+	_bb = bb;
 }
 
 }

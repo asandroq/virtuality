@@ -55,6 +55,12 @@ private:
 inline Triangle::Triangle(const Point& p1, const Point& p2, const Point& p3)
 	: _p1(p1), _p2(p2), _p3(p3)
 {
+	setBounds(BoundingBox(min(p1.x(), p2.x(), p3.x()),
+			      min(p1.y(), p2.y(), p3.y()),
+			      min(p1.z(), p2.z(), p3.z()),
+			      max(p1.x(), p2.x(), p3.x()),
+			      max(p1.y(), p2.y(), p3.y()),
+			      max(p1.z(), p2.z(), p3.z())));
 }
 
 inline Triangle::~Triangle()
