@@ -41,38 +41,12 @@ bool Cylinder::clip(const Ray& r, double in, double out,
 	*min = in;
 	*max = out;
 	// planes' distances to origin
-	double bot = _base * _axis;
+	double bot = _base * (-_axis);
 	double top = (_base + _length*_axis) * _axis;
 	// intersect ray with the bottom plane
-	double u = r.origin() * _axis;
-	double dc = r.direction() * _axis;
-	double dw = u - bot;
+	double dc = r.direction() * (-_axis);
+	double dw = r.origin() * (-_axis) - bot;
 	// if parallel to plane
-	if(isZero(dc)) {
-		if(isZero(dw) || dw > 0.0) {
-			return false;
-		}
-	} else {
-		double t = - dw / dc;
-		// if far plane
-		if(dc < 0.0) {
-			if(t > in && t < out) {
-				out = t;
-			} else if(t < in) {
-				return false;
-			}
-		} else {
-			if(t > in && t < out) {
-				in = t;
-			} else if(t > out) {
-				return false;
-			}
-		}
-	}
-	// intersect ray with the top plane
-	dw = u - top;
-	// if parallel to plane
-/*
 	if(isZero(dc)) {
 		if(isZero(dw) || dw > 0.0) {
 			return false;
@@ -94,7 +68,31 @@ bool Cylinder::clip(const Ray& r, double in, double out,
 			}
 		}
 	}
-*/
+	// intersect ray with the top plane
+	dc = r.direction() * _axis;
+	dw = r.origin() * _axis - top;
+	// if parallel to plane
+	if(isZero(dc)) {
+		if(isZero(dw) || dw > 0.0) {
+			return false;
+		}
+	} else {
+		double t = - dw / dc;
+		// if far plane
+		if(dc > 0.0) {
+			if(t > in && t < out) {
+				out = t;
+			} else if(t < in) {
+				return false;
+			}
+		} else {
+			if(t > in && t < out) {
+				in = t;
+			} else if(t > out) {
+				return false;
+			}
+		}
+	}
 	*min = in;
 	*max = out;
 
