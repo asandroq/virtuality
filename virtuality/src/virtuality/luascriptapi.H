@@ -28,8 +28,6 @@ extern "C" {
 #include <lua.h>
 }
 
-#include <scriptapi.H>
-
 namespace Virtuality {
 
 namespace LuaScriptAPI {

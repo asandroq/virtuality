@@ -21,6 +21,7 @@
  * To contact the author send eletronic mail to asandro@lcg.dc.ufc.br
  */
 
+#include <scriptapi.H>
 #include <luascriptapi.H>
 
 namespace Virtuality {

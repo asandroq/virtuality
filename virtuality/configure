@@ -1005,9 +1005,9 @@ else
   echo "$ac_t""no" 1>&6
 fi
 
-echo $ac_n "checking for lua_open in -llua""... $ac_c" 1>&6
-echo "configure:1010: checking for lua_open in -llua" >&5
-ac_lib_var=`echo lua'_'lua_open | sed 'y%./+-%__p_%'`
+echo $ac_n "checking for lua_close in -llua""... $ac_c" 1>&6
+echo "configure:1010: checking for lua_close in -llua" >&5
+ac_lib_var=`echo lua'_'lua_close | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1022,10 +1022,10 @@ extern "C"
 #endif
 /* We use char because int might match the return type of a gcc2
     builtin and then its argument prototype would still apply.  */
-char lua_open();
+char lua_close();
 
 int main() {
-lua_open()
+lua_close()
 ; return 0; }
 EOF
 if { (eval echo configure:1032: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then

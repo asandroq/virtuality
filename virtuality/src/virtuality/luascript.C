@@ -45,6 +45,20 @@
 #include <pngframebuffer.H>
 #include <tgaframebuffer.H>
 
+// helper function to test if a tag belongs to a shape
+bool isShape(lua_State *L, int tag)
+{
+	if(tag == lua_name2tag(L, "Box")	||
+	   tag == lua_name2tag(L, "Cylinder")	||
+	   tag == lua_name2tag(L, "Sphere")	||
+	   tag == lua_name2tag(L, "Torus")	||
+	   tag == lua_name2tag(L, "Triangle"))	{
+		return true;
+	} else {
+		return false;
+	}
+}
+
 namespace Virtuality {
 
 const int FB_PNG = 1;
@@ -56,9 +70,6 @@ int LuaScript::_point_ctor(lua_State *L)
 {
 	double x, y, z;
 
-	// getting and popping upvalue - LuaScript instance
-	LuaScript* s = static_cast<LuaScript*>(lua_touserdata(L, -1));
-	lua_pop(L, 1);
 	// we must get a table
 	if(!lua_istable(L, 1)) {
 		lua_error(L, "invalid argument to Point");
@@ -68,7 +79,7 @@ int LuaScript::_point_ctor(lua_State *L)
 	lua_gettable(L, 1);
 	if(lua_isnil(L, 2)) {
 		x = 0.0;
-	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+	} else if(lua_tag(L, 2) != LUA_TNUMBER) {
 		lua_error(L, "invalid type for Point.x");
 		x = 0.0;
 	} else {
@@ -80,7 +91,7 @@ int LuaScript::_point_ctor(lua_State *L)
 	lua_gettable(L, 1);
 	if(lua_isnil(L, 2)) {
 		y = 0.0;
-	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+	} else if(lua_tag(L, 2) != LUA_TNUMBER) {
 		lua_error(L, "invalid type for Point.y");
 		y = 0.0;
 	} else {
@@ -92,7 +103,7 @@ int LuaScript::_point_ctor(lua_State *L)
 	lua_gettable(L, 1);
 	if(lua_isnil(L, 2)) {
 		z = 0.0;
-	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+	} else if(lua_tag(L, 2) != LUA_TNUMBER) {
 		lua_error(L, "invalid type for Point.z");
 		z = 0.0;
 	} else {
@@ -101,7 +112,8 @@ int LuaScript::_point_ctor(lua_State *L)
 	lua_pop(L, 2);
 	// pushing point onto stack
 	Point* p = new Point(x, y, z);
-	lua_pushusertag(L, p, s->_point_tag);
+	lua_newuserdatabox(L, p);
+	lua_settag(L, lua_name2tag(L, "Point"));
 
 	return 1;
 }
@@ -120,7 +132,7 @@ int LuaScript::_point_index(lua_State* L)
 	double res;
 
 	// points can only be indexed by the strings "x", "y", "z"
-	if(lua_type(L, 2) != LUA_TSTRING) {
+	if(lua_tag(L, 2) != LUA_TSTRING) {
 		lua_error(L, "index of point has wrong type");
 	}
 	string index(lua_tostring(L, 2));
@@ -143,13 +155,132 @@ int LuaScript::_point_index(lua_State* L)
 	return 1;
 }
 
+// it's possible to sum two points, a point and a vector, or
+// a point and a scalar
+int LuaScript::_point_add(lua_State *L)
+{
+	Point *r = 0;
+
+	// argument tags
+	int tag1 = lua_tag(L, 1);
+	int tag2 = lua_tag(L, 2);
+	// allowed tags
+	int _point_tag  = lua_name2tag(L, "Point");
+	int _vector_tag = lua_name2tag(L, "Vector");
+	// possible cases
+	if(tag1 == _point_tag && tag2 == _point_tag) {
+		Point *p1 = static_cast<Point*>(lua_touserdata(L, 1));
+		Point *p2 = static_cast<Point*>(lua_touserdata(L, 2));
+		r = new Point(p1->x()+p2->x(), p1->y()+p2->y(),
+							p1->z()+p2->z());
+	} else if(tag1 == _point_tag && tag2 == _vector_tag) {
+		Point  *p = static_cast<Point*>(lua_touserdata(L, 1));
+		Vector *v = static_cast<Vector*>(lua_touserdata(L, 2));
+		r = new Point(p->x()+v->x(), p->y()+v->y(), p->z()+v->z());
+	} else if(tag1 == _vector_tag && tag2 == _point_tag) {
+		Vector *v = static_cast<Vector*>(lua_touserdata(L, 1));
+		Point  *p = static_cast<Point*>(lua_touserdata(L, 2));
+		r = new Point(p->x()+v->x(), p->y()+v->y(), p->z()+v->z());
+	} else if(tag1 == _point_tag && tag2 == LUA_TNUMBER) {
+		Point *p = static_cast<Point*>(lua_touserdata(L, 1));
+		double n = lua_tonumber(L, 2);
+		r = new Point(p->x()+n, p->y()+n, p->z()+n);
+	} else if(tag1 == LUA_TNUMBER && tag2 == _point_tag) {
+		double n = lua_tonumber(L, 1);
+		Point *p = static_cast<Point*>(lua_touserdata(L, 2));
+		r = new Point(p->x()+n, p->y()+n, p->z()+n);
+	} else {
+		lua_error(L, "incompatible types added");
+	}
+	// stack management
+	lua_pop(L, 2);
+	lua_newuserdatabox(L, r);
+	lua_settag(L, _point_tag);
+
+	return 1;
+}
+
+int LuaScript::_point_sub(lua_State *L)
+{
+	// argument tags
+	int tag1 = lua_tag(L, 1);
+	int tag2 = lua_tag(L, 2);
+	// allowed tags
+	int _point_tag  = lua_name2tag(L, "Point");
+	int _vector_tag = lua_name2tag(L, "Vector");
+	// possible cases
+	if(tag1 == _point_tag && tag2 == _point_tag) {
+		Point *p1 = static_cast<Point*>(lua_touserdata(L, 1));
+		Point *p2 = static_cast<Point*>(lua_touserdata(L, 2));
+		Vector *r = new Vector(*p1 - *p2);
+		// stack management
+		lua_pop(L, 2);
+		lua_newuserdatabox(L, r);
+		lua_settag(L, _vector_tag);
+	} else if(tag1 == _point_tag && tag2 == _vector_tag) {
+		Point  *p = static_cast<Point*>(lua_touserdata(L, 1));
+		Vector *v = static_cast<Vector*>(lua_touserdata(L, 2));
+		Point  *r = new Point(p->x()-v->x(), p->y()-v->y(),
+							p->z()-v->z());
+		// stack management
+		lua_pop(L, 2);
+		lua_newuserdatabox(L, r);
+		lua_settag(L, _point_tag);
+	} else if(tag1 == _vector_tag && tag2 == _point_tag) {
+		Vector *v = static_cast<Vector*>(lua_touserdata(L, 1));
+		Point  *p = static_cast<Point*>(lua_touserdata(L, 2));
+		Point  *r = new Point(v->x()-p->x(), v->y()-p->y(),
+							v->z()-p->z());
+		// stack management
+		lua_pop(L, 2);
+		lua_newuserdatabox(L, r);
+		lua_settag(L, _point_tag);
+	} else if(tag1 == _point_tag && tag2 == LUA_TNUMBER) {
+		Point *p = static_cast<Point*>(lua_touserdata(L, 1));
+		double n = lua_tonumber(L, 2);
+		Point *r = new Point(p->x()-n, p->y()-n, p->z()-n);
+		// stack management
+		lua_pop(L, 2);
+		lua_newuserdatabox(L, r);
+		lua_settag(L, _point_tag);
+	} else if(tag1 == LUA_TNUMBER && tag2 == _point_tag) {
+		double n = lua_tonumber(L, 1);
+		Point *p = static_cast<Point*>(lua_touserdata(L, 2));
+		Point *r = new Point(n-p->x(), n-p->z(), n-p->z());
+		// stack management
+		lua_pop(L, 2);
+		lua_newuserdatabox(L, r);
+		lua_settag(L, _point_tag);
+	} else {
+		lua_error(L, "incompatible types subtracted");
+	}
+
+	return 1;
+}
+
+int LuaScript::_point_mul(lua_State *L)
+{
+	// argument tags
+	int tag1 = lua_tag(L, 1);
+	int tag2 = lua_tag(L, 2);
+	// allowed tags
+	int _point_tag  = lua_name2tag(L, "Point");
+	int _vector_tag = lua_name2tag(L, "Vector");
+	// possible cases
+	if(tag1 == _point_tag && tag2 == _point_tag) {
+		Point *p1 = static_cast<Point*>(lua_touserdata(L, 1));
+		Point *p2 = static_cast<Point*>(lua_touserdata(L, 2));
+	}
+}
+
+int LuaScript::_point_div(lua_State *L)
+{
+}
+
 int LuaScript::_colour_ctor(lua_State *L)
 {
 	double r, g, b;
 
-	// getting and popping upvalue - LuaScript instance
-	LuaScript* s = static_cast<LuaScript*>(lua_touserdata(L, -1));
-	lua_pop(L, 1);
 	// we must get a table
 	if(!lua_istable(L, 1)) {
 		lua_error(L, "invalid argument to Point");
@@ -159,7 +290,7 @@ int LuaScript::_colour_ctor(lua_State *L)
 	lua_gettable(L, 1);
 	if(lua_isnil(L, 2)) {
 		r = 0.0;
-	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+	} else if(lua_tag(L, 2) != LUA_TNUMBER) {
 		lua_error(L, "invalid type for Colour.red");
 		r = 0.0;
 	} else {
@@ -171,7 +302,7 @@ int LuaScript::_colour_ctor(lua_State *L)
 	lua_gettable(L, 1);
 	if(lua_isnil(L, 2)) {
 		g = 0.0;
-	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+	} else if(lua_tag(L, 2) != LUA_TNUMBER) {
 		lua_error(L, "invalid type for Colour.green");
 		g = 0.0;
 	} else {
@@ -183,7 +314,7 @@ int LuaScript::_colour_ctor(lua_State *L)
 	lua_gettable(L, 1);
 	if(lua_isnil(L, 2)) {
 		b = 0.0;
-	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+	} else if(lua_tag(L, 2) != LUA_TNUMBER) {
 		lua_error(L, "invalid type for Colour.blue");
 		b = 0.0;
 	} else {
@@ -192,7 +323,8 @@ int LuaScript::_colour_ctor(lua_State *L)
 	lua_pop(L, 2);
 	// pushing colour onto stack
 	Colour* c = new Colour(r, g, b);
-	lua_pushusertag(L, c, s->_colour_tag);
+	lua_newuserdatabox(L, c);
+	lua_settag(L, lua_name2tag(L, "Colour"));
 
 	return 1;
 }
@@ -211,7 +343,7 @@ int LuaScript::_colour_index(lua_State* L)
 	double res;
 
 	// colours can only be indexed by the strings "red", "green", "blue"
-	if(lua_type(L, 2) != LUA_TSTRING) {
+	if(lua_tag(L, 2) != LUA_TSTRING) {
 		lua_error(L, "index of colour has wrong type");
 	}
 	string index(lua_tostring(L, 2));
@@ -234,13 +366,26 @@ int LuaScript::_colour_index(lua_State* L)
 	return 1;
 }
 
+int LuaScript::_colour_add(lua_State *L)
+{
+}
+
+int LuaScript::_colour_sub(lua_State *L)
+{
+}
+
+int LuaScript::_colour_mul(lua_State *L)
+{
+}
+
+int LuaScript::_colour_div(lua_State *L)
+{
+}
+
 int LuaScript::_vector_ctor(lua_State *L)
 {
 	double x, y, z;
 
-	// getting and popping upvalue - LuaScript instance
-	LuaScript* s = static_cast<LuaScript*>(lua_touserdata(L, -1));
-	lua_pop(L, 1);
 	// we must get a table
 	if(!lua_istable(L, 1)) {
 		lua_error(L, "invalid argument to Vector");
@@ -250,7 +395,7 @@ int LuaScript::_vector_ctor(lua_State *L)
 	lua_gettable(L, 1);
 	if(lua_isnil(L, 2)) {
 		x = 0.0;
-	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+	} else if(lua_tag(L, 2) != LUA_TNUMBER) {
 		lua_error(L, "invalid type for Vector.x");
 		x = 0.0;
 	} else {
@@ -262,7 +407,7 @@ int LuaScript::_vector_ctor(lua_State *L)
 	lua_gettable(L, 1);
 	if(lua_isnil(L, 2)) {
 		y = 0.0;
-	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+	} else if(lua_tag(L, 2) != LUA_TNUMBER) {
 		lua_error(L, "invalid type for Vector.y");
 		y = 0.0;
 	} else {
@@ -274,7 +419,7 @@ int LuaScript::_vector_ctor(lua_State *L)
 	lua_gettable(L, 1);
 	if(lua_isnil(L, 2)) {
 		z = 0.0;
-	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+	} else if(lua_tag(L, 2) != LUA_TNUMBER) {
 		lua_error(L, "invalid type for Vector.z");
 		z = 0.0;
 	} else {
@@ -283,7 +428,8 @@ int LuaScript::_vector_ctor(lua_State *L)
 	lua_pop(L, 2);
 	// pushing vector onto stack
 	Vector* v = new Vector(x, y, z);
-	lua_pushusertag(L, v, s->_vector_tag);
+	lua_newuserdatabox(L, v);
+	lua_settag(L, lua_name2tag(L, "Vector"));
 
 	return 1;
 }
@@ -302,7 +448,7 @@ int LuaScript::_vector_index(lua_State* L)
 	double res;
 
 	// vectors can only be indexed by the strings "x", "y", "z"
-	if(lua_type(L, 2) != LUA_TSTRING) {
+	if(lua_tag(L, 2) != LUA_TSTRING) {
 		lua_error(L, "index of vector has wrong type");
 	}
 	string index(lua_tostring(L, 2));
@@ -325,14 +471,27 @@ int LuaScript::_vector_index(lua_State* L)
 	return 1;
 }
 
+int LuaScript::_vector_add(lua_State *L)
+{
+}
+
+int LuaScript::_vector_sub(lua_State *L)
+{
+}
+
+int LuaScript::_vector_mul(lua_State *L)
+{
+}
+
+int LuaScript::_vector_div(lua_State *L)
+{
+}
+
 int LuaScript::_light_ctor(lua_State* L)
 {
 	Point p;
 	Colour c;
 
-	// getting and popping upvalue - LuaScript instance
-	LuaScript* s = static_cast<LuaScript*>(lua_touserdata(L, -1));
-	lua_pop(L, 1);
 	// we must get a table
 	if(!lua_istable(L, 1)) {
 		lua_error(L, "invalid argument to Light");
@@ -342,7 +501,7 @@ int LuaScript::_light_ctor(lua_State* L)
 	lua_gettable(L, 1);
 	if(lua_isnil(L, 2)) {
 		p = Point(0.0, 0.0, 0.0);
-	} else if(lua_tag(L, 2) != s->_point_tag) {
+	} else if(lua_tag(L, 2) != lua_name2tag(L, "Point")) {
 		lua_error(L, "invalid type for Light.position");
 	} else {
 		p = *(static_cast<Point*>(lua_touserdata(L, 2)));
@@ -353,7 +512,7 @@ int LuaScript::_light_ctor(lua_State* L)
 	lua_gettable(L, 1);
 	if(lua_isnil(L, 2)) {
 		c = Colour(0.7, 0.7, 0.7);
-	} else if(lua_tag(L, 2) != s->_colour_tag) {
+	} else if(lua_tag(L, 2) != lua_name2tag(L, "Colour")) {
 		lua_error(L, "invalid type for Light.colour");
 	} else {
 		c = *(static_cast<Colour*>(lua_touserdata(L, 2)));
@@ -361,7 +520,8 @@ int LuaScript::_light_ctor(lua_State* L)
 	lua_pop(L, 2);
 	// creating and pushing new light
 	Light* l = new Light(p, c);
-	lua_pushusertag(L, l, s->_light_tag);
+	lua_newuserdatabox(L, l);
+	lua_settag(L, lua_name2tag(L, "Light"));
 		
 	return 1;
 }
@@ -380,9 +540,6 @@ int LuaScript::_camera_ctor(lua_State* L)
 	Point p;
 	Vector d, u, r;
 
-	// getting and popping upvalue - LuaScript instance
-	LuaScript* s = static_cast<LuaScript*>(lua_touserdata(L, -1));
-	lua_pop(L, 1);
 	// we must get a table
 	if(!lua_istable(L, 1)) {
 		lua_error(L, "invalid argument to Camera");
@@ -392,7 +549,7 @@ int LuaScript::_camera_ctor(lua_State* L)
 	lua_gettable(L, 1);
 	if(lua_isnil(L, 2)) {
 		p = Point(0.0, 0.0, 0.0);
-	} else if(lua_tag(L, 2) != s->_point_tag) {
+	} else if(lua_tag(L, 2) != lua_name2tag(L, "Point")) {
 		lua_error(L, "invalid type for Camera.position");
 	} else {
 		p = *(static_cast<Point*>(lua_touserdata(L, 2)));
@@ -403,7 +560,7 @@ int LuaScript::_camera_ctor(lua_State* L)
 	lua_gettable(L, 1);
 	if(lua_isnil(L, 2)) {
 		d = Vector(0.0, 0.0, 1.0);
-	} else if(lua_tag(L, 2) != s->_vector_tag) {
+	} else if(lua_tag(L, 2) != lua_name2tag(L, "Vector")) {
 		lua_error(L, "invalid type for Camera.direction");
 	} else {
 		d = *(static_cast<Vector*>(lua_touserdata(L, 2)));
@@ -414,7 +571,7 @@ int LuaScript::_camera_ctor(lua_State* L)
 	lua_gettable(L, 1);
 	if(lua_isnil(L, 2)) {
 		u = Vector(0.0, 1.0, 0.0);
-	} else if(lua_tag(L, 2) != s->_vector_tag) {
+	} else if(lua_tag(L, 2) != lua_name2tag(L, "Vector")) {
 		lua_error(L, "invalid type for Camera.up");
 	} else {
 		u = *(static_cast<Vector*>(lua_touserdata(L, 2)));
@@ -425,7 +582,7 @@ int LuaScript::_camera_ctor(lua_State* L)
 	lua_gettable(L, 1);
 	if(lua_isnil(L, 2)) {
 		r = Vector(4.0/3.0, 0.0, 0.0);
-	} else if(lua_tag(L, 2) != s->_vector_tag) {
+	} else if(lua_tag(L, 2) != lua_name2tag(L, "Vector")) {
 		lua_error(L, "invalid type for Camera.right");
 	} else {
 		r = *(static_cast<Vector*>(lua_touserdata(L, 2)));
@@ -433,7 +590,8 @@ int LuaScript::_camera_ctor(lua_State* L)
 	lua_pop(L, 2);
 	// creating new camera
 	Camera* c = new Camera(p, d, u, r);
-	lua_pushusertag(L, c, s->_camera_tag);
+	lua_newuserdatabox(L, c);
+	lua_settag(L, lua_name2tag(L, "Camera"));
 
 	return 1;
 }
@@ -546,18 +704,15 @@ int LuaScript::_union_ctor(lua_State* L)
 	lua_pushnil(L);
 	while(lua_next(L, 1)) {
 		int tag = lua_tag(L, 3);
-		if(tag == s->_box_tag      ||
-		   tag == s->_cylinder_tag ||
-		   tag == s->_sphere_tag   ||
-		   tag == s->_torus_tag    ||
-		   tag == s->_triangle_tag) {
+		if(isShape(L, tag)) {
 			n->addChild(static_cast<Shape*>(lua_touserdata(L, 3)));
 		}
 		lua_pop(L, 1);
 	}
 	// returning union
 	s->_shape_ctor(L, n);
-	lua_pushusertag(L, n, s->_csg_tag);
+	lua_newuserdatabox(L, n);
+	lua_settag(L, lua_name2tag(L, "CSG"));
 
 	return 1;
 }
@@ -577,18 +732,15 @@ int LuaScript::_difference_ctor(lua_State* L)
 	lua_pushnil(L);
 	while(lua_next(L, 1)) {
 		int tag = lua_tag(L, 3);
-		if(tag == s->_box_tag      ||
-		   tag == s->_cylinder_tag ||
-		   tag == s->_sphere_tag   ||
-		   tag == s->_torus_tag    ||
-		   tag == s->_triangle_tag) {
+		if(isShape(L, tag)) {
 			n->addChild(static_cast<Shape*>(lua_touserdata(L, 3)));
 		}
 		lua_pop(L, 1);
 	}
 	// returning difference
 	s->_shape_ctor(L, n);
-	lua_pushusertag(L, n, s->_csg_tag);
+	lua_newuserdatabox(L, n);
+	lua_settag(L, lua_name2tag(L, "CSG"));
 
 	return 1;
 }
@@ -608,18 +760,15 @@ int LuaScript::_intersection_ctor(lua_State* L)
 	lua_pushnil(L);
 	while(lua_next(L, 1)) {
 		int tag = lua_tag(L, 3);
-		if(tag == s->_box_tag      ||
-		   tag == s->_cylinder_tag ||
-		   tag == s->_sphere_tag   ||
-		   tag == s->_torus_tag    ||
-		   tag == s->_triangle_tag) {
+		if(isShape(L, tag)) {
 			n->addChild(static_cast<Shape*>(lua_touserdata(L, 3)));
 		}
 		lua_pop(L, 1);
 	}
 	// returning intersection
 	s->_shape_ctor(L, n);
-	lua_pushusertag(L, n, s->_csg_tag);
+	lua_newuserdatabox(L, n);
+	lua_settag(L, lua_name2tag(L, "CSG"));
 
 	return 1;
 }
@@ -660,7 +809,8 @@ int LuaScript::_box_ctor(lua_State* L)
 	// creating and pushing new box
 	Shape* b = new Box(p1, p2);
 	s->_shape_ctor(L, b);
-	lua_pushusertag(L, b, s->_box_tag);
+	lua_newuserdatabox(L, b);
+	lua_settag(L, s->_box_tag);
 
 	return 1;
 }
@@ -682,7 +832,7 @@ int LuaScript::_cylinder_ctor(lua_State* L)
 	lua_gettable(L, 1);
 	if(lua_isnil(L, 2)) {
 		r = 1.0;
-	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+	} else if(lua_tag(L, 2) != LUA_TNUMBER) {
 		lua_error(L, "invalid type for Cylinder.radius");
 		r = 0.0;
 	} else {
@@ -714,7 +864,8 @@ int LuaScript::_cylinder_ctor(lua_State* L)
 	// creating and pushing new cylinder
 	Shape* c = new Cylinder(r, p1, p2);
 	s->_shape_ctor(L, c);
-	lua_pushusertag(L, c, s->_cylinder_tag);
+	lua_newuserdatabox(L, c);
+	lua_settag(L, s->_cylinder_tag);
 
 	return 1;
 }
@@ -747,7 +898,7 @@ int LuaScript::_sphere_ctor(lua_State* L)
 	lua_gettable(L, 1);
 	if(lua_isnil(L, 2)) {
 		r = 1.0;
-	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+	} else if(lua_tag(L, 2) != LUA_TNUMBER) {
 		lua_error(L, "invalid type for Sphere.radius");
 		r = 0.0;
 	} else {
@@ -757,7 +908,8 @@ int LuaScript::_sphere_ctor(lua_State* L)
 	// creating and pushing new sphere
 	Shape* sph = new Sphere(p, r);
 	s->_shape_ctor(L, sph);
-	lua_pushusertag(L, sph, s->_sphere_tag);
+	lua_newuserdatabox(L, sph);
+	lua_settag(L, s->_sphere_tag);
 
 	return 1;
 }
@@ -790,7 +942,7 @@ int LuaScript::_plane_ctor(lua_State* L)
 	lua_gettable(L, 1);
 	if(lua_isnil(L, 2)) {
 		d = 0.0;
-	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+	} else if(lua_tag(L, 2) != LUA_TNUMBER) {
 		lua_error(L, "invalid type for Plane.distance");
 		d = 0.0;
 	} else {
@@ -800,7 +952,8 @@ int LuaScript::_plane_ctor(lua_State* L)
 	// creating plane
 	Shape* p = new Plane(n, d);
 	s->_shape_ctor(L, p);
-	lua_pushusertag(L, p, s->_plane_tag);
+	lua_newuserdatabox(L, p);
+	lua_settag(L, s->_plane_tag);
 
 	return 1;
 }
@@ -821,7 +974,7 @@ int LuaScript::_torus_ctor(lua_State* L)
 	lua_gettable(L, 1);
 	if(lua_isnil(L, 2)) {
 		major = 1.0;
-	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+	} else if(lua_tag(L, 2) != LUA_TNUMBER) {
 		lua_error(L, "invalid type for Torus.major");
 		major = 0.0;
 	} else {
@@ -833,7 +986,7 @@ int LuaScript::_torus_ctor(lua_State* L)
 	lua_gettable(L, 1);
 	if(lua_isnil(L, 2)) {
 		minor = 1.0;
-	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+	} else if(lua_tag(L, 2) != LUA_TNUMBER) {
 		lua_error(L, "invalid type for Torus.minor");
 		minor = 0.0;
 	} else {
@@ -843,7 +996,8 @@ int LuaScript::_torus_ctor(lua_State* L)
 	// creating torus
 	Shape* t = new Torus(major, minor);
 	s->_shape_ctor(L, t);
-	lua_pushusertag(L, t, s->_torus_tag);
+	lua_newuserdatabox(L, t);
+	lua_settag(L, s->_torus_tag);
 
 	return 1;
 }
@@ -895,7 +1049,8 @@ int LuaScript::_triangle_ctor(lua_State* L)
 	// creating triangle
 	Shape* t = new Triangle(p1, p2, p3);
 	s->_shape_ctor(L, t);
-	lua_pushusertag(L, t, s->_triangle_tag);
+	lua_newuserdatabox(L, t);
+	lua_settag(L, s->_triangle_tag);
 
 	return 1;
 }
@@ -916,7 +1071,7 @@ int LuaScript::_mattesurface_ctor(lua_State* L)
 	lua_gettable(L, 1);
 	if(lua_isnil(L, 2)) {
 		ka = 1.0;
-	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+	} else if(lua_tag(L, 2) != LUA_TNUMBER) {
 		lua_error(L, "invalid type for Matte.ka");
 		ka = 0.0;
 	} else {
@@ -928,7 +1083,7 @@ int LuaScript::_mattesurface_ctor(lua_State* L)
 	lua_gettable(L, 1);
 	if(lua_isnil(L, 2)) {
 		kd = 1.0;
-	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+	} else if(lua_tag(L, 2) != LUA_TNUMBER) {
 		lua_error(L, "invalid type for Matte.kd");
 		kd = 0.0;
 	} else {
@@ -936,7 +1091,8 @@ int LuaScript::_mattesurface_ctor(lua_State* L)
 	}
 	lua_pop(L, 2);
 	SurfaceShader *ss = new MatteSurfaceShader(ka, kd);
-	lua_pushusertag(L, ss, s->_surface_tag);
+	lua_newuserdatabox(L, ss);
+	lua_settag(L, s->_surface_tag);
 
 	return 1;
 }
@@ -958,7 +1114,7 @@ int LuaScript::_plasticsurface_ctor(lua_State* L)
 	lua_gettable(L, 1);
 	if(lua_isnil(L, 2)) {
 		ka = 1.0;
-	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+	} else if(lua_tag(L, 2) != LUA_TNUMBER) {
 		lua_error(L, "invalid type for Plastic.ka");
 		ka = 0.0;
 	} else {
@@ -970,7 +1126,7 @@ int LuaScript::_plasticsurface_ctor(lua_State* L)
 	lua_gettable(L, 1);
 	if(lua_isnil(L, 2)) {
 		kd = 0.5;
-	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+	} else if(lua_tag(L, 2) != LUA_TNUMBER) {
 		lua_error(L, "invalid type for Plastic.kd");
 		kd = 0.0;
 	} else {
@@ -982,7 +1138,7 @@ int LuaScript::_plasticsurface_ctor(lua_State* L)
 	lua_gettable(L, 1);
 	if(lua_isnil(L, 2)) {
 		ks = 0.5;
-	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+	} else if(lua_tag(L, 2) != LUA_TNUMBER) {
 		lua_error(L, "invalid type for Plastic.ks");
 		ks = 0.0;
 	} else {
@@ -994,7 +1150,7 @@ int LuaScript::_plasticsurface_ctor(lua_State* L)
 	lua_gettable(L, 1);
 	if(lua_isnil(L, 2)) {
 		rn = 0.1;
-	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+	} else if(lua_tag(L, 2) != LUA_TNUMBER) {
 		lua_error(L, "invalid type for Plastic.roughness");
 		rn = 0.0;
 	} else {
@@ -1013,7 +1169,8 @@ int LuaScript::_plasticsurface_ctor(lua_State* L)
 	}
 	lua_pop(L, 2);
 	SurfaceShader *ss = new PlasticSurfaceShader(ka, kd, ks, rn, spc);
-	lua_pushusertag(L, ss, s->_surface_tag);
+	lua_newuserdatabox(L, ss);
+	lua_settag(L, s->_surface_tag);
 
 	return 1;
 }
@@ -1029,7 +1186,8 @@ int LuaScript::_constantsurface_ctor(lua_State* L)
 	}
 	lua_pop(L, 1);
 	SurfaceShader *ss = new ConstantSurfaceShader();
-	lua_pushusertag(L, ss, s->_surface_tag);
+	lua_newuserdatabox(L, ss);
+	lua_settag(L, s->_surface_tag);
 
 	return 1;
 }
@@ -1060,7 +1218,7 @@ int LuaScript::_frame_ctor(lua_State* L)
 	// reading frame buffer name
 	lua_pushstring(L, "name");
 	lua_gettable(L, 1);
-	if(lua_type(L, 2) == LUA_TSTRING) {
+	if(lua_tag(L, 2) == LUA_TSTRING) {
 		nm = lua_tostring(L, 2);
 	} else {
 		lua_error(L, "invalid frame name");
@@ -1180,7 +1338,7 @@ LuaScript::LuaScript()
 	lua_mathlibopen(_lua_state);
 
 	// locking this script to avoid it being garbage collected
-	lua_pushuserdata(_lua_state, this);
+	lua_newuserdatabox(_lua_state, this);
 	_script_ref = lua_ref(_lua_state, 1);
 
 	// framebuffer types
@@ -1190,11 +1348,9 @@ LuaScript::LuaScript()
 	lua_setglobal(_lua_state, "FB_TGA");
 
 	// points
-	_point_tag = lua_newtag(_lua_state);
+	_point_tag = lua_newtype(_lua_state, "Point", LUA_TUSERDATA);
 	// constructor
-	lua_getref(_lua_state, _script_ref);
-	lua_pushcclosure(_lua_state, _point_ctor, 1);
-	lua_setglobal(_lua_state, "Point");
+	lua_register(_lua_state, "Point", _point_ctor);
 	// destructor
 	lua_pushcfunction(_lua_state, _point_dtor);
 	lua_settagmethod(_lua_state, _point_tag, "gc");
@@ -1203,11 +1359,9 @@ LuaScript::LuaScript()
 	lua_settagmethod(_lua_state, _point_tag, "gettable");
 
 	// colours
-	_colour_tag = lua_newtag(_lua_state);
+	_colour_tag = lua_newtype(_lua_state, "Colour", LUA_TUSERDATA);
 	// constructor
-	lua_getref(_lua_state, _script_ref);
-	lua_pushcclosure(_lua_state, _colour_ctor, 1);
-	lua_setglobal(_lua_state, "Colour");
+	lua_register(_lua_state, "Colour", _colour_ctor);
 	// destructor
 	lua_pushcfunction(_lua_state, _colour_dtor);
 	lua_settagmethod(_lua_state, _colour_tag, "gc");
@@ -1215,23 +1369,26 @@ LuaScript::LuaScript()
 	lua_pushcfunction(_lua_state, _colour_index);
 	lua_settagmethod(_lua_state, _colour_tag, "gettable");
 	// some useful constants
-	lua_pushusertag(_lua_state, new Colour(0.0, 0.0, 0.0), _colour_tag);
+	lua_newuserdatabox(_lua_state, new Colour(0.0, 0.0, 0.0));
+	lua_settag(_lua_state, _colour_tag);
 	lua_setglobal(_lua_state, "Black");
-	lua_pushusertag(_lua_state, new Colour(1.0, 0.0, 0.0), _colour_tag);
+	lua_newuserdatabox(_lua_state, new Colour(1.0, 0.0, 0.0));
+	lua_settag(_lua_state, _colour_tag);
 	lua_setglobal(_lua_state, "Red");
-	lua_pushusertag(_lua_state, new Colour(0.0, 1.0, 0.0), _colour_tag);
+	lua_newuserdatabox(_lua_state, new Colour(0.0, 1.0, 0.0));
+	lua_settag(_lua_state, _colour_tag);
 	lua_setglobal(_lua_state, "Green");
-	lua_pushusertag(_lua_state, new Colour(0.0, 0.0, 1.0), _colour_tag);
+	lua_newuserdatabox(_lua_state, new Colour(0.0, 0.0, 1.0));
+	lua_settag(_lua_state, _colour_tag);
 	lua_setglobal(_lua_state, "Blue");
-	lua_pushusertag(_lua_state, new Colour(1.0, 1.0, 1.0), _colour_tag);
+	lua_newuserdatabox(_lua_state, new Colour(1.0, 1.0, 1.0));
+	lua_settag(_lua_state, _colour_tag);
 	lua_setglobal(_lua_state, "White");
 
 	// vectors
-	_vector_tag = lua_newtag(_lua_state);
+	_vector_tag = lua_newtype(_lua_state, "Vector", LUA_TUSERDATA);
 	// constructor
-	lua_getref(_lua_state, _script_ref);
-	lua_pushcclosure(_lua_state, _vector_ctor, 1);
-	lua_setglobal(_lua_state, "Vector");
+	lua_register(_lua_state, "Vector", _vector_ctor);
 	// destructor
 	lua_pushcfunction(_lua_state, _vector_dtor);
 	lua_settagmethod(_lua_state, _vector_tag, "gc");
@@ -1239,96 +1396,89 @@ LuaScript::LuaScript()
 	lua_pushcfunction(_lua_state, _vector_index);
 	lua_settagmethod(_lua_state, _vector_tag, "gettable");
 	// some useful constants
-	lua_pushusertag(_lua_state, new Vector(1.0, 0.0, 0.0), _vector_tag);
+	lua_newuserdatabox(_lua_state, new Vector(1.0, 0.0, 0.0));
+	lua_settag(_lua_state, _vector_tag);
 	lua_setglobal(_lua_state, "x");
-	lua_pushusertag(_lua_state, new Vector(0.0, 1.0, 0.0), _vector_tag);
+	lua_newuserdatabox(_lua_state, new Vector(0.0, 1.0, 0.0));
+	lua_settag(_lua_state, _vector_tag);
 	lua_setglobal(_lua_state, "y");
-	lua_pushusertag(_lua_state, new Vector(0.0, 0.0, 1.0), _vector_tag);
+	lua_newuserdatabox(_lua_state, new Vector(0.0, 0.0, 1.0));
+	lua_settag(_lua_state, _vector_tag);
 	lua_setglobal(_lua_state, "z");
 
 	// lights
-	_light_tag = lua_newtag(_lua_state);
+	_light_tag = lua_newtype(_lua_state, "Light", LUA_TUSERDATA);
 	// constructor
-	lua_getref(_lua_state, _script_ref);
-	lua_pushcclosure(_lua_state, _light_ctor, 1);
-	lua_setglobal(_lua_state, "Light");
+	lua_register(_lua_state, "Light", _light_ctor);
 	// destructor
 	lua_pushcfunction(_lua_state, _light_dtor);
 	lua_settagmethod(_lua_state, _light_tag, "gc");
 
 	// cameras
-	_camera_tag = lua_newtag(_lua_state);
+	_camera_tag = lua_newtype(_lua_state, "Camera", LUA_TUSERDATA);
 	// constructor
-	lua_getref(_lua_state, _script_ref);
-	lua_pushcclosure(_lua_state, _camera_ctor, 1);
-	lua_setglobal(_lua_state, "Camera");
+	lua_register(_lua_state, "Camera", _camera_ctor);
 	// destructor
 	lua_pushcfunction(_lua_state, _camera_dtor);
 	lua_settagmethod(_lua_state, _camera_tag, "gc");
 
-	// unions
-	_csg_tag = lua_newtag(_lua_state);
-	// constructor
+	// csg
+	_csg_tag = lua_newtype(_lua_state, "CSG", LUA_TUSERDATA);
+	// constructors
 	lua_getref(_lua_state, _script_ref);
 	lua_pushcclosure(_lua_state, _union_ctor, 1);
 	lua_setglobal(_lua_state, "Union");
-
-	// differences
-	// constructor
 	lua_getref(_lua_state, _script_ref);
 	lua_pushcclosure(_lua_state, _difference_ctor, 1);
 	lua_setglobal(_lua_state, "Difference");
-
-	// intersections
-	// constructor
 	lua_getref(_lua_state, _script_ref);
 	lua_pushcclosure(_lua_state, _intersection_ctor, 1);
 	lua_setglobal(_lua_state, "Intersection");
 
 	// boxes
-	_box_tag = lua_newtag(_lua_state);
+	_box_tag = lua_newtype(_lua_state, "Box", LUA_TUSERDATA);
 	// constructor
 	lua_getref(_lua_state, _script_ref);
 	lua_pushcclosure(_lua_state, _box_ctor, 1);
 	lua_setglobal(_lua_state, "Box");
 
 	// cylinders
-	_cylinder_tag = lua_newtag(_lua_state);
+	_cylinder_tag = lua_newtype(_lua_state, "Cylinder", LUA_TUSERDATA);
 	// constructor
 	lua_getref(_lua_state, _script_ref);
 	lua_pushcclosure(_lua_state, _cylinder_ctor, 1);
 	lua_setglobal(_lua_state, "Cylinder");
 
 	// spheres
-	_sphere_tag = lua_newtag(_lua_state);
+	_sphere_tag = lua_newtype(_lua_state, "Sphere", LUA_TUSERDATA);
 	// constructor
 	lua_getref(_lua_state, _script_ref);
 	lua_pushcclosure(_lua_state, _sphere_ctor, 1);
 	lua_setglobal(_lua_state, "Sphere");
 
 	// planes
-	_plane_tag = lua_newtag(_lua_state);
+	_plane_tag = lua_newtype(_lua_state, "Plane", LUA_TUSERDATA);
 	// constructor
 	lua_getref(_lua_state, _script_ref);
 	lua_pushcclosure(_lua_state, _plane_ctor, 1);
 	lua_setglobal(_lua_state, "Plane");
 
 	// torii
-	_torus_tag = lua_newtag(_lua_state);
+	_torus_tag = lua_newtype(_lua_state, "Torus", LUA_TUSERDATA);
 	// constructor
 	lua_getref(_lua_state, _script_ref);
 	lua_pushcclosure(_lua_state, _torus_ctor, 1);
 	lua_setglobal(_lua_state, "Torus");
 
 	// triangles
-	_triangle_tag = lua_newtag(_lua_state);
+	_triangle_tag = lua_newtype(_lua_state, "Triangle", LUA_TUSERDATA);
 	// constructor
 	lua_getref(_lua_state, _script_ref);
 	lua_pushcclosure(_lua_state, _triangle_ctor, 1);
 	lua_setglobal(_lua_state, "Triangle");
 
 	// surface shaders
-	_surface_tag = lua_newtag(_lua_state);
+	_surface_tag = lua_newtype(_lua_state, "Surface", LUA_TUSERDATA);
 	// matte surface constructor
 	lua_getref(_lua_state, _script_ref);
 	lua_pushcclosure(_lua_state, _mattesurface_ctor, 1);
@@ -1368,19 +1518,23 @@ void LuaScript::exportShaderEnv(const ShaderEnv& env)
 {
 	// surface colour
 	Colour* Cs = new Colour(env.Cs());
-	lua_pushusertag(_lua_state, Cs, _colour_tag);
+	lua_newuserdatabox(_lua_state, Cs);
+	lua_settag(_lua_state, _colour_tag);
 	lua_setglobal(_lua_state, "Cs");
 	// surface opacity
 	Colour* Os = new Colour(env.Os());
-	lua_pushusertag(_lua_state, Os, _colour_tag);
+	lua_newuserdatabox(_lua_state, Os);
+	lua_settag(_lua_state, _colour_tag);
 	lua_setglobal(_lua_state, "Os");
 	// intersection point
 	Point* P = new Point(env.P());
-	lua_pushusertag(_lua_state, P, _point_tag);
+	lua_newuserdatabox(_lua_state, P);
+	lua_settag(_lua_state, _point_tag);
 	lua_setglobal(_lua_state, "P");
 	// normal at intersection
 	Vector* N = new Vector(env.N());
-	lua_pushusertag(_lua_state, N, _vector_tag);
+	lua_newuserdatabox(_lua_state, N);
+	lua_settag(_lua_state, _vector_tag);
 	lua_setglobal(_lua_state, "N");
 	// surface parameters
 	lua_pushnumber(_lua_state, env.u());
@@ -1394,11 +1548,13 @@ void LuaScript::exportShaderEnv(const ShaderEnv& env)
 	lua_setglobal(_lua_state, "t");
 	// eye position
 	Point* E = new Point(env.E());
-	lua_pushusertag(_lua_state, E, _point_tag);
+	lua_newuserdatabox(_lua_state, E);
+	lua_settag(_lua_state, _point_tag);
 	lua_setglobal(_lua_state, "E");
 	// incident ray direction
 	Vector* I = new Vector(env.I());
-	lua_pushusertag(_lua_state, I, _vector_tag);
+	lua_newuserdatabox(_lua_state, I);
+	lua_settag(_lua_state, _vector_tag);
 	lua_setglobal(_lua_state, "I");
 }
 

@@ -74,18 +74,30 @@ private:
 	static int _point_ctor(lua_State* L);
 	static int _point_dtor(lua_State* L);
 	static int _point_index(lua_State* L);
+	static int _point_add(lua_State* L);
+	static int _point_sub(lua_State* L);
+	static int _point_mul(lua_State* L);
+	static int _point_div(lua_State* L);
 
 	// colours
 	int _colour_tag;
 	static int _colour_ctor(lua_State* L);
 	static int _colour_dtor(lua_State* L);
 	static int _colour_index(lua_State* L);
+	static int _colour_add(lua_State* L);
+	static int _colour_sub(lua_State* L);
+	static int _colour_mul(lua_State* L);
+	static int _colour_div(lua_State* L);
 
 	// vectors
 	int _vector_tag;
 	static int _vector_ctor(lua_State* L);
 	static int _vector_dtor(lua_State* L);
 	static int _vector_index(lua_State* L);
+	static int _vector_add(lua_State* L);
+	static int _vector_sub(lua_State* L);
+	static int _vector_mul(lua_State* L);
+	static int _vector_div(lua_State* L);
 
 	// light
 	int _light_tag;
