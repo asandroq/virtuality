@@ -29,10 +29,14 @@ namespace LuaScriptAPI {
 
 void exportLuaScriptAPI(lua_State* L)
 {
-}
-
-void exportShaderEnv(lua_State* L, const ShaderEnv& env)
-{
+	// geometric functions
+	lua_register(L, "reflect", reflect);
+	lua_register(L, "refract", refract);
+	lua_register(L, "faceforward", faceforward);
+	// shading functions
+	lua_register(L, "ambient", ambient);
+	lua_register(L, "diffuse", diffuse);
+	lua_register(L, "specular", specular);
 }
 
 int reflect(lua_State* L)

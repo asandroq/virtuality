@@ -34,7 +34,7 @@ libshaders_a_SOURCES = surfaceshader.H \
 		       luasurfaceshader.H luasurfaceshader.C \
 		       plasticsurfaceshader.H plasticsurfaceshader.C
 
-INCLUDES = -I../shapes -I../virtuality
+INCLUDES = -I../framebuffers -I../shapes -I../virtuality
 AM_CXXFLAGS = -Wall -Wno-trigraphs -ansi -ffast-math -fno-rtti -fno-exceptions
 
 AUTOMAKE_OPTIONS = foreign

@@ -98,16 +98,12 @@ private:
 	vector<Shape*> _shapes;
 };
 
-extern Scene* _global_scene;
-
 inline Scene::Scene()
 {
-	_global_scene = this;
 }
 
 inline Scene::~Scene()
 {
-	_global_scene = 0;
 	clear();
 }
 

@@ -21,20 +21,51 @@
  * To contact the author send eletronic mail to asandro@lcg.dc.ufc.br
  */
 
+#include <cassert>
+
+#include <luascript.H>
 #include <luasurfaceshader.H>
 
 namespace Virtuality {
 
 LuaSurfaceShader::LuaSurfaceShader(lua_State* L, int index)
 {
+	_shader = 0;
+	_lua_state = L;
+	// copying object to stack's top
+	lua_pushvalue(_lua_state, index);
+	// creating a reference to it
+	_shader = lua_ref(_lua_state, 1);
 }
 
 LuaSurfaceShader::~LuaSurfaceShader()
 {
+	lua_unref(_lua_state, _shader);
 }
 
 void LuaSurfaceShader::shade(const ShaderEnv& env, Colour& Ci, Colour& Oi)
 {
+	assert(_lua_script);
+	// exports the shader environment
+	_lua_script->exportShaderEnv(env);
+	// call the real shader
+	lua_getref(_lua_state, _shader);
+	lua_call(_lua_state, 0, 2);
+	if(lua_isnil(_lua_state, -1)) {
+		lua_error(_lua_state, "Lua shader did not return opacity");
+	} else if(lua_tag(_lua_state, -1) != _lua_script->colourTag()) {
+		lua_error(_lua_state, "Wrong type for returned opacity");
+	} else {
+		Oi = *(static_cast<Colour*>(lua_touserdata(_lua_state, -1)));
+	}
+	if(lua_isnil(_lua_state, -2)) {
+		lua_error(_lua_state, "Lua shader did not return colour");
+	} else if(lua_tag(_lua_state, -2) != _lua_script->colourTag()) {
+		lua_error(_lua_state, "Wrong type for returned colour");
+	} else {
+		Ci = *(static_cast<Colour*>(lua_touserdata(_lua_state, -2)));
+	}
+	lua_pop(_lua_state, 2);
 }
 
 }

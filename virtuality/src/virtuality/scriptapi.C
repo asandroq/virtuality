@@ -24,7 +24,7 @@
 #include <cassert>
 
 #include <math.H>
-#include <scene.H>
+#include <luascript.H>
 #include <scriptapi.H>
 
 namespace Virtuality {
@@ -54,23 +54,25 @@ Vector faceforward(const Vector& N, const Vector& I)
 
 Colour ambient(const ShaderEnv& env)
 {
-	return _global_scene->ambient();
+	assert(_lua_script);
+	return _lua_script->scene()->ambient();
 }
 
 Colour diffuse(const ShaderEnv& env, const Vector& N)
 {
 	Colour c;
 
-	assert(_global_scene);
-	for(unsigned i = 0; i < _global_scene->numLights(); i++) {
+	assert(_lua_script);
+	for(unsigned i = 0; i < _lua_script->scene()->numLights(); i++) {
 		// gets light and light direction
-                Light  l = _global_scene->light(i);
+                Light  l = _lua_script->scene()->light(i);
 		Vector L = (l.position()-env.P()).normalise();
 		 // calculating light contribution
                 double coss = N*L;
                 if(coss > 0.0) {
                         // is this point in shadow?
-                        if(_global_scene->occluded(env.P(), l.position())) {
+                        if(_lua_script->scene()->occluded(env.P(),
+								l.position())) {
                                 continue;
                         }
 			c += coss*l.colour();
@@ -80,23 +82,24 @@ Colour diffuse(const ShaderEnv& env, const Vector& N)
 	return c;
 }
 
-Colour specular(const ShaderEnv& env, const Vector& N, const Vector& V,
-                double roughness)
+Colour specular(const ShaderEnv& env, 
+        	        const Vector& N, const Vector& V, double roughness)
 {
 	Colour c;
 
-	assert(_global_scene);
+	assert(_lua_script);
 	if(isZero(roughness)) {
-		roughness = 0.001;
+		roughness = 0.02;
 	}
-	for(unsigned i = 0; i < _global_scene->numLights(); i++) {
+	for(unsigned i = 0; i < _lua_script->scene()->numLights(); i++) {
 		// gets light and light direction
-                Light  l = _global_scene->light(i);
+                Light  l = _lua_script->scene()->light(i);
 		Vector L = (l.position()-env.P()).normalise();
 		 // calculating light contribution
                 if(N*L > 0.0) {
                         // is this point in shadow?
-                        if(_global_scene->occluded(env.P(), l.position())) {
+                        if(_lua_script->scene()->occluded(env.P(),
+								l.position())) {
                                 continue;
                         }
 			Vector H = 0.5*(L+V);

@@ -46,8 +46,8 @@ Colour ambient(const ShaderEnv& env);
 Colour diffuse(const ShaderEnv& env, const Vector& N);
 
 //! Returns the amount of specular light
-Colour specular(const ShaderEnv& env, const Vector& N, const Vector& V,
-		double roughness);
+Colour specular(const ShaderEnv& env, 
+			const Vector& N, const Vector& V, double roughness);
 
 }
 

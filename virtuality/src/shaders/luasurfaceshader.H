@@ -46,6 +46,12 @@ public:
 
 	//! Shades a surface
 	virtual void shade(const ShaderEnv& env, Colour& Ci, Colour& Oi);
+
+private:
+	// pointer to the lua state
+	lua_State* _lua_state;
+	// reference to the lua function
+	int _shader;
 };
 
 }

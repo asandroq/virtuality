@@ -35,6 +35,12 @@ extern "C" {
 
 namespace Virtuality {
 
+class LuaScript;
+
+#warning I really would like to get rid of this global variable
+// currently running script
+extern LuaScript* _lua_script;
+
 class LuaScript {
 public:
 	//! Constructor
@@ -42,6 +48,15 @@ public:
 
 	//! Destructor
 	~LuaScript();
+
+	//! Queries the current scene
+	const Scene* scene() const;
+
+	//! Queries the tag of the Colour objects
+	int colourTag() const;
+
+	// exports the shading environment to the Lua interpreter
+	void exportShaderEnv(const ShaderEnv& env);
 
 	//! Runs specified script
 	bool run(const char* filename, bool verbose);
@@ -134,6 +149,16 @@ private:
 	// framebuffer where to render the scene
 	FrameBuffer* _fb;
 };
+
+inline int LuaScript::colourTag() const
+{
+	return _colour_tag;
+}
+
+inline const Scene* LuaScript::scene() const
+{
+	return _sc;
+}
 
 }
 

@@ -37,9 +37,6 @@ namespace LuaScriptAPI {
 //! Exports this API to the Lua interpreter
 void exportLuaScriptAPI(lua_State* L);
 
-//! Exports the shading environment to the Lua interpreter
-void exportShaderEnv(lua_State* L, const ShaderEnv& env);
-
 //! Returns the reflection vector
 int reflect(lua_State* L);
 

@@ -22,6 +22,7 @@
  */
 
 #include <string>
+#include <cassert>
 
 #include <box.H>
 #include <cylinder.H>
@@ -34,11 +35,13 @@
 #include <difference.H>
 #include <intersection.H>
 
+#include <luasurfaceshader.H>
 #include <mattesurfaceshader.H>
 #include <plasticsurfaceshader.H>
 #include <constantsurfaceshader.H>
 
 #include <luascript.H>
+#include <luascriptapi.H>
 #include <pngframebuffer.H>
 #include <tgaframebuffer.H>
 
@@ -46,6 +49,8 @@ namespace Virtuality {
 
 const int FB_PNG = 1;
 const int FB_TGA = 2;
+
+LuaScript* _lua_script;
 
 int LuaScript::_point_ctor(lua_State *L)
 {
@@ -505,6 +510,8 @@ void LuaScript::_shape_ctor(lua_State* L, Shape* p)
 	lua_gettable(L, 1);
 	if(lua_isnil(L, 2)) {
 		ss = new ConstantSurfaceShader();
+	} else if(lua_isfunction(_lua_state, 2)) {
+		ss = new LuaSurfaceShader(_lua_state, 2);
 	} else if(lua_tag(L, 2) != _surface_tag) {
 		lua_error(L, "invalid type for Shape.surface");
 		ss = 0;
@@ -1164,6 +1171,9 @@ int LuaScript::_frame_ctor(lua_State* L)
 LuaScript::LuaScript()
 	: _verbose(false), _lua_state(0), _sc(0), _rd(0), _fb(0)
 {
+	// this is now the currently running script
+	_lua_script = this;
+
 	// creating a new lua state
 	_lua_state = lua_open(0);
 	lua_baselibopen(_lua_state);
@@ -1337,16 +1347,59 @@ LuaScript::LuaScript()
 	lua_getref(_lua_state, _script_ref);
 	lua_pushcclosure(_lua_state, _frame_ctor, 1);
 	lua_setglobal(_lua_state, "Frame");
+
+	// exporting the Shader's API
+	LuaScriptAPI::exportLuaScriptAPI(_lua_state);
 }
 
 LuaScript::~LuaScript()
 {
+	_lua_script = 0;
+
 	lua_unref(_lua_state, _script_ref);
 	lua_close(_lua_state);
 	// cleaning up
 	delete _sc;
 	delete _rd;
 	delete _fb;
+}
+
+void LuaScript::exportShaderEnv(const ShaderEnv& env)
+{
+	// surface colour
+	Colour* Cs = new Colour(env.Cs());
+	lua_pushusertag(_lua_state, Cs, _colour_tag);
+	lua_setglobal(_lua_state, "Cs");
+	// surface opacity
+	Colour* Os = new Colour(env.Os());
+	lua_pushusertag(_lua_state, Os, _colour_tag);
+	lua_setglobal(_lua_state, "Os");
+	// intersection point
+	Point* P = new Point(env.P());
+	lua_pushusertag(_lua_state, P, _point_tag);
+	lua_setglobal(_lua_state, "P");
+	// normal at intersection
+	Vector* N = new Vector(env.N());
+	lua_pushusertag(_lua_state, N, _vector_tag);
+	lua_setglobal(_lua_state, "N");
+	// surface parameters
+	lua_pushnumber(_lua_state, env.u());
+	lua_setglobal(_lua_state, "u");
+	lua_pushnumber(_lua_state, env.v());
+	lua_setglobal(_lua_state, "v");
+	// texture coordinates
+	lua_pushnumber(_lua_state, env.s());
+	lua_setglobal(_lua_state, "s");
+	lua_pushnumber(_lua_state, env.t());
+	lua_setglobal(_lua_state, "t");
+	// eye position
+	Point* E = new Point(env.E());
+	lua_pushusertag(_lua_state, E, _point_tag);
+	lua_setglobal(_lua_state, "E");
+	// incident ray direction
+	Vector* I = new Vector(env.I());
+	lua_pushusertag(_lua_state, I, _vector_tag);
+	lua_setglobal(_lua_state, "I");
 }
 
 bool LuaScript::run(const char* filename, bool verbose)
