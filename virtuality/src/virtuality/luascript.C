@@ -57,6 +57,7 @@ bool LuaScript::isShape(int tag) const
 {
 	if(tag == _box_tag	||
 	   tag == _cylinder_tag	||
+	   tag == _plane_tag	||
 	   tag == _sphere_tag	||
 	   tag == _torus_tag	||
 	   tag == _triangle_tag){
