@@ -438,11 +438,36 @@ int Script::_camera_dtor(lua_State* L)
 void Script::_shape_ctor(lua_State* L, Shape* p)
 {
 	Colour c;
+	Vector v;
 
 	// we must get a table
 	if(!lua_istable(L, 1)) {
 		lua_error(L, "invalid argument to Shape");
 	}
+	// reading scaling
+	lua_pushstring(L, "scale");
+	lua_gettable(L, 1);
+	if(lua_isnil(L, 2)) {
+		// ok
+	} else if(lua_tag(L, 2) != _vector_tag) {
+		lua_error(L, "invalid type for Shape.scale");
+	} else {
+		v = *(static_cast<Vector*>(lua_touserdata(L, 2)));
+		p->scale(v.x(), v.y(), v.z());
+	}
+	lua_pop(L, 1);
+	// reading translation
+	lua_pushstring(L, "translate");
+	lua_gettable(L, 1);
+	if(lua_isnil(L, 2)) {
+		// ok
+	} else if(lua_tag(L, 2) != _vector_tag) {
+		lua_error(L, "invalid type for Shape.translate");
+	} else {
+		v = *(static_cast<Vector*>(lua_touserdata(L, 2)));
+		p->translate(v.x(), v.y(), v.z());
+	}
+	lua_pop(L, 1);
 	// reading colour
 	lua_pushstring(L, "colour");
 	lua_gettable(L, 1);

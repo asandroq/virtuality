@@ -26,10 +26,12 @@
 
 namespace Virtuality {
 
-void Triangle::hit(const Ray& r, SpanList* sl) const
+void Triangle::hit(const Ray& r0, SpanList* sl) const
 {
 	double l1, l2, l3;
 
+	// applying inverse transformation to ray
+	Ray r = transformRay(r0);
 	Vector n = normal(_p1);
 	// I must first test if the ray hits the triangle's plane
 	double den =

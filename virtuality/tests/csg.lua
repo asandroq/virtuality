@@ -24,7 +24,8 @@ Frame {
 		Sphere {
 			radius = 1.0,
 			colour = Red,
-			centre = Point { x = 0.5, z = 7.5 }
+			centre = Point { x = 0.5, z = 7.5 },
+			scale = Vector { x = 2.0, y = 2.0 }
 		},
 		-- creating blue sphere
 		Sphere {

@@ -139,6 +139,14 @@ Matrix Matrix::inverse() const
 
 #undef SWAP_ROWS
 
+Matrix Matrix::transposed() const
+{
+	return Matrix(_e11, _e21, _e31, _e41,
+		      _e12, _e22, _e32, _e42,
+		      _e13, _e23, _e33, _e43,
+		      _e14, _e24, _e34, _e44);
+}
+
 #define T(x) (this->x)
 
 Matrix& Matrix::operator*=(const Matrix& m)

@@ -26,8 +26,11 @@
 
 namespace Virtuality {
 
-void Plane::hit(const Ray& r, SpanList* sl) const
+void Plane::hit(const Ray& r0, SpanList* sl) const
 {
+	// applying inverse transformation to ray
+	Ray r = transformRay(r0);
+	// finds intersection
 	double den = _normal.x()*r.direction().x() +
 				_normal.y()*r.direction().y() +
 				_normal.z()*r.direction().z();

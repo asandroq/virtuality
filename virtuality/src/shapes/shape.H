@@ -79,12 +79,14 @@ public:
 
 	//! Rotates this shape
 	/*!
-	 * \param a the angle of rotation, in degrees
-	 * \param x the x component of the rotation axis
-	 * \param y the y component of the rotation axis
-	 * \param z the z component of the rotation axis
+	 * \param ax the rotation angle around the x axis
+	 * \param ay the rotation angle around the y axis
+	 * \param az the rotation angle around the z axis
 	 */
-	void rotate(double a, double x, double y, double z);
+	void rotate(double ax, double ay, double az);
+
+	//! transforms the ray with inverse shape's transformation
+	Ray transformRay(const Ray& r) const;
 
 	//! Queries if the ray hits the shape
 	/*!
@@ -106,6 +108,8 @@ private:
 	Colour _colour;
 	// transformation matrix
 	Matrix _trans;
+	// inverse transfomation matrix
+	Matrix _inv;
 };
 
 // inline member functions
@@ -126,24 +130,39 @@ inline void Shape::setColour(const Colour& c)
 
 inline void Shape::scale(double x, double y, double z)
 {
-	// creating scaling matrix
-	Matrix tmp(  x, 0.0, 0.0, 0.0,
-		   0.0,   y, 0.0, 0.0,
-		   0.0, 0.0,   z, 0.0,
-		   0.0, 0.0, 0.0, 1.0);
-	// applying transformation
-	_trans *= tmp;
+	// sanity checking
+	if(isZero(x)) x = 1.0;
+	if(isZero(y)) y = 1.0;
+	if(isZero(z)) z = 1.0;
+	// applying scaling transformation
+	_trans *= Matrix(  x, 0.0, 0.0, 0.0,
+			 0.0,   y, 0.0, 0.0,
+			 0.0, 0.0,   z, 0.0,
+			 0.0, 0.0, 0.0, 1.0);
+	// applying inverse scaling
+	_inv = Matrix(1/x, 0.0, 0.0, 0.0,
+		      0.0, 1/y, 0.0, 0.0,
+		      0.0, 0.0, 1/z, 0.0,
+		      0.0, 0.0, 0.0, 1.0) * _inv;
 }
 
 inline void Shape::translate(double x, double y, double z)
 {
-	// creating translation matrix
-	Matrix tmp(1.0, 0.0, 0.0,   x,
-		   0.0, 1.0, 0.0,   y,
-		   0.0, 0.0, 1.0,   z,
-		   0.0, 0.0, 0.0, 1.0);
-	// applying transformation
-	_trans *= tmp;
+	// applying translation transformation
+	_trans *= Matrix(1.0, 0.0, 0.0,   x,
+			 0.0, 1.0, 0.0,   y,
+			 0.0, 0.0, 1.0,   z,
+			 0.0, 0.0, 0.0, 1.0);
+	// applying inverse translation
+	_inv = Matrix(1.0, 0.0, 0.0,  -x,
+		      0.0, 1.0, 0.0,  -y,
+		      0.0, 0.0, 1.0,  -z,
+		      0.0, 0.0, 0.0, 1.0) * _inv;
+}
+
+inline Ray Shape::transformRay(const Ray& r) const
+{
+	return _inv*r;
 }
 
 }

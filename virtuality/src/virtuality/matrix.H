@@ -53,6 +53,9 @@ public:
 	//! the inverse of this matrix
 	Matrix inverse() const;
 
+	//! the transposed matrix
+	Matrix transposed() const;
+
 	//! multiplying this matrix by another one
 	Matrix& operator*=(const Matrix& m);
 

@@ -26,8 +26,10 @@
 
 namespace Virtuality {
 
-void Sphere::hit(const Ray& r, SpanList* sl) const
+void Sphere::hit(const Ray& r0, SpanList* sl) const
 {
+	// applying inverse transformation to ray
+	Ray r = transformRay(r0);
 	// sphere's centre
 	double l = _centre.x();
 	double m = _centre.y();
