@@ -192,7 +192,7 @@ int LuaScript::_point_add(lua_State *L)
 		Point *p = static_cast<Point*>(lua_touserdata(L, 2));
 		r = new Point(p->x()+n, p->y()+n, p->z()+n);
 	} else {
-		lua_error(L, "incompatible types added");
+		lua_error(L, "incompatible types in addition");
 	}
 	// stack management
 	lua_pop(L, 2);
@@ -256,7 +256,7 @@ int LuaScript::_point_sub(lua_State *L)
 		lua_newuserdatabox(L, r);
 		lua_settag(L, _point_tag);
 	} else {
-		lua_error(L, "incompatible types subtracted");
+		lua_error(L, "incompatible types in subtraction");
 	}
 
 	return 1;
@@ -287,7 +287,7 @@ int LuaScript::_point_mul(lua_State *L)
 		Point *p = static_cast<Point*>(lua_touserdata(L, 2));
 		r = new Point(p->x()*n, p->y()*n, p->z()*n);
 	} else {
-		lua_error(L, "incompatible types multiplied");
+		lua_error(L, "incompatible types in multiplication");
 	}
 	// stack management
 	lua_pop(L, 2);
@@ -332,7 +332,7 @@ int LuaScript::_point_div(lua_State *L)
 		}
 		r = new Point(n/p->x(), n/p->y(), n/p->z());
 	} else {
-		lua_error(L, "incompatible types divided");
+		lua_error(L, "incompatible types in division");
 	}
 	// stack management
 	lua_pop(L, 2);
@@ -501,10 +501,83 @@ int LuaScript::_colour_sub(lua_State *L)
 
 int LuaScript::_colour_mul(lua_State *L)
 {
+	Colour *r = 0;
+
+	// argument tags
+	int tag1 = lua_tag(L, 1);
+	int tag2 = lua_tag(L, 2);
+	// allowed tag
+	int _colour_tag = lua_name2tag(L, "Colour");
+	assert(_colour_tag != LUA_TNONE);
+	if(tag1 == _colour_tag && tag2 == _colour_tag) {
+		Colour *c1 = static_cast<Colour*>(lua_touserdata(L, 1));
+		Colour *c2 = static_cast<Colour*>(lua_touserdata(L, 2));
+		r = new Colour(c1->red()*c2->red(), c1->green()*c2->green(),
+							c1->blue()*c2->blue());
+	} else if(tag1 == _colour_tag && tag2 == LUA_TNUMBER) {
+		Colour *c = static_cast<Colour*>(lua_touserdata(L, 1));
+		double  n = lua_tonumber(L, 2);
+		r = new Colour(c->red()*n, c->green()*n, c->blue()*n);
+	} else if(tag1 == LUA_TNUMBER && tag2 == _colour_tag) {
+		double  n = lua_tonumber(L, 1);
+		Colour *c = static_cast<Colour*>(lua_touserdata(L, 2));
+		r = new Colour(n*c->red(), n*c->green(), n*c->blue());
+	} else {
+		lua_error(L, "incompatible types in multiplication");
+	}
+	// stack management
+	lua_pop(L, 2);
+	lua_newuserdatabox(L, r);
+	lua_settag(L, _colour_tag);
+
+	return 1;
 }
 
 int LuaScript::_colour_div(lua_State *L)
 {
+	Colour *r = 0;
+
+	// argument tags
+	int tag1 = lua_tag(L, 1);
+	int tag2 = lua_tag(L, 2);
+	// allowed tag
+	int _colour_tag = lua_name2tag(L, "Colour");
+	assert(_colour_tag != LUA_TNONE);
+	if(tag1 == _colour_tag && tag2 == _colour_tag) {
+		Colour *c1 = static_cast<Colour*>(lua_touserdata(L, 1));
+		Colour *c2 = static_cast<Colour*>(lua_touserdata(L, 2));
+		// avoids division by zero
+		if(isZero(c2->red()) || isZero(c2->green()) ||
+						isZero(c2->blue())) {
+			lua_error(L, "division by zero");
+		}
+		r = new Colour(c1->red()/c2->red(), c1->green()/c2->green(),
+							c1->blue()/c2->blue());
+	} else if(tag1 == _colour_tag && tag2 == LUA_TNUMBER) {
+		Colour *c = static_cast<Colour*>(lua_touserdata(L, 1));
+		double  n = lua_tonumber(L, 2);
+		// avoids division by zero
+		if(isZero(n)) {
+			lua_error(L, "division by zero");
+		}
+		r = new Colour(c->red()/n, c->green()/n, c->blue()/n);
+	} else if(tag1 == LUA_TNUMBER && tag2 == _colour_tag) {
+		double  n = lua_tonumber(L, 1);
+		Colour *c = static_cast<Colour*>(lua_touserdata(L, 2));
+		// avoids division by zero
+		if(isZero(c->red()) || isZero(c->green()) || isZero(c->blue())){
+			lua_error(L, "division by zero");
+		}
+		r = new Colour(n/c->red(), n/c->green(), n/c->blue());
+	} else {
+		lua_error(L, "incompatible types in division");
+	}
+	// stack management
+	lua_pop(L, 2);
+	lua_newuserdatabox(L, r);
+	lua_settag(L, _colour_tag);
+
+	return 1;
 }
 
 int LuaScript::_vector_ctor(lua_State *L)
@@ -598,10 +671,124 @@ int LuaScript::_vector_index(lua_State* L)
 
 int LuaScript::_vector_add(lua_State *L)
 {
+	// argument tags
+	int tag1 = lua_tag(L, 1);
+	int tag2 = lua_tag(L, 2);
+	// allowed tags
+	int _point_tag  = lua_name2tag(L, "Point");
+	assert(_point_tag != LUA_TNONE);
+	int _vector_tag = lua_name2tag(L, "Vector");
+	assert(_vector_tag != LUA_TNONE);
+	// possible cases
+	if(tag1 == _vector_tag && tag2 == _vector_tag) {
+		Vector *a = static_cast<Vector*>(lua_touserdata(L, 1));
+		Vector *b = static_cast<Vector*>(lua_touserdata(L, 2));
+		Vector *r = new Vector(a->x()+b->x(), a->y()+b->y(),
+							a->z()+b->z());
+		// stack management
+		lua_pop(L, 2);
+		lua_newuserdatabox(L, r);
+		lua_settag(L, _vector_tag);
+	} else if(tag1 == _vector_tag && tag2 == _point_tag) {
+		Vector *v = static_cast<Vector*>(lua_touserdata(L, 1));
+		Point  *p = static_cast<Point*>(lua_touserdata(L, 2));
+		Point  *r = new Point(v->x()+p->x(), v->y()+p->y(),
+							v->z()+p->z());
+		// stack management
+		lua_pop(L, 2);
+		lua_newuserdatabox(L, r);
+		lua_settag(L, _point_tag);
+	} else if(tag1 == _point_tag && tag2 == _vector_tag) {
+		Point  *p = static_cast<Point*>(lua_touserdata(L, 1));
+		Vector *v = static_cast<Vector*>(lua_touserdata(L, 2));
+		Point  *r = new Point(p->x()+v->x(), p->y()+v->y(),
+							p->z()+v->z());
+		// stack management
+		lua_pop(L, 2);
+		lua_newuserdatabox(L, r);
+		lua_settag(L, _point_tag);
+	} else if(tag1 == _vector_tag && tag2 == LUA_TNUMBER) {
+		Vector *v = static_cast<Vector*>(lua_touserdata(L, 1));
+		double  n = lua_tonumber(L, 2);
+		Vector *r = new Vector(v->x()+n, v->y()+n, v->z()+n);
+		// stack management
+		lua_pop(L, 2);
+		lua_newuserdatabox(L, r);
+		lua_settag(L, _vector_tag);
+	} else if(tag1 == LUA_TNUMBER && tag2 == _vector_tag) {
+		double  n = lua_tonumber(L, 1);
+		Vector *v = static_cast<Vector*>(lua_touserdata(L, 2));
+		Vector *r = new Vector(n+v->x(), n+v->y(), n+v->z());
+		// stack management
+		lua_pop(L, 2);
+		lua_newuserdatabox(L, r);
+		lua_settag(L, _vector_tag);
+	} else {
+		lua_error(L, "incompatible types in addition");
+	}
+
+	return 1;
 }
 
 int LuaScript::_vector_sub(lua_State *L)
 {
+	// argument tags
+	int tag1 = lua_tag(L, 1);
+	int tag2 = lua_tag(L, 2);
+	// allowed tags
+	int _point_tag  = lua_name2tag(L, "Point");
+	assert(_point_tag != LUA_TNONE);
+	int _vector_tag = lua_name2tag(L, "Vector");
+	assert(_vector_tag != LUA_TNONE);
+	// possible cases
+	if(tag1 == _vector_tag && tag2 == _vector_tag) {
+		Vector *a = static_cast<Vector*>(lua_touserdata(L, 1));
+		Vector *b = static_cast<Vector*>(lua_touserdata(L, 2));
+		Vector *r = new Vector(a->x()-b->x(), a->y()-b->y(),
+							a->z()-b->z());
+		// stack management
+		lua_pop(L, 2);
+		lua_newuserdatabox(L, r);
+		lua_settag(L, _vector_tag);
+	} else if(tag1 == _vector_tag && tag2 == _point_tag) {
+		Vector *v = static_cast<Vector*>(lua_touserdata(L, 1));
+		Point  *p = static_cast<Point*>(lua_touserdata(L, 2));
+		Point  *r = new Point(v->x()+p->x(), v->y()+p->y(),
+							v->z()+p->z());
+		// stack management
+		lua_pop(L, 2);
+		lua_newuserdatabox(L, r);
+		lua_settag(L, _point_tag);
+	} else if(tag1 == _point_tag && tag2 == _vector_tag) {
+		Point  *p = static_cast<Point*>(lua_touserdata(L, 1));
+		Vector *v = static_cast<Vector*>(lua_touserdata(L, 2));
+		Point  *r = new Point(p->x()+v->x(), p->y()+v->y(),
+							p->z()+v->z());
+		// stack management
+		lua_pop(L, 2);
+		lua_newuserdatabox(L, r);
+		lua_settag(L, _point_tag);
+	} else if(tag1 == _vector_tag && tag2 == LUA_TNUMBER) {
+		Vector *v = static_cast<Vector*>(lua_touserdata(L, 1));
+		double  n = lua_tonumber(L, 2);
+		Vector *r = new Vector(v->x()+n, v->y()+n, v->z()+n);
+		// stack management
+		lua_pop(L, 2);
+		lua_newuserdatabox(L, r);
+		lua_settag(L, _vector_tag);
+	} else if(tag1 == LUA_TNUMBER && tag2 == _vector_tag) {
+		double  n = lua_tonumber(L, 1);
+		Vector *v = static_cast<Vector*>(lua_touserdata(L, 2));
+		Vector *r = new Vector(n+v->x(), n+v->y(), n+v->z());
+		// stack management
+		lua_pop(L, 2);
+		lua_newuserdatabox(L, r);
+		lua_settag(L, _vector_tag);
+	} else {
+		lua_error(L, "incompatible types in subtraction");
+	}
+
+	return 1;
 }
 
 int LuaScript::_vector_mul(lua_State *L)
@@ -1425,15 +1612,8 @@ int LuaScript::_frame_ctor(lua_State* L)
 		} else if(tag == s->_light_tag) {
 			Light* l = static_cast<Light*>(lua_touserdata(L, -1));
 			s->_sc->addLight(*l);
-		} else if(tag == s->_csg_tag            ||
-				tag == s->_box_tag      ||
-				tag == s->_cylinder_tag ||
-				tag == s->_sphere_tag   ||
-				tag == s->_plane_tag    ||
-				tag == s->_torus_tag    ||
-				tag == s->_triangle_tag) {
-			Shape* p =
-				static_cast<Shape*>(lua_touserdata(L, -1));
+		} else if(tag == s->_csg_tag || isShape(L, tag)) {
+			Shape* p = static_cast<Shape*>(lua_touserdata(L, -1));
 			s->_sc->addShape(p);
 		}
 		lua_pop(L, 1);
@@ -1482,6 +1662,18 @@ LuaScript::LuaScript()
 	// indexing
 	lua_pushcfunction(_lua_state, _point_index);
 	lua_settagmethod(_lua_state, _point_tag, "gettable");
+	// adding
+	lua_pushcfunction(_lua_state, _point_add);
+	lua_settagmethod(_lua_state, _point_tag, "add");
+	// subtracting
+	lua_pushcfunction(_lua_state, _point_sub);
+	lua_settagmethod(_lua_state, _point_tag, "sub");
+	// multiplying
+	lua_pushcfunction(_lua_state, _point_mul);
+	lua_settagmethod(_lua_state, _point_tag, "mul");
+	// dividing
+	lua_pushcfunction(_lua_state, _point_div);
+	lua_settagmethod(_lua_state, _point_tag, "div");
 
 	// colours
 	_colour_tag = lua_newtype(_lua_state, "Colour", LUA_TUSERDATA);
@@ -1493,6 +1685,18 @@ LuaScript::LuaScript()
 	// indexing
 	lua_pushcfunction(_lua_state, _colour_index);
 	lua_settagmethod(_lua_state, _colour_tag, "gettable");
+	// adding
+	lua_pushcfunction(_lua_state, _colour_add);
+	lua_settagmethod(_lua_state, _colour_tag, "add");
+	// subtracting
+	lua_pushcfunction(_lua_state, _colour_sub);
+	lua_settagmethod(_lua_state, _colour_tag, "sub");
+	// multiplying
+	lua_pushcfunction(_lua_state, _colour_mul);
+	lua_settagmethod(_lua_state, _colour_tag, "mul");
+	// dividing
+	lua_pushcfunction(_lua_state, _colour_div);
+	lua_settagmethod(_lua_state, _colour_tag, "div");
 	// some useful constants
 	lua_newuserdatabox(_lua_state, new Colour(0.0, 0.0, 0.0));
 	lua_settag(_lua_state, _colour_tag);
