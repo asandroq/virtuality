@@ -23,8 +23,11 @@ Frame {
 		-- creating red box
 		Box {
 			colour = Red,
-			point1 = Point { x = -0.5, y = -1.0, z = 6.5 },
-			point2 = Point { x =  1.5, y =  1.0, z = 8.5 }
+			point1 = Point { x = -1.0, y = -1.0, z = -1.0 },
+			point2 = Point { x =  1.0, y =  1.0, z =  1.0 },
+
+			rotate = Vector { y = 15.0 },
+			translate = Vector { x = 0.5, z = 7.5 }
 		},
 		-- creating blue sphere
 		Sphere {

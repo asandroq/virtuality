@@ -33,15 +33,45 @@ namespace Virtuality {
  */
 void Shape::rotate(double ax, double ay, double az)
 {
-	double cosx, sinx, cosy, siny, cosz, sinz;
-
-	// precomputing...
-	cosx = cos(radians(ax));
-	sinx = sin(radians(ax));
-	cosy = cos(radians(ay));
-	siny = sin(radians(ay));
-	cosz = cos(radians(az));
-	sinz = sin(radians(az));
+	// rotation around x axis
+	if(!isZero(ax)) {
+		double cosx = cos(radians(ax));
+		double sinx = sin(radians(ax));
+		_trans *= Matrix(1.0,  0.0,   0.0, 0.0,
+				 0.0, cosx, -sinx, 0.0,
+				 0.0, sinx,  cosx, 0.0,
+				 0.0,  0.0,   0.0, 1.0);
+		_inv = Matrix(1.0,   0.0,  0.0, 0.0,
+			      0.0,  cosx, sinx, 0.0,
+			      0.0, -sinx, cosx, 0.0,
+			      0.0,   0.0,  0.0, 1.0) * _inv;
+	}
+	// rotation around y axis
+	if(!isZero(ay)) {
+		double cosy = cos(radians(ay));
+		double siny = sin(radians(ay));
+		_trans *= Matrix( cosy, 0.0, siny, 0.0,
+				   0.0, 1.0,  0.0, 0.0,
+				 -siny, 0.0, cosy, 0.0,
+				   0.0, 0.0,  0.0, 1.0);
+		_inv = Matrix(cosy, 0.0, -siny, 0.0,
+			       0.0, 1.0,   0.0, 0.0,
+			      siny, 0.0,  cosy, 0.0,
+			       0.0, 0.0,   0.0, 1.0) * _inv;
+	}
+	// rotation around z axis
+	if(!isZero(az)) {
+		double cosz = cos(radians(az));
+		double sinz = sin(radians(az));
+		_trans *= Matrix(cosz, -sinz, 0.0, 0.0,
+				 sinz,  cosz, 0.0, 0.0,
+				  0.0,   0.0, 1.0, 0.0,
+				  0.0,   0.0, 0.0, 1.0);
+		_inv = Matrix( cosz, sinz, 0.0, 0.0,
+			      -sinz, cosz, 0.0, 0.0,
+			        0.0, 0.0,  1.0, 0.0,
+			        0.0, 0.0,  0.0, 1.0) * _inv;
+	}
 }
 
 Ray Shape::reflectedRay(const Ray& r, const Point& P) const
