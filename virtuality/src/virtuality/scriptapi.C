@@ -21,8 +21,48 @@
  * To contact the author send eletronic mail to asandro@lcg.dc.ufc.br
  */
 
+#include <math.H>
 #include <scriptapi.H>
 
 namespace Virtuality {
+
+namespace ScriptAPI {
+
+Vector reflect(const Vector& I, const Vector& N)
+{
+	return I - 2*(I*N)*N;
+}
+
+Vector refract(const Vector& I, const Vector& N, double eta)
+{
+	double IdotN = I*N;
+	double k = 1 - sqr(eta)*(1 - sqr(IdotN));
+	return k < 0 ? Vector(0.0, 0.0, 0.0) : eta*I - (eta*IdotN + sqrt(k))*N;
+}
+
+Vector faceforward(const Vector& N, const Vector& I)
+{
+	if(N*I < 0.0) {
+		return N;
+	} else {
+		return -N;
+	}
+}
+
+Colour ambient(const ShaderEnv& env)
+{
+	return Colour(0.0, 0.0, 0.0);
+}
+
+Colour diffuse(const ShaderEnv& env, const Vector& N)
+{
+}
+
+Colour specular(const ShaderEnv& env, const Vector& N, const Vector& V,
+                double roughness)
+{
+}
+
+}
 
 }

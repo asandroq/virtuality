@@ -30,18 +30,25 @@ namespace Virtuality {
 
 namespace ScriptAPI {
 
-	//! Gives the reflection vector
-	Vector reflect(const Vector& I, const Vector& N);
+//! Returns the reflection vector
+Vector reflect(const Vector& I, const Vector& N);
 
-	//! Gives the refraction vector
-	Vector refract(const Vector& I, const Vector& N, double eta);
+//! Returns the refraction vector
+Vector refract(const Vector& I, const Vector& N, double eta);
 
-	//! Returns the ambient light in scene
-	Colour ambient(const ShaderEnv& env);
+//! Returns the vector N or -N, which is opposite to I
+Vector faceforward(const Vector& N, const Vector& I);
 
+//! Returns the ambient light in scene
+Colour ambient(const ShaderEnv& env);
 
-	//! Returns the amount of diffuse light given normal
-	Colour diffuse(const ShaderEnv& env, const Vector& N);
+//! Returns the amount of diffuse light
+Colour diffuse(const ShaderEnv& env, const Vector& N);
+
+//! Returns the amount of specular light
+Colour specular(const ShaderEnv& env, const Vector& N, const Vector& V,
+		double roughness);
+
 }
 
 }
