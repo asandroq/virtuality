@@ -92,7 +92,7 @@ VERSION = @VERSION@
 
 bin_PROGRAMS = virtuality
 
-virtuality_SOURCES = boundingbox.H boundingbox.C 		     camera.H 		     colour.H colour.C 		     light.H 		     luascript.H luascript.C 		     main.C 		     math.H math.C 		     matrix.H matrix.C 		     point.H 		     ray.H 		     renderer.H renderer.C 		     scene.H scene.C 		     scriptapi.H scriptapi.C 		     shaderenv.H 		     vector.H
+virtuality_SOURCES = boundingbox.H boundingbox.C 		     camera.H 		     colour.H colour.C 		     light.H 		     luascript.H luascript.C 		     luascriptapi.H luascriptapi.C 		     main.C 		     math.H math.C 		     matrix.H matrix.C 		     point.H 		     ray.H 		     renderer.H renderer.C 		     scene.H scene.C 		     scriptapi.H scriptapi.C 		     shaderenv.H 		     vector.H
 
 virtuality_LDADD = ../framebuffers/libframebuffers.a 		     ../shaders/libshaders.a 		     ../shapes/libshapes.a
 
@@ -110,8 +110,8 @@ DEFS = @DEFS@ -I. -I$(srcdir)
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-virtuality_OBJECTS =  boundingbox.o colour.o luascript.o main.o math.o \
-matrix.o renderer.o scene.o scriptapi.o
+virtuality_OBJECTS =  boundingbox.o colour.o luascript.o luascriptapi.o \
+main.o math.o matrix.o renderer.o scene.o scriptapi.o
 virtuality_DEPENDENCIES =  ../framebuffers/libframebuffers.a \
 ../shaders/libshaders.a ../shapes/libshapes.a
 virtuality_LDFLAGS = 
@@ -131,8 +131,8 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 TAR = tar
 GZIP_ENV = --best
 DEP_FILES =  .deps/boundingbox.P .deps/colour.P .deps/luascript.P \
-.deps/main.P .deps/math.P .deps/matrix.P .deps/renderer.P .deps/scene.P \
-.deps/scriptapi.P
+.deps/luascriptapi.P .deps/main.P .deps/math.P .deps/matrix.P \
+.deps/renderer.P .deps/scene.P .deps/scriptapi.P
 SOURCES = $(virtuality_SOURCES)
 OBJECTS = $(virtuality_OBJECTS)
 
@@ -236,7 +236,7 @@ distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
-	    cp -pr $$d/$$file $(distdir)/$$file; \
+	    cp -pr $$/$$file $(distdir)/$$file; \
 	  else \
 	    test -f $(distdir)/$$file \
 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \

@@ -31,6 +31,7 @@ noinst_LIBRARIES = libshaders.a
 libshaders_a_SOURCES = surfaceshader.H \
 		       constantsurfaceshader.H \
 		       mattesurfaceshader.H \
+		       luasurfaceshader.H luasurfaceshader.C \
 		       plasticsurfaceshader.H plasticsurfaceshader.C
 
 INCLUDES = -I../shapes -I../virtuality

@@ -32,6 +32,7 @@ virtuality_SOURCES = boundingbox.H boundingbox.C \
 		     colour.H colour.C \
 		     light.H \
 		     luascript.H luascript.C \
+		     luascriptapi.H luascriptapi.C \
 		     main.C \
 		     math.H math.C \
 		     matrix.H matrix.C \

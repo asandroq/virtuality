@@ -1,5 +1,5 @@
 These are the points to be addressed in the near future:
 
-* Transformations
-* Programmable shaders
+* Shader's API
 * More primitive shapes
+* Anti-aliasing techniques
