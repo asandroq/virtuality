@@ -22,6 +22,7 @@ Frame {
 		major = 1.0,
 		minor = 0.5,
 		colour = Blue,
+		surface = Matte {},
 		rotate = Vector { x = -45.0 },
 		translate = Vector { z = 7.0 }
 	},
@@ -30,6 +31,7 @@ Frame {
 		major = 1.0,
 		minor = 0.5,
 		colour = Red,
+		surface = Matte {},
 		rotate = Vector { x = -45.0 },
 		translate = Vector { x = -3.0, z = 7.0 }
 	},
@@ -38,6 +40,7 @@ Frame {
 		major = 1.0,
 		minor = 0.5,
 		colour = Green,
+		surface = Matte {},
 		rotate = Vector { x = -45.0 },
 		translate = Vector { x = 3.0, z = 7.0 }
 	},
@@ -46,6 +49,7 @@ Frame {
 	Plane {
 		normal = y,
 		distance = -1.0,
+		surface = Matte {},
 		colour = Colour { red = 0.7, green = 0.7, blue = 0.7 }
 	}
 }

@@ -21,7 +21,10 @@
  * To contact the author send eletronic mail to asandro@lcg.dc.ufc.br
  */
 
+#include <cassert>
+
 #include <math.H>
+#include <scene.H>
 #include <scriptapi.H>
 
 namespace Virtuality {
@@ -51,27 +54,29 @@ Vector faceforward(const Vector& N, const Vector& I)
 
 Colour ambient(const ShaderEnv& env)
 {
-	return Colour(0.0, 0.0, 0.0);
+	return _global_scene->ambient();
 }
 
 Colour diffuse(const ShaderEnv& env, const Vector& N)
 {
 	Colour c;
 
-	for(unsigned i = 0; i < env.Sc().numLights(); i++) {
+	assert(_global_scene);
+	for(unsigned i = 0; i < _global_scene->numLights(); i++) {
 		// gets light and light direction
-                Light  l = env.Sc().light(i);
+                Light  l = _global_scene->light(i);
 		Vector L = (l.position()-env.P()).normalise();
 		 // calculating light contribution
                 double coss = N*L;
                 if(coss > 0.0) {
                         // is this point in shadow?
-                        if(env.Sc().occluded(env.P(), l.position())) {
+                        if(_global_scene->occluded(env.P(), l.position())) {
                                 continue;
                         }
 			c += coss*l.colour();
 		}
 	}
+
 	return c;
 }
 
@@ -80,17 +85,18 @@ Colour specular(const ShaderEnv& env, const Vector& N, const Vector& V,
 {
 	Colour c;
 
+	assert(_global_scene);
 	if(isZero(roughness)) {
 		roughness = 0.001;
 	}
-	for(unsigned i = 0; i < env.Sc().numLights(); i++) {
+	for(unsigned i = 0; i < _global_scene->numLights(); i++) {
 		// gets light and light direction
-                Light  l = env.Sc().light(i);
+                Light  l = _global_scene->light(i);
 		Vector L = (l.position()-env.P()).normalise();
 		 // calculating light contribution
                 if(N*L > 0.0) {
                         // is this point in shadow?
-                        if(env.Sc().occluded(env.P(), l.position())) {
+                        if(_global_scene->occluded(env.P(), l.position())) {
                                 continue;
                         }
 			Vector H = 0.5*(L+V);

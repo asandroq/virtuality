@@ -96,7 +96,7 @@ noinst_LIBRARIES = libshapes.a
 libshapes_a_SOURCES = box.H box.C 		      cylinder.H cylinder.C 		      csgnode.H 		      difference.H difference.C 		      intersection.H intersection.C 		      plane.H plane.C 		      shape.H shape.C 		      sphere.H sphere.C 		      torus.H torus.C 		      triangle.H triangle.C 		      union.H union.C
 
 
-INCLUDES = -I../virtuality
+INCLUDES = -I../shaders -I../virtuality
 AM_CXXFLAGS = -Wall -Wno-trigraphs -ansi -ffast-math -fno-rtti -fno-exceptions
 
 AUTOMAKE_OPTIONS = foreign

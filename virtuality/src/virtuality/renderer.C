@@ -45,61 +45,31 @@ void Renderer::printStatistics(clock_t t, int h, int i) const
 	}
 }
 
-Colour Renderer::trace(const Ray& r) const
+Colour Renderer::shade(const Ray& r) const
 {
 	double t;
 	Shape* s;
+	Colour Ci, Oi;
 
-	// ambient colour
-	Colour amb(0.1, 0.1, 0.1);
 	// fires ray into scene
 	t = _scn->hit(r, &s);
 	if(!s) {
 		// we hit nothing
 		return _scn->backgroundColour();
 	}
-	Vector V = -r.direction();
 	Point  P = r.pointOnRay(t);
 	Vector N = s->normal(P);
-	// make normal point to camera
-	if(N*V < 0.0) {
-		N = -N;
-	}
 	// shading locally
-	Colour c = amb + shade(s, P, N, V);
+	ShaderEnv env(s->colour(), Colour(1.0, 1.0, 1.0),
+		      P, N, 0, 0, 0, 0, r.origin(), r.direction());
+	s->surfaceShader()->shade(env, Ci, Oi);
 	// calculating reflections and refractions
 	if(_curr_depth++ < _max_depth) {
-		c += 0.2 * trace(s->reflectedRay(r, P));
-		//c += 0.2 * trace(s->transmittedRay(r, P));
+		Ci += 0.2 * shade(s->reflectedRay(r, P));
+		//Ci += 0.2 * shade(s->transmittedRay(r, P));
 	}
 	
-	return c;
-}
-
-Colour Renderer::shade(Shape* s, const Point& P,
-				const Vector& N, const Vector& V) const
-{
-	Colour c;
-
-	assert(s);
-	for(unsigned i = 0; i < _scn->numLights(); i++) {
-		// gets light and light direction
-		Light  l = _scn->light(i);
-		Vector L = (l.position()-P).normalise();
-		// calculating light contribution
-		double coss = N*L;
-		if(coss > 0.0) {
-			// is this point in shadow?
-			if(_scn->occluded(P, l.position())) {
-				continue;
-			}
-			Vector H = 0.5*(L+V);
-			c += (0.7*coss*s->colour() +
-				pow(N*H, 30.0)*Colour(.7, .7, .7))*l.colour();
-		}
-	}
-
-	return c;
+	return Ci;
 }
 
 void Renderer::render(bool verbose) const
@@ -139,7 +109,7 @@ void Renderer::render(bool verbose) const
 			// creating and firing ray
 			Ray r(p, v);
 			_curr_depth = 0;
-			sl[i] = trace(r);
+			sl[i] = shade(r);
 		}
 		_fb->addScanLine(sl);
 	}

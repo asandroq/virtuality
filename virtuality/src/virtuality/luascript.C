@@ -446,7 +446,7 @@ void LuaScript::_shape_ctor(lua_State* L, Shape* p)
 {
 	Colour c;
 	Vector v;
-	SurfaceShader* surface;
+	SurfaceShader* ss;
 
 	// we must get a table
 	if(!lua_istable(L, 1)) {
@@ -504,12 +504,14 @@ void LuaScript::_shape_ctor(lua_State* L, Shape* p)
 	lua_pushstring(L, "surface");
 	lua_gettable(L, 1);
 	if(lua_isnil(L, 2)) {
-		p->setSurfaceShader(new ConstantSurfaceShader());
+		ss = new ConstantSurfaceShader();
 	} else if(lua_tag(L, 2) != _surface_tag) {
 		lua_error(L, "invalid type for Shape.surface");
+		ss = 0;
 	} else {
-		p->setSurfaceShader(static_cast<Colour*>(lua_touserdata(L, 2)));
+		ss = static_cast<SurfaceShader*>(lua_touserdata(L, 2));
 	}
+	p->setSurfaceShader(ss);
 	lua_pop(L, 2);
 }
 
@@ -1028,6 +1030,7 @@ int LuaScript::_constantsurface_ctor(lua_State* L)
 int LuaScript::_frame_ctor(lua_State* L)
 {
 	string nm;
+	Colour amb;
 	int depth, kind, width, height;
 
 	// getting and popping upvalue - LuaScript instance
@@ -1097,8 +1100,20 @@ int LuaScript::_frame_ctor(lua_State* L)
 		height = 0;
 	}
 	lua_pop(L, 1);
+	// reading ambient light
+	lua_pushstring(L, "ambient");
+	lua_gettable(L, 1);
+	if(lua_isnil(L, 2)) {
+		amb = Colour(0.1, 0.1, 0.1);
+	} else if(lua_tag(L, 2) != s->_colour_tag) {
+		lua_error(L, "invalid type for Frame.ambient");
+	} else {
+		amb = *(static_cast<Colour*>(lua_touserdata(L, 2)));
+	}
+	lua_pop(L, 1);
 	// creating scene
 	s->_sc = new Scene();
+	s->_sc->setAmbient(amb);
 	// creating the correct frame buffer
 	switch(kind) {
 		case FB_PNG:

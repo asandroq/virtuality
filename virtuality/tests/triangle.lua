@@ -21,11 +21,13 @@ Frame {
 	Sphere {
 		radius = 0.5,
 		colour = Blue,
+		surface = Matte {},
 		centre = Point { x = -1.0, y = 2.0, z = 7.0 }
 	},
 
 	Triangle {
 		colour = Red,
+		surface = Matte {},
 		point1 = Point { x =  0.0, y = 3.0, z = 10.0 },
 		point2 = Point { x =  3.0, y = 1.0, z =  8.0 },
 		point3 = Point { x = -3.0, y = 0.0, z =  6.0 }
@@ -33,6 +35,7 @@ Frame {
 
 	Triangle {
 		colour = Red,
+		surface = Matte {},
 		point1 = Point { x =  0.0, y = 3.0, z = 10.0 },
 		point2 = Point { x = -6.0, y = 4.0, z =  8.0 },
 		point3 = Point { x = -3.0, y = 0.0, z =  6.0 }
@@ -42,6 +45,7 @@ Frame {
 	Plane {
 		normal = y,
 		distance = -1.0,
+		surface = Matte {},
 		colour = Colour { red = 0.7, green = 0.7, blue = 0.7 }
 	}
 }

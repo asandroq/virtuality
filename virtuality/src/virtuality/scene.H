@@ -49,6 +49,12 @@ public:
 	 */
 	void addShape(Shape* s);
 
+	//! Queries the ambient light
+	Colour ambient() const;
+
+	//! Sets the ambient light
+	void setAmbient(const Colour& c);
+
 	//! Queries one of the lights
 	Light light(unsigned i) const;
 
@@ -82,6 +88,8 @@ public:
 private:
 	// camera
 	Camera _cam;
+	// ambient light
+	Colour _ambient;
 	// background colour
 	Colour _bg_colour;
 	// list of lights
@@ -90,12 +98,16 @@ private:
 	vector<Shape*> _shapes;
 };
 
+extern Scene* _global_scene;
+
 inline Scene::Scene()
 {
+	_global_scene = this;
 }
 
 inline Scene::~Scene()
 {
+	_global_scene = 0;
 	clear();
 }
 
@@ -104,6 +116,16 @@ inline void Scene::addShape(Shape* s)
 	if(s) {
 		_shapes.push_back(s);
 	}
+}
+
+inline Colour Scene::ambient() const
+{
+	return _ambient;
+}
+
+inline void Scene::setAmbient(const Colour& c)
+{
+	_ambient = c;
 }
 
 inline Light Scene::light(unsigned i) const

@@ -23,6 +23,7 @@ Frame {
 		-- creating red box
 		Box {
 			colour = Red,
+			surface = Matte {},
 			point1 = Point { x = -1.0, y = -1.0, z = -1.0 },
 			point2 = Point { x =  1.0, y =  1.0, z =  1.0 },
 
@@ -33,6 +34,7 @@ Frame {
 		Sphere {
 			radius = 1.0,
 			colour = Blue,
+			surface = Matte {},
 			centre = Point { z = 7.0 }
 		}
 	},
@@ -41,6 +43,7 @@ Frame {
 		-- creating yellow sphere
 		Sphere {
 			radius = 1.0,
+			surface = Matte {},
 			colour = Colour { red = 1.0, green = 1.0 },
 			centre = Point { x = -1.5, z = 5.5 }
 		},
@@ -48,6 +51,7 @@ Frame {
 		Sphere {
 			radius = 1.0,
 			colour = Green,
+			surface = Matte {},
 			centre = Point { x = -2.0, z = 5.0 }
 		}
 	},
@@ -56,6 +60,7 @@ Frame {
 	Plane {
 		normal = y,
 		distance = -1.0,
+		surface = Matte {},
 		colour = Colour { red = 0.7, green = 0.7, blue = 0.7 }
 	}
 }

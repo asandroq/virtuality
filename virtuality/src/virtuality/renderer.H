@@ -60,10 +60,7 @@ private:
 	// print statistics
 	void printStatistics(clock_t t, int h, int i) const;
 	// traces rays into scene
-	Colour trace(const Ray& r) const;
-	// shades a sample
-	Colour shade(Shape* s, const Point& P,
-				const Vector& N, const Vector& V) const;
+	Colour shade(const Ray& r) const;
 };
 
 inline Renderer::Renderer(const Scene& s, FrameBuffer& f)

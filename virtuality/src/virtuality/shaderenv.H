@@ -24,7 +24,8 @@
 #ifndef __VIRTUALITY_SHADERENV_H__
 #define __VIRTUALITY_SHADERENV_H__
 
-#include <scene.H>
+#include <colour.H>
+#include <vector.H>
 
 namespace Virtuality {
 
@@ -33,7 +34,6 @@ class ShaderEnv {
 public:
 	//! Constructor
 	/*!
-	 * \param Sc Current scene
 	 * \param Cs Surface colour
 	 * \param Os Surface opacity
 	 * \param P  Intersection point
@@ -45,15 +45,12 @@ public:
 	 * \param E  Eye position
 	 * \param I  Incident ray direction
 	 */
-	ShaderEnv(const Scene& Sc, const Colour& Cs, const Colour& Os,
+	ShaderEnv(const Colour& Cs, const Colour& Os,
 		  const Point& P, const Vector& N, double u, double v,
 		  double s, double t, const Point& E, const Vector& I);
 
 	//! Destructor
 	~ShaderEnv();
-
-	//! Queries the current scene
-	const Scene& Sc() const;
 
 	//! Queries the surface colour
 	Colour Cs() const;
@@ -86,8 +83,6 @@ public:
 	Vector I() const;
 
 private:
-	// current scene
-	const Scene& _Sc;
 	// surface's colour and opacity
 	Colour _Cs, _Os;
 	// intersection point
@@ -104,21 +99,16 @@ private:
 	Vector _I;
 };
 
-inline ShaderEnv::ShaderEnv(const Scene& Sc, const Colour& Cs, const Colour& Os,
+inline ShaderEnv::ShaderEnv(const Colour& Cs, const Colour& Os,
 			    const Point& P, const Vector& N, double u, double v,
 			    double s, double t, const Point& E, const Vector& I)
-	: _Sc(Sc), _Cs(Cs), _Os(Os), _P(P), _N(N),
+	: _Cs(Cs), _Os(Os), _P(P), _N(N),
 	  _u(u), _v(v), _s(s), _t(t), _E(E),_I(I)
 {
 }
 
 inline ShaderEnv::~ShaderEnv()
 {
-}
-
-inline const Scene& ShaderEnv::Sc() const
-{
-	return _Sc;
 }
 
 inline Colour ShaderEnv::Cs() const

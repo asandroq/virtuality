@@ -26,6 +26,8 @@
 
 namespace Virtuality {
 
+Scene* _global_scene;
+
 double Scene::hit(const Ray& r, Shape** s) const
 {
 	*s = 0;
