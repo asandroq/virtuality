@@ -260,21 +260,80 @@ int LuaScript::_point_sub(lua_State *L)
 
 int LuaScript::_point_mul(lua_State *L)
 {
+	Point *r = 0;
+
 	// argument tags
 	int tag1 = lua_tag(L, 1);
 	int tag2 = lua_tag(L, 2);
 	// allowed tags
 	int _point_tag  = lua_name2tag(L, "Point");
-	int _vector_tag = lua_name2tag(L, "Vector");
 	// possible cases
 	if(tag1 == _point_tag && tag2 == _point_tag) {
 		Point *p1 = static_cast<Point*>(lua_touserdata(L, 1));
 		Point *p2 = static_cast<Point*>(lua_touserdata(L, 2));
+		r = new Point(p1->x()*p2->x(), p1->y()*p2->y(),
+							p1->z()*p2->z());
+	} else if(tag1 == _point_tag && tag2 == LUA_TNUMBER) {
+		Point *p = static_cast<Point*>(lua_touserdata(L, 1));
+		double n = lua_tonumber(L, 2);
+		r = new Point(p->x()*n, p->y()*n, p->z()*n);
+	} else if(tag1 == LUA_TNUMBER && tag2 == _point_tag) {
+		double n = lua_tonumber(L, 1);
+		Point *p = static_cast<Point*>(lua_touserdata(L, 2));
+		r = new Point(p->x()*n, p->y()*n, p->z()*n);
+	} else {
+		lua_error(L, "incompatible types multiplied");
 	}
+	// stack management
+	lua_pop(L, 2);
+	lua_newuserdatabox(L, r);
+	lua_settag(L, _point_tag);
+
+	return 1;
 }
 
 int LuaScript::_point_div(lua_State *L)
 {
+	Point *r = 0;
+
+	// argument tags
+	int tag1 = lua_tag(L, 1);
+	int tag2 = lua_tag(L, 2);
+	// allowed tags
+	int _point_tag  = lua_name2tag(L, "Point");
+	// possible cases
+	if(tag1 == _point_tag && tag2 == _point_tag) {
+		Point *p1 = static_cast<Point*>(lua_touserdata(L, 1));
+		Point *p2 = static_cast<Point*>(lua_touserdata(L, 2));
+		// avoids division by zero
+		if(isZero(p2->x()) || isZero(p2->y()) || isZero(p2->z())) {
+			lua_error(L, "division by zero");
+		}
+		r = new Point(p1->x()/p2->x(), p1->y()/p2->y(),
+							p1->z()/p2->z());
+	} else if(tag1 == _point_tag && tag2 == LUA_TNUMBER) {
+		Point *p = static_cast<Point*>(lua_touserdata(L, 1));
+		double n = lua_tonumber(L, 2);
+		if(isZero(n)) {
+			lua_error(L, "division by zero");
+		}
+		r = new Point(p->x()/n, p->y()/n, p->z()/n);
+	} else if(tag1 == LUA_TNUMBER && tag2 == _point_tag) {
+		double n = lua_tonumber(L, 1);
+		Point *p = static_cast<Point*>(lua_touserdata(L, 2));
+		if(isZero(p->x()) || isZero(p->y()) || isZero(p->z())) {
+			lua_error(L, "division by zero");
+		}
+		r = new Point(n/p->x(), n/p->y(), n/p->z());
+	} else {
+		lua_error(L, "incompatible types divided");
+	}
+	// stack management
+	lua_pop(L, 2);
+	lua_newuserdatabox(L, r);
+	lua_settag(L, _point_tag);
+
+	return 1;
 }
 
 int LuaScript::_colour_ctor(lua_State *L)
