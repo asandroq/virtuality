@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * The Virtuality Renderer
  * Copyright (C) 2001 Alex Sandro Queiroz e Silva
@@ -24,8 +23,8 @@
 #ifndef __VIRTUALITY_LIGHT_H__
 #define __VIRTUALITY_LIGHT_H__
 
-#include <point.H>
-#include <colour.H>
+#include <point.hpp>
+#include <colour.hpp>
 
 namespace Virtuality {
 

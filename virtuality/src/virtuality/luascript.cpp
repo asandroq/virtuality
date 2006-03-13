@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * The Virtuality Renderer
  * Copyright (C) 2001 Alex Sandro Queiroz e Silva
@@ -18,32 +17,32 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * To contact the author send eletronic mail to asandro@lcg.dc.ufc.br
+ * To contact the author send eletronic mail to ventonegro@ventonegro.org
  */
 
 #include <string>
 #include <cassert>
 
-#include <box.H>
-#include <cylinder.H>
-#include <plane.H>
-#include <sphere.H>
-#include <torus.H>
-#include <triangle.H>
+#include <box.hpp>
+#include <cylinder.hpp>
+#include <plane.hpp>
+#include <sphere.hpp>
+#include <torus.hpp>
+#include <triangle.hpp>
 
-#include <union.H>
-#include <difference.H>
-#include <intersection.H>
+#include <union.hpp>
+#include <difference.hpp>
+#include <intersection.hpp>
 
-#include <luasurfaceshader.H>
-#include <mattesurfaceshader.H>
-#include <plasticsurfaceshader.H>
-#include <constantsurfaceshader.H>
+#include <luasurfaceshader.hpp>
+#include <mattesurfaceshader.hpp>
+#include <plasticsurfaceshader.hpp>
+#include <constantsurfaceshader.hpp>
 
-#include <luascript.H>
-#include <luascriptapi.H>
-#include <pngframebuffer.H>
-#include <tgaframebuffer.H>
+#include <luascript.hpp>
+#include <luascriptapi.hpp>
+#include <pngframebuffer.hpp>
+#include <tgaframebuffer.hpp>
 
 namespace Virtuality {
 

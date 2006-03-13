@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * The Virtuality Renderer
  * Copyright (C) 2001 Alex Sandro Queiroz e Silva
@@ -24,8 +23,8 @@
 #ifndef __VIRTUALITY_SHADERENV_H__
 #define __VIRTUALITY_SHADERENV_H__
 
-#include <colour.H>
-#include <vector.H>
+#include <colour.hpp>
+#include <vector.hpp>
 
 namespace Virtuality {
 

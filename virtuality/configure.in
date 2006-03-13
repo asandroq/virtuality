@@ -25,7 +25,7 @@ dnl
 dnl Virtuality's configuration script
 dnl
 
-AC_INIT(src/virtuality/main.C)
+AC_INIT(src/virtuality/main.cpp)
 AM_INIT_AUTOMAKE("virtuality", "0.1.90")
 
 dnl Checks for programs
@@ -36,7 +36,6 @@ AC_LANG_CPLUSPLUS
 dnl Checks for libraries
 AC_CHECK_LIB(m, sin)
 AC_CHECK_LIB(lua, lua_close)
-AC_CHECK_LIB(lualib, lua_baselibopen)
 AC_CHECK_LIB(z, deflate)
 AC_CHECK_LIB(png, png_set_gAMA,,, -lz -lm)
 

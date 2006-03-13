@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * The Virtuality Renderer
  * Copyright (C) 2001 Alex Sandro Queiroz e Silva
@@ -26,7 +25,7 @@
 
 #include <fstream>
 
-#include <framebuffer.H>
+#include <framebuffer.hpp>
 
 namespace Virtuality {
 
@@ -43,9 +42,10 @@ public:
 
 private:
 	// output file
-	ofstream _file;
+	std::ofstream _file;
 };
 
 }
 
 #endif  // __VIRTUALITY_TGAFRAMEBUFFER_H__
+

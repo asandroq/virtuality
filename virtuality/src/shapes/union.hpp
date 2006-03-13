@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * The Virtuality Renderer
  * Copyright (C) 2001 Alex Sandro Queiroz e Silva
@@ -24,7 +23,7 @@
 #ifndef __VIRTUALITY_UNION_H__
 #define __VIRTUALITY_UNION_H__
 
-#include <csgnode.H>
+#include <csgnode.hpp>
 
 namespace Virtuality {
 

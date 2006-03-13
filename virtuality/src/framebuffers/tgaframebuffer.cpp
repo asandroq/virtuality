@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * The Virtuality Renderer
  * Copyright (C) 2001 Alex Sandro Queiroz e Silva
@@ -18,15 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * To contact the author send eletronic mail to asandro@lcg.dc.ufc.br
+ * To contact the author send eletronic mail to ventonegro@ventonegro.org
  */
 
 #include <cstring>
-#include <tgaframebuffer.H>
+#include <tgaframebuffer.hpp>
 
 namespace Virtuality {
 
-typedef unsigned char byte;
+typedef char byte;
 
 TGAFrameBuffer::TGAFrameBuffer(const char* path, int w, int h)
 	: FrameBuffer(w, h)
@@ -78,3 +77,4 @@ bool TGAFrameBuffer::addScanLine(const Colour* pixels)
 }
 
 }
+

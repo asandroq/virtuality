@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * The Virtuality Renderer
  * Copyright (C) 2001 Alex Sandro Queiroz e Silva
@@ -24,7 +23,7 @@
 #ifndef __VIRTUALITY_BOX_H__
 #define __VIRTUALITY_BOX_H__
 
-#include <shape.H>
+#include <shape.hpp>
 
 namespace Virtuality {
 

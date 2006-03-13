@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * The Virtuality Renderer
  * Copyright (C) 2001 Alex Sandro Queiroz e Silva
@@ -29,9 +28,9 @@ extern "C" {
 #include <lualib.h>
 }
 
-#include <scene.H>
-#include <renderer.H>
-#include <framebuffer.H>
+#include <scene.hpp>
+#include <renderer.hpp>
+#include <framebuffer.hpp>
 
 namespace Virtuality {
 

@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * The Virtuality Renderer
  * Copyright (C) 2001 Alex Sandro Queiroz e Silva
@@ -26,11 +25,11 @@
 
 #include <map>
 
-#include <ray.H>
-#include <colour.H>
-#include <boundingbox.H>
+#include <ray.hpp>
+#include <colour.hpp>
+#include <boundingbox.hpp>
 
-#include <surfaceshader.H>
+#include <surfaceshader.hpp>
 
 namespace Virtuality {
 

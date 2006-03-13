@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * The Virtuality Renderer
  * Copyright (C) 2001 Alex Sandro Queiroz e Silva
@@ -32,7 +31,7 @@
 #  include <png.h>
 #endif
 
-#include <framebuffer.H>
+#include <framebuffer.hpp>
 
 namespace Virtuality {
 

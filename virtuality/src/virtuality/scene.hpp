@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * The Virtuality Renderer
  * Copyright (C) 2001 Alex Sandro Queiroz e Silva
@@ -26,9 +25,9 @@
 
 #include <vector>
 
-#include <light.H>
-#include <shape.H>
-#include <camera.H>
+#include <light.hpp>
+#include <shape.hpp>
+#include <camera.hpp>
 
 namespace Virtuality {
 

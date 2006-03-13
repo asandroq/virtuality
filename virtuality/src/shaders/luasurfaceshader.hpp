@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * The Virtuality Renderer
  * Copyright (C) 2001 Alex Sandro Queiroz e Silva
@@ -28,7 +27,7 @@ extern "C" {
 #include <lua.h>
 }
 
-#include <surfaceshader.H>
+#include <surfaceshader.hpp>
 
 namespace Virtuality {
 

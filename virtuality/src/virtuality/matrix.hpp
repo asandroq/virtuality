@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * The Virtuality Renderer
  * Copyright (C) 2001 Alex Sandro Queiroz e Silva
@@ -24,8 +23,8 @@
 #ifndef __VIRTUALITY_MATRIX_H__
 #define __VIRTUALITY_MATRIX_H__
 
-#include <point.H>
-#include <vector.H>
+#include <point.hpp>
+#include <vector.hpp>
 
 namespace Virtuality {
 

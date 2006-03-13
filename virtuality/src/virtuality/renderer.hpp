@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * The Virtuality Renderer
  * Copyright (C) 2001 Alex Sandro Queiroz e Silva
@@ -26,8 +25,8 @@
 
 #include <ctime>
 
-#include <scene.H>
-#include <framebuffer.H>
+#include <scene.hpp>
+#include <framebuffer.hpp>
 
 namespace Virtuality {
 
