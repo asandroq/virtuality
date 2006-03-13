@@ -1,7 +1,4 @@
 #
-# $Id$
-# 
-#
 # The Virtuality Renderer
 # Copyright (C) 2001 Alex Sandro Queiroz e Silva
 #
@@ -31,7 +28,6 @@ noinst_LIBRARIES = libshaders.a
 libshaders_a_SOURCES = surfaceshader.hpp \
 		       constantsurfaceshader.hpp \
 		       mattesurfaceshader.hpp \
-		       luasurfaceshader.hpp luasurfaceshader.cpp \
 		       plasticsurfaceshader.hpp plasticsurfaceshader.cpp
 
 INCLUDES = -I../framebuffers -I../shapes -I../virtuality
@@ -39,5 +35,6 @@ AM_CXXFLAGS = -Wall -Wno-trigraphs -ansi -ffast-math -fno-rtti -fno-exceptions
 
 AUTOMAKE_OPTIONS = foreign
 
+#		       luasurfaceshader.hpp luasurfaceshader.cpp \
 # Done.
 

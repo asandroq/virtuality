@@ -1,5 +1,4 @@
 /*
- *
  * The Virtuality Renderer
  * Copyright (C) 2001 Alex Sandro Queiroz e Silva
  *
@@ -30,11 +29,11 @@ using namespace Virtuality;
 
 static void usage()
 {
-	cout << "Program usage:\n\n";
-	cout << "virtuality [options] scene-file\n\n";
-	cout << "Options:\n\n";
-	cout << "  -h\tShow this help screen\n";
-	cout << "  -v\tPrint diagnostics to standard output\n";
+	std::cout << "Program usage:\n\n";
+	std::cout << "virtuality [options] scene-file\n\n";
+	std::cout << "Options:\n\n";
+	std::cout << "  -h\tShow this help screen\n";
+	std::cout << "  -v\tPrint diagnostics to standard output\n";
 }
 
 int main(int argc, char *argv[])
@@ -43,9 +42,9 @@ int main(int argc, char *argv[])
 	bool verbose = false;
 
 	// the usual copyright notice
-	cout << "The Virtuality Renderer\n";
-	cout << "Copyright (c) 2001 Alex Sandro Queiroz e Silva\n";
-	cout << "This program comes with no warranty!\n\n";
+	std::cout << "The Virtuality Renderer\n";
+	std::cout << "Copyright (c) 2001 Alex Sandro Queiroz e Silva\n";
+	std::cout << "This program comes with no warranty!\n\n";
 	// reading options
 	opterr = 0;
 	while((i = getopt(argc, argv, "hv")) != -1) {
@@ -58,10 +57,10 @@ int main(int argc, char *argv[])
 				break;
 			case '?':
 				char c = static_cast<char>(optopt);
-				cerr << argv[0] << ": option -" << c;
-				cerr << " is invalid\n";
-				cerr << "Use '" << argv[0] << " -h' for a ";
-				cerr << "complete list of options\n";
+				std::cerr << argv[0] << ": option -" << c;
+				std::cerr << " is invalid\n";
+				std::cerr << "Use '"<< argv[0]<< " -h' for a ";
+				std::cerr << "complete list of options\n";
 				exit(1);
 		};
 	}
@@ -73,9 +72,9 @@ int main(int argc, char *argv[])
 	srand(time(0));
 	// running file
 	LuaScript script;
-	cout << "Processing " << argv[optind] << "...\n";
+	std::cout << "Processing " << argv[optind] << "...\n";
 	script.run(argv[optind], verbose);
-	cout << "Processing of " << argv[optind] << " finished.\n";
+	std::cout << "Processing of " << argv[optind] << " finished.\n";
 
 	return 0;
 }

@@ -57,9 +57,9 @@ Matrix Matrix::inverse() const
 	r3[7] =  1.0, r3[4] = r3[5] = r3[6] = 0.0;
 
 	// choose pivot - or return identity
-	if(abs(r3[0]) > abs(r2[0])) SWAP_ROWS(r3, r2);
-	if(abs(r2[0]) > abs(r1[0])) SWAP_ROWS(r2, r1);
-	if(abs(r1[0]) > abs(r0[0])) SWAP_ROWS(r1, r0);
+	if(fabs(r3[0]) > fabs(r2[0])) SWAP_ROWS(r3, r2);
+	if(fabs(r2[0]) > fabs(r1[0])) SWAP_ROWS(r2, r1);
+	if(fabs(r1[0]) > fabs(r0[0])) SWAP_ROWS(r1, r0);
 	if(isZero(r0[0])) return Matrix();
 
 	/* eliminate first variable	*/
@@ -77,8 +77,8 @@ Matrix Matrix::inverse() const
 	if(!isZero(s)) { r1[7] -= m1 * s; r2[7] -= m2 * s; r3[7] -= m3 * s; }
 
 	// choose pivot - or return identity
-	if(abs(r3[1]) > abs(r2[1])) SWAP_ROWS(r3, r2);
-	if(abs(r2[1]) > abs(r1[1])) SWAP_ROWS(r2, r1);
+	if(fabs(r3[1]) > fabs(r2[1])) SWAP_ROWS(r3, r2);
+	if(fabs(r2[1]) > fabs(r1[1])) SWAP_ROWS(r2, r1);
 	if(isZero(r1[1])) return Matrix();
 
 	// eliminate second variable
@@ -91,7 +91,7 @@ Matrix Matrix::inverse() const
 	s = r1[7]; if(!isZero(s)) { r2[7] -= m2 * s; r3[7] -= m3 * s; }
 
 	// choose pivot - or return identity
-	if(abs(r3[2]) > abs(r2[2])) SWAP_ROWS(r3, r2);
+	if(fabs(r3[2]) > fabs(r2[2])) SWAP_ROWS(r3, r2);
 	if(isZero(r2[2])) return Matrix();
 
 	/* eliminate third variable */

@@ -1,5 +1,4 @@
 /*
- *
  * The Virtuality Renderer
  * Copyright (C) 2001 Alex Sandro Queiroz e Silva
  *
@@ -22,6 +21,7 @@
 
 #include <cassert>
 #include <iomanip>
+#include <iostream>
 
 #include <renderer.hpp>
 
@@ -32,15 +32,15 @@ void Renderer::printStatistics(clock_t t, int h, int i) const
 	clock_t t1 = clock();
 	int secs = (t1-t) / CLOCKS_PER_SEC;
 	// showing elapsed time and current scanline
-	cout << "\r";
-	cout << setw(2) << secs/3600 << ":";
-	cout << setw(2) << secs/60   << ":";
-	cout << setw(2) << secs%60;
-	cout << "\tRendering line " << h-i << " of " << h;
+	std::cout << "\r";
+	std::cout << std::setw(2) << secs/3600 << ":";
+	std::cout << std::setw(2) << secs/60   << ":";
+	std::cout << std::setw(2) << secs%60;
+	std::cout << "\tRendering line " << h-i << " of " << h;
 	if(i == 0) {
-		cout << endl;
+		std::cout << std::endl;
 	} else {
-		cout << flush;
+		std::cout << std::flush;
 	}
 }
 

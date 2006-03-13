@@ -1,5 +1,4 @@
 /*
- *
  * The Virtuality Renderer
  * Copyright (C) 2001 Alex Sandro Queiroz e Silva
  *
@@ -31,7 +30,7 @@ double Scene::hit(const Ray& r, Shape** s) const
 {
 	*s = 0;
 	double t = -1.0;
-	vector<Shape*>::const_iterator it;
+	std::vector<Shape*>::const_iterator it;
 
 	for(it = _shapes.begin(); it != _shapes.end(); it++) {
 		SpanList sl;
@@ -56,7 +55,7 @@ bool Scene::occluded(const Point& p1, const Point& p2) const
 {
 	double t;
 	Ray r(p1, p2-p1);
-	vector<Shape*>::const_iterator it;
+	std::vector<Shape*>::const_iterator it;
 
 	// finds parametric distance from one point to the other
 	if(isZero(r.direction().x())) {
