@@ -28,9 +28,9 @@
 
 noinst_LIBRARIES = libframebuffers.a
 
-libframebuffers_a_SOURCES = framebuffer.H \
-			    pngframebuffer.H pngframebuffer.C \
-			    tgaframebuffer.H tgaframebuffer.C
+libframebuffers_a_SOURCES = framebuffer.hpp \
+			    pngframebuffer.hpp pngframebuffer.cpp \
+			    tgaframebuffer.hpp tgaframebuffer.cpp
 
 INCLUDES = -I../virtuality
 AM_CXXFLAGS = -Wall -Wno-trigraphs -ansi -ffast-math -fno-rtti -fno-exceptions
@@ -38,3 +38,4 @@ AM_CXXFLAGS = -Wall -Wno-trigraphs -ansi -ffast-math -fno-rtti -fno-exceptions
 AUTOMAKE_OPTIONS = foreign
 
 # Done.
+

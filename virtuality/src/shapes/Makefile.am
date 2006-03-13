@@ -28,17 +28,17 @@
 
 noinst_LIBRARIES = libshapes.a
 
-libshapes_a_SOURCES = box.H box.C \
-		      cylinder.H cylinder.C \
-		      csgnode.H \
-		      difference.H difference.C \
-		      intersection.H intersection.C \
-		      plane.H plane.C \
-		      shape.H shape.C \
-		      sphere.H sphere.C \
-		      torus.H torus.C \
-		      triangle.H triangle.C \
-		      union.H union.C
+libshapes_a_SOURCES = box.hpp box.cpp \
+		      cylinder.hpp cylinder.cpp \
+		      csgnode.hpp \
+		      difference.hpp difference.cpp \
+		      intersection.hpp intersection.cpp \
+		      plane.hpp plane.cpp \
+		      shape.hpp shape.cpp \
+		      sphere.hpp sphere.cpp \
+		      torus.hpp torus.cpp \
+		      triangle.hpp triangle.cpp \
+		      union.hpp union.cpp
 
 INCLUDES = -I../shaders -I../virtuality
 AM_CXXFLAGS = -Wall -Wno-trigraphs -ansi -ffast-math -fno-rtti -fno-exceptions
@@ -46,3 +46,4 @@ AM_CXXFLAGS = -Wall -Wno-trigraphs -ansi -ffast-math -fno-rtti -fno-exceptions
 AUTOMAKE_OPTIONS = foreign
 
 # Done.
+

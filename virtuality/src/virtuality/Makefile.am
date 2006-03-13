@@ -27,22 +27,22 @@
 
 bin_PROGRAMS = virtuality
 
-virtuality_SOURCES = boundingbox.H boundingbox.C \
-		     camera.H \
-		     colour.H colour.C \
-		     light.H \
-		     luascript.H luascript.C \
-		     luascriptapi.H luascriptapi.C \
-		     main.C \
-		     math.H math.C \
-		     matrix.H matrix.C \
-		     point.H \
-		     ray.H \
-		     renderer.H renderer.C \
-		     scene.H scene.C \
-		     scriptapi.H scriptapi.C \
-		     shaderenv.H \
-		     vector.H
+virtuality_SOURCES = boundingbox.hpp boundingbox.cpp \
+		     camera.hpp \
+		     colour.hpp colour.cpp \
+		     light.hpp \
+		     luascript.hpp luascript.cpp \
+		     luascriptapi.hpp luascriptapi.cpp \
+		     main.cpp \
+		     math.hpp math.cpp \
+		     matrix.hpp matrix.cpp \
+		     point.hpp \
+		     ray.hpp \
+		     renderer.hpp renderer.cpp \
+		     scene.hpp scene.cpp \
+		     scriptapi.hpp scriptapi.cpp \
+		     shaderenv.hpp \
+		     vector.hpp
 virtuality_LDADD =   ../framebuffers/libframebuffers.a \
 		     ../shaders/libshaders.a \
 		     ../shapes/libshapes.a
@@ -53,3 +53,4 @@ AM_CXXFLAGS = -Wall -Wno-trigraphs -ansi -D_XOPEN_SOURCE -ffast-math -fno-rtti -
 AUTOMAKE_OPTIONS = foreign
 
 # Done.
+
