@@ -45,7 +45,7 @@ public:
 
 protected:
 	// childs
-	vector<const Shape*> _childs;
+	std::vector<const Shape*> _childs;
 };
 
 inline CSGNode::CSGNode()
@@ -54,7 +54,7 @@ inline CSGNode::CSGNode()
 
 inline CSGNode::~CSGNode()
 {
-	vector<const Shape*>::iterator it;
+	std::vector<const Shape*>::iterator it;
 
 	// simply runs through list of shapes and deletes them
 	for(it = _childs.begin(); it != _childs.end(); it++) {

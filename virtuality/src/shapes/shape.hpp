@@ -36,7 +36,7 @@ namespace Virtuality {
 class Shape;
 
 // list of hits
-typedef map<double, const Shape*> SpanList;
+typedef std::map<double, const Shape*> SpanList;
 
 class Shape {
 public:

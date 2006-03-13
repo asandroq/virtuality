@@ -128,13 +128,13 @@ void Cylinder::hit(const Ray& r0, SpanList* sl) const
 	}
 	// shortest distance
 	n = n.normalise();
-	double d = abs(RC * n);
+	double d = fabs(RC * n);
 	// ray hits infinite cylinder
 	if(d <= _radius) {
 		Vector O = RC ^ _axis;
 		double t = -(O * n) / length;
 		O = (n ^ _axis).normalise();
-		double s = abs(sqrt(sqr(_radius) - sqr(d)) / (r.direction()*O));
+		double s = fabs(sqrt(sqr(_radius) - sqr(d)) / (r.direction()*O));
 		double t1, t2;
 		if(clip(r, t-s, t+s, &t1, &t2)) {
 			sl->insert(SpanList::value_type(t1*fct, this));

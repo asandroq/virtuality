@@ -92,9 +92,9 @@ private:
 	// background colour
 	Colour _bg_colour;
 	// list of lights
-	vector<Light> _lights;
+	std::vector<Light> _lights;
 	// list of shapes
-	vector<Shape*> _shapes;
+	std::vector<Shape*> _shapes;
 };
 
 inline Scene::Scene()
@@ -144,7 +144,7 @@ inline void Scene::addLight(const Light& l)
 
 inline void Scene::clear()
 {
-	vector<Shape*>::iterator it;
+	std::vector<Shape*>::iterator it;
 
 	// simply runs through list of shapes and deletes them
 	for(it = _shapes.begin(); it != _shapes.end(); it++) {

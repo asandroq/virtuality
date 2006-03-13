@@ -61,8 +61,8 @@ void Triangle::hit(const Ray& r0, SpanList* sl) const
 	double dz = _p1.x()*(_p2.y()-_p3.y())+
 			_p2.x()*(_p3.y()-_p1.y())+
 			_p3.x()*(_p1.y()-_p2.y());
-	if(abs(dx) > abs(dy)) {
-		if(abs(dx) > abs(dz)) {
+	if(fabs(dx) > fabs(dy)) {
+		if(fabs(dx) > fabs(dz)) {
 			// without x yelds the largest area
 			if(isZero(dx)) {
 				return;
@@ -92,7 +92,7 @@ void Triangle::hit(const Ray& r0, SpanList* sl) const
 				p.x()*(_p1.y()-_p2.y())) / dz;
 		}
 	} else {
-		if(abs(dy) > abs(dz)) {
+		if(fabs(dy) > fabs(dz)) {
 			// without y yelds the largest area
 			if(isZero(dy)) {
 				return;
