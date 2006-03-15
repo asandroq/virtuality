@@ -1,6 +1,4 @@
 #
-# $Id$
-#
 # The Virtuality Renderer
 # Copyright (C) 2001 Alex Sandro Queiroz e Silva
 #
@@ -18,7 +16,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-# To contact the author send eletronic mail to asandro@lcg.dc.ufc.br
+# To contact the author send eletronic mail to ventonegro@ventonegro.org
 #
 
 #
@@ -29,7 +27,7 @@ bin_PROGRAMS = virtuality
 
 virtuality_SOURCES = boundingbox.hpp boundingbox.cpp \
 		     camera.hpp \
-		     colour.hpp colour.cpp \
+		     color.hpp color.cpp \
 		     light.hpp \
 		     luascript.hpp luascript.cpp \
 		     luascriptapi.hpp luascriptapi.cpp \
@@ -48,7 +46,7 @@ virtuality_LDADD =   ../framebuffers/libframebuffers.a \
 		     ../shapes/libshapes.a
 
 INCLUDES = -I../framebuffers -I../shaders -I../shapes
-AM_CXXFLAGS = -Wall -Wno-trigraphs -ansi -D_XOPEN_SOURCE -ffast-math -fno-rtti -fno-exceptions
+AM_CXXFLAGS = -Wall -ansi -ffast-math -fno-rtti -fno-exceptions
 
 AUTOMAKE_OPTIONS = foreign
 

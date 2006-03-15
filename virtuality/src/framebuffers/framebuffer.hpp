@@ -23,7 +23,7 @@
 #ifndef __VIRTUALITY_FRAMEBUFFER_H__
 #define __VIRTUALITY_FRAMEBUFFER_H__
 
-#include <colour.hpp>
+#include <color.hpp>
 
 namespace Virtuality {
 

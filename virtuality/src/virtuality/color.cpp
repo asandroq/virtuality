@@ -20,7 +20,7 @@
  * To contact the author send eletronic mail to ventonegro@ventonegro.org
  */
 
-#include <colour.hpp>
+#include <color.hpp>
 
 namespace Virtuality {
 

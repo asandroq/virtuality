@@ -23,7 +23,7 @@
 #ifndef __VIRTUALITY_SHADERENV_H__
 #define __VIRTUALITY_SHADERENV_H__
 
-#include <colour.hpp>
+#include <color.hpp>
 #include <vector.hpp>
 
 namespace Virtuality {

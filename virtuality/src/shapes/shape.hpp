@@ -26,7 +26,7 @@
 #include <map>
 
 #include <ray.hpp>
-#include <colour.hpp>
+#include <color.hpp>
 #include <boundingbox.hpp>
 
 #include <surfaceshader.hpp>

@@ -24,7 +24,7 @@
 #define __VIRTUALITY_LIGHT_H__
 
 #include <point.hpp>
-#include <colour.hpp>
+#include <color.hpp>
 
 namespace Virtuality {
 
