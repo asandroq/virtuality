@@ -43,89 +43,74 @@
 #include <pngframebuffer.hpp>
 #include <tgaframebuffer.hpp>
 
+/*
+ * Code for binding Lua <---> C++ from
+ * http://lua-users.org/wiki/DoItYourselfCppBinding
+ */
+
+void* operator new(size_t size, lua_State* L, const char* metaname)
+{
+	void *ptr = lua_newuserdata(L, size);
+	luaL_getmetatable(L, metaname);
+	lua_setmetatable(L, -2);
+
+	return ptr;
+}
+
+#define luaV_pushobject(L, T) new(L, #T) T
+
+#define luaV_udata_cast(L, pos, T) \
+	reinterpret_cast<T*>(luaL_checkudata((L), (pos), #T))
+
 namespace Virtuality {
 
 const int FB_PNG = 1;
 const int FB_TGA = 2;
 
-LuaScript* _lua_script;
-
-// helper function to test if a tag belongs to a shape
-bool LuaScript::isShape(int tag) const
-{
-	if(tag == _box_tag	||
-	   tag == _cylinder_tag	||
-	   tag == _plane_tag	||
-	   tag == _sphere_tag	||
-	   tag == _torus_tag	||
-	   tag == _triangle_tag){
-		return true;
-	} else {
-		return false;
-	}
-}
-
 int LuaScript::_point_ctor(lua_State *L)
 {
 	double x, y, z;
 
-	// getting and popping upvalue - LuaScript instance
-	LuaScript* s = static_cast<LuaScript*>(lua_touserdata(L, -1));
-	lua_pop(L, 1);
 	// we must get a table
-	if(!lua_istable(L, 1)) {
-		lua_error(L, "invalid argument to Point");
-	}
+	luaL_checktype(L, 1, LUA_TTABLE);
+
 	// reading x coordinate
-	lua_pushstring(L, "x");
-	lua_gettable(L, 1);
+	lua_getfield(L, 1, "x");
 	if(lua_isnil(L, 2)) {
 		x = 0.0;
-	} else if(lua_tag(L, 2) != LUA_TNUMBER) {
-		lua_error(L, "invalid type for Point.x");
-		x = 0.0;
+	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+		return luaL_error(L, "invalid type for Point.x");
 	} else {
 		x = lua_tonumber(L, 2);
 	}
 	lua_pop(L, 1);
+
 	// reading y coordinate
-	lua_pushstring(L, "y");
-	lua_gettable(L, 1);
+	lua_getfield(L, 1, "y");
 	if(lua_isnil(L, 2)) {
 		y = 0.0;
-	} else if(lua_tag(L, 2) != LUA_TNUMBER) {
-		lua_error(L, "invalid type for Point.y");
-		y = 0.0;
+	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+		return luaL_error(L, "invalid type for Point.y");
 	} else {
 		y = lua_tonumber(L, 2);
 	}
 	lua_pop(L, 1);
+
 	// reading z coordinate
-	lua_pushstring(L, "z");
-	lua_gettable(L, 1);
+	lua_getfield(L, 1, "z");
 	if(lua_isnil(L, 2)) {
 		z = 0.0;
-	} else if(lua_tag(L, 2) != LUA_TNUMBER) {
-		lua_error(L, "invalid type for Point.z");
-		z = 0.0;
+	} else if(lua_type(L, 2) != LUA_TNUMBER) {
+		return luaL_error(L, "invalid type for Point.z");
 	} else {
 		z = lua_tonumber(L, 2);
 	}
-	lua_pop(L, 2);
+	lua_pop(L, 1);
+
 	// pushing point onto stack
-	Point* p = new Point(x, y, z);
-	lua_pushusertag(L, p, s->_point_tag);
+	new(L, "Point") Point(x, y, z);
 
 	return 1;
-}
-
-int LuaScript::_point_dtor(lua_State* L)
-{
-	Point* p = static_cast<Point*>(lua_touserdata(L, 1));
-	lua_pop(L, 1);
-	delete p;
-
-	return 0;
 }
 
 int LuaScript::_point_index(lua_State* L)
@@ -133,28 +118,26 @@ int LuaScript::_point_index(lua_State* L)
 	double res;
 
 	// points can only be indexed by the strings "x", "y", "z"
-	if(lua_tag(L, 2) != LUA_TSTRING) {
-		lua_error(L, "index of point has wrong type");
-	}
-	string index(lua_tostring(L, 2));
+	Point *p = luaV_udata_cast(L, 1, Point);
+	const char *idx = luaL_checkstring(L, 2);
+
+	std::string index(idx);
+
 	if(index == "x") {
-		Point *p = static_cast<Point*>(lua_touserdata(L, 1));
 		res = p->x();
 	} else if(index == "y") {
-		Point *p = static_cast<Point*>(lua_touserdata(L, 1));
 		res = p->y();
 	} else if(index == "z") {
-		Point *p = static_cast<Point*>(lua_touserdata(L, 1));
 		res = p->z();
 	} else {
-		lua_error(L, "invalid point index");
-		res = 0.0;
+		return luaL_error(L, "invalid point index");
 	}
-	lua_pop(L, 2);
-	lua_pushnumber(L, res);
 
+	lua_pushnumber(L, res);
 	return 1;
 }
+
+#if 0
 
 // it's possible to sum two points, a point and a vector, or
 // a point and a scalar
@@ -1876,4 +1859,7 @@ bool LuaScript::run(const char* filename, bool verbose)
 	}
 }
 
+#endif
+
 }
+
