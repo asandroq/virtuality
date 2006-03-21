@@ -821,11 +821,11 @@ void LuaScript::_shape_ctor(lua_State* L, Shape* p)
 	SurfaceShader* ss;
 
 	// we must get a table
-	luaL_checktype(L, 1, LUA_TTABLE);
+	luaL_checktype(L, -2, LUA_TTABLE);
 
 	// reading translation
-	lua_getfield(L, 1, "translate");
-	if(lua_isnil(L, 2)) {
+	lua_getfield(L, -2, "translate");
+	if(lua_isnil(L, -1)) {
 		// ok
 	} else {
 		v = *luaV_udata_cast(L, 2, Vector);
@@ -834,8 +834,8 @@ void LuaScript::_shape_ctor(lua_State* L, Shape* p)
 	lua_pop(L, 1);
 
 	// reading rotation
-	lua_getfield(L, 1, "rotate");
-	if(lua_isnil(L, 2)) {
+	lua_getfield(L, -2, "rotate");
+	if(lua_isnil(L, -1)) {
 		// ok
 	} else {
 		v = *luaV_udata_cast(L, 2, Vector);
@@ -844,8 +844,8 @@ void LuaScript::_shape_ctor(lua_State* L, Shape* p)
 	lua_pop(L, 1);
 
 	// reading scaling
-	lua_getfield(L, 1, "scale");
-	if(lua_isnil(L, 2)) {
+	lua_getfield(L, -2, "scale");
+	if(lua_isnil(L, -1)) {
 		// ok
 	} else {
 		v = *luaV_udata_cast(L, 2, Vector);
@@ -854,8 +854,8 @@ void LuaScript::_shape_ctor(lua_State* L, Shape* p)
 	lua_pop(L, 1);
 
 	// reading colour
-	lua_getfield(L, 1, "colour");
-	if(lua_isnil(L, 2)) {
+	lua_getfield(L, -2, "colour");
+	if(lua_isnil(L, -1)) {
 		c = Colour(0.7, 0.7, 0.7);
 	} else {
 		c = *luaV_udata_cast(L, 2, Colour);
@@ -864,8 +864,8 @@ void LuaScript::_shape_ctor(lua_State* L, Shape* p)
 	p->setColour(c);
 
 	// reading surface shader
-	lua_getfield(L, 1, "surface");
-	if(lua_isnil(L, 2)) {
+	lua_getfield(L, -2, "surface");
+	if(lua_isnil(L, -1)) {
 		ss = new ConstantSurfaceShader();
 	} else if(lua_isfunction(L, 2)) {
 		ss = new LuaSurfaceShader(L, 2);
@@ -876,88 +876,76 @@ void LuaScript::_shape_ctor(lua_State* L, Shape* p)
 	lua_pop(L, 1);
 }
 
-#if 0
-
 int LuaScript::_union_ctor(lua_State* L)
 {
-	// getting and popping upvalue - LuaScript instance
-	LuaScript* s = static_cast<LuaScript*>(lua_touserdata(L, -1));
-	lua_pop(L, 1);
 	// we must get a table
-	if(!lua_istable(L, 1)) {
-		lua_error(L, "invalid argument to Union");
-	}
+	luaL_checktype(L, 1, LUA_TTABLE);
+
 	// creating new union
-	CSGNode *n = new Union;
+	CSGNode *n = new(L, "Union") Union;
+
 	// traversing table gathering shapes
 	lua_pushnil(L);
 	while(lua_next(L, 1)) {
-		int tag = lua_tag(L, 3);
-		if(s->isShape(tag)) {
-			n->addChild(static_cast<Shape*>(lua_touserdata(L, 3)));
+		Shape *s = static_cast<Shape*>(lua_touserdata(L, 4));
+		if(s) {
+			n->addChild(s);
 		}
 		lua_pop(L, 1);
 	}
-	// returning union
-	s->_shape_ctor(L, n);
-	lua_pushusertag(L, n, s->_csg_tag);
 
+	// returning union
+	_shape_ctor(L, n);
 	return 1;
 }
 
 int LuaScript::_difference_ctor(lua_State* L)
 {
-	// getting and popping upvalue - LuaScript instance
-	LuaScript* s = static_cast<LuaScript*>(lua_touserdata(L, -1));
-	lua_pop(L, 1);
 	// we must get a table
-	if(!lua_istable(L, 1)) {
-		lua_error(L, "invalid argument to Difference");
-	}
+	luaL_checktype(L, 1, LUA_TTABLE);
+
 	// creating new difference
-	CSGNode *n = new Difference;
+	CSGNode *n = new(L, "Difference") Difference;
+
 	// traversing table gathering shapes
 	lua_pushnil(L);
 	while(lua_next(L, 1)) {
-		int tag = lua_tag(L, 3);
-		if(s->isShape(tag)) {
-			n->addChild(static_cast<Shape*>(lua_touserdata(L, 3)));
+		Shape *s = static_cast<Shape*>(lua_touserdata(L, 4));
+		if(s) {
+			n->addChild(s);
 		}
 		lua_pop(L, 1);
 	}
-	// returning difference
-	s->_shape_ctor(L, n);
-	lua_pushusertag(L, n, s->_csg_tag);
 
+	// returning difference
+	_shape_ctor(L, n);
 	return 1;
 }
 
 int LuaScript::_intersection_ctor(lua_State* L)
 {
-	// getting and popping upvalue - LuaScript instance
-	LuaScript* s = static_cast<LuaScript*>(lua_touserdata(L, -1));
-	lua_pop(L, 1);
 	// we must get a table
-	if(!lua_istable(L, 1)) {
-		lua_error(L, "invalid argument to Intersection");
-	}
+	luaL_checktype(L, 1, LUA_TTABLE);
+
 	// creating new intersection
-	CSGNode *n = new Intersection;
+	CSGNode *n = new(L, "Intersection") Intersection;
+
 	// traversing table gathering shapes
 	lua_pushnil(L);
 	while(lua_next(L, 1)) {
-		int tag = lua_tag(L, 3);
-		if(s->isShape(tag)) {
-			n->addChild(static_cast<Shape*>(lua_touserdata(L, 3)));
+		Shape *s = static_cast<Shape*>(lua_touserdata(L, 4));
+		if(s) {
+			n->addChild(s);
 		}
 		lua_pop(L, 1);
 	}
-	// returning intersection
-	s->_shape_ctor(L, n);
-	lua_pushusertag(L, n, s->_csg_tag);
 
+	// returning intersection
+	_shape_ctor(L, n);
 	return 1;
 }
+
+#if 0
 
 int LuaScript::_box_ctor(lua_State* L)
 {

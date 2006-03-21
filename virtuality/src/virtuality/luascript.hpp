@@ -109,7 +109,7 @@ private:
 	static int _camera_dtor(lua_State* L);
 
 	// shapes
-	void _shape_ctor(lua_State* L, Shape* s);
+	static void _shape_ctor(lua_State* L, Shape* s);
 	static int _shape_dtor(lua_State* L);
 
 	// CSG
